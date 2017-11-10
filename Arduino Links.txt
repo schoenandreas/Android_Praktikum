@@ -1,0 +1,23 @@
+Arduino
+
+    Getting Started: https://www.arduino.cc/en/Guide/HomePage
+    IDE: https://www.arduino.cc/en/Main/Software
+
+Arduino Braccio Robot Arm (https://store.arduino.cc/tinkerkit-braccio)
+
+    Reference: https://web.archive.org/web/20170711140751/http://www.arduino.org/learning/reference/braccio
+    Library: https://github.com/arduino-org/arduino-library-braccio
+
+Seeed Wifi Shield V2.0
+
+    Reference: http://wiki.seeed.cc/Wifi_Shield_V2.0/
+    Library: https://github.com/Seeed-Studio/WiFi_Shield
+
+Seeed Bluetooth Shield V2.0
+
+    Reference: http://wiki.seeedstudio.com/wiki/Bluetooth_Shield_V2.0
+    Library: https://github.com/Seeed-Studio/Bluetooth_Shield_V2_Demo_Code
+
+
+
+https://developer.android.com/training/wearables/apps/voice.html
