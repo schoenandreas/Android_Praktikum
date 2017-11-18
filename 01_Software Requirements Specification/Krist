@@ -1,0 +1,21 @@
+--- Product perspective: This system will consist of two parts: the hardware part with the Arduino Robotic Arm and its sensors and the software part with the User Interface on Android Operating System. 
+
+The two parts will be connected together through Bluetooth, which will be made possible through a Bluetooth Shield attached to the Arduino chip. While the Arduino will use the Bluetooth channel to send data collected from its sensors, the UI will use it to control the Arm either manualy or with pre-programmed movements. The commands will be voice controled, made possible from the integrated Voice Controller of the Android Operating System. 
+
+--- Product functions: The most basic function made through the mobile application will be the simple movements of the arm in the all possible space. In addition to that, using the data gathered from the detection, pressure, color detector and alcohol sensor, the arm will be able to detect and move object and also separate them from their color and alcohol compound, if being commanded to do so from the application. 
+
+--- User classes: Since this product is a prototype and not an end-product, the purpose will be to test different functionalities possible between an Arduino chip and an Android Operating System. There aren't any user classes that will use or make use of it. 
+
+--- Operating Environment: The Arduino chip is of the Arduino Uno version, which will have a Bluetooth Shield attached in order to make possible the coexistence with the software. The sensors used must also be compatible with the Arduino Uno chip. The controlling device will have to be equiped with an Android software of at least version 6.0, also, if possible, with the Bluetooth version 5.0, in order to make multiple pairing possible. 
+
+--- Design and Implementation Constrains: The constrains of the product depend on the capability of the sensors of gathering the required data and providing them for the system. Another constrain is the version of Android Operating System, which has to provide us the data from the Voice Controller. There are not other constrains thought, since the operations planned are supported by the used Arduino chip and Operating System.
+
+--- User Documentation:
+
+--- Assumptions and Dependencies:  We assume that the sensors provided are compatible with the Arduino Uno chip and that they will provide us correctly the expected data. We also assume that the data gathered from the Voice Controller of Android will be usable for our purposes of giving commands to the Arm through the User Interface. 
+
+
+
+
+
+
