@@ -20,4 +20,25 @@
         tools:layout_constraintLeft_creator="1"
         tools:layout_constraintTop_creator="1" />
 
+    <ImageButton
+        android:id="@+id/imageButton"
+        android:layout_width="105dp"
+        android:layout_height="96dp"
+        android:adjustViewBounds="true"
+        android:src="@android:drawable/presence_audio_online"
+        tools:layout_editor_absoluteX="140dp"
+        tools:layout_editor_absoluteY="207dp" />
+
+    <TextView
+        android:id="@+id/section_label2"
+        android:layout_width="377dp"
+        android:layout_height="49dp"
+        android:layout_marginLeft="4dp"
+        android:layout_marginTop="456dp"
+        android:text="Text Here"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/constraintLayout"
+        tools:layout_constraintLeft_creator="2"
+        tools:layout_constraintTop_creator="2" />
+
 </android.support.constraint.ConstraintLayout>
