@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    tools:ignore="TextFields,HardcodedText"
+    tools:context=".secondActivity">
+
+    <TextView
+        android:id="@+id/label"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:text="Type here:" />
+
+    <TextView
+        android:id="@+id/textfield"
+        android:layout_width="252dp"
+        android:layout_height="181dp"
+        android:layout_above="@+id/button"
+        android:layout_centerHorizontal="true"
+        android:layout_marginBottom="37dp"
+        android:text="---"
+        android:textSize="30dp" />
+
+    <Button
+        android:id="@+id/bindButton2"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignLeft="@+id/open"
+        android:layout_alignStart="@+id/open"
+        android:layout_below="@+id/open"
+        android:layout_marginTop="101dp"
+        android:text="BindButton"
+        android:onClick="onClickBind2"/>
+</RelativeLayout>

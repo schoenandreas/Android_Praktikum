@@ -1,0 +1,3 @@
+EleBar:
+	Service funktioniert mit Toasts auch bei Activity wechseln, der selbe Service wird dabei weiterverwendet (inkr. wurde gespeichert)
+
