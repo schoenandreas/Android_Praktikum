@@ -5,16 +5,11 @@ import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.speech.RecognizerIntent;
-import android.support.annotation.Nullable;
-import android.support.constraint.ConstraintLayout;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AppCompatActivity;
-import android.text.Layout;
 import android.util.Log;
-import android.view.GestureDetector;
 import android.view.MotionEvent;
 import android.view.View;
-import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -30,7 +25,7 @@ public class SpeechRecognitionActivity extends AppCompatActivity {
     private static final int SPEECH_REQUEST_CODE = 0;
     private TextView text;
 
-    private GestureDetector gestureDetector;
+    private float x0 = 0,x1 = 0,y0 = 0,y1 = 0;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -41,17 +36,12 @@ public class SpeechRecognitionActivity extends AppCompatActivity {
         text = (TextView) findViewById(R.id.textView);
 
 
-
         FloatingActionButton buttonFloat = (FloatingActionButton) findViewById(R.id.floatingActionButton);
 
-        gestureDetector = (new GestureDetector(this, new MyGestureListener(this)));
-        text.setOnTouchListener(new View.OnTouchListener() {
-            @Override
-            public boolean onTouch(final View view, final MotionEvent event) {
-                gestureDetector.onTouchEvent(event);
-                return true;
-            }
-        });
+
+
+
+
     }
 
     @Override
@@ -80,6 +70,29 @@ public class SpeechRecognitionActivity extends AppCompatActivity {
     }
 
 
+    public boolean onTouchEvent(MotionEvent event) {
+
+        switch(event.getAction()){
+            case MotionEvent.ACTION_DOWN:
+                x0 = event.getX();
+                y0 = event.getY();
+                break;
+            case MotionEvent.ACTION_UP:
+                x1 = event.getX();
+                y1 = event.getY();
+                if(x0 - x1 > 100){ //leftswipe
+                    Intent intent = new Intent(this, DrinkOverviewActivity.class);
+                    startActivity(intent);
+                    this.overridePendingTransition(R.anim.animation_enter_from_right, R.anim.animation_leave_to_left);
+
+                }else if (x1 - x0 > 100){ //rightswipe
+                    Intent intent = new Intent(this, HelpActivity.class);
+                    startActivity(intent);
+                    this.overridePendingTransition(R.anim.animation_enter_from_left, R.anim.animation_leave_to_right);
+                }
+        }
+        return false;
+    }
 
     public void onClickFloat(View v){
 
@@ -129,5 +142,6 @@ public class SpeechRecognitionActivity extends AppCompatActivity {
         }
 
     }
+
 
 }

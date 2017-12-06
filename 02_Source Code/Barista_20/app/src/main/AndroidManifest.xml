@@ -16,9 +16,16 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".DrinkOverviewActivity"></activity>
-        <activity android:name=".HelpActivity"></activity>
-        <activity android:name=".SpeechRecognitionActivity"
+        <activity
+            android:name=".DrinkOverviewActivity"
+            android:theme="@style/AppTheme.NoActionBar">
+        </activity>
+        <activity
+            android:name=".HelpActivity"
+            android:theme="@style/AppTheme.NoActionBar">
+        </activity>
+        <activity
+            android:name=".SpeechRecognitionActivity"
             android:theme="@style/AppTheme.NoActionBar">
         </activity>
     </application>

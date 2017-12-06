@@ -1,0 +1,4 @@
+#Wed Nov 22 13:02:06 CET 2017
+base.0=C\:\\Users\\Andreas\\Desktop\\Android Projekt\\02_Source Code\\Android\\EleBar\\app\\build\\intermediates\\transforms\\dexMerger\\debug\\9
+path.0=classes.dex
+renamed.0=classes.dex
