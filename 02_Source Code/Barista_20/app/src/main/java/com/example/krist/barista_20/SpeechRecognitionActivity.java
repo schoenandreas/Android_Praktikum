@@ -6,9 +6,13 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.speech.RecognizerIntent;
 import android.support.annotation.Nullable;
+import android.support.constraint.ConstraintLayout;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AppCompatActivity;
+import android.text.Layout;
 import android.util.Log;
+import android.view.GestureDetector;
+import android.view.MotionEvent;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
@@ -26,6 +30,8 @@ public class SpeechRecognitionActivity extends AppCompatActivity {
     private static final int SPEECH_REQUEST_CODE = 0;
     private TextView text;
 
+    private GestureDetector gestureDetector;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -34,7 +40,18 @@ public class SpeechRecognitionActivity extends AppCompatActivity {
 
         text = (TextView) findViewById(R.id.textView);
 
+
+
         FloatingActionButton buttonFloat = (FloatingActionButton) findViewById(R.id.floatingActionButton);
+
+        gestureDetector = (new GestureDetector(this, new MyGestureListener(this)));
+        text.setOnTouchListener(new View.OnTouchListener() {
+            @Override
+            public boolean onTouch(final View view, final MotionEvent event) {
+                gestureDetector.onTouchEvent(event);
+                return true;
+            }
+        });
     }
 
     @Override
