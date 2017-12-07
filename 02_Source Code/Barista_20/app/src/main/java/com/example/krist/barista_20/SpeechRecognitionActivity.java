@@ -26,6 +26,12 @@ public class SpeechRecognitionActivity extends AppCompatActivity {
     private TextView text;
 
     private float x0 = 0,x1 = 0,y0 = 0,y1 = 0;
+    
+    //Animation für die SpeechRecognition Acitivity. + ein Teil an "onClickFloat"
+    private ConstraintLayout constraintLayout;
+    private ConstraintSet constr1 = new ConstraintSet();
+    private ConstraintSet constr2 = new ConstraintSet();
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -35,10 +41,12 @@ public class SpeechRecognitionActivity extends AppCompatActivity {
 
         text = (TextView) findViewById(R.id.textView);
 
-
         FloatingActionButton buttonFloat = (FloatingActionButton) findViewById(R.id.floatingActionButton);
 
 
+        constraintLayout=(ConstraintLayout)findViewById(R.id.activity_speechrecognition);
+        constr1.clone(this,R.layout.activity_speechrecognition);
+        constr2.clone(this,R.layout.activity_speechrecognitionanimation);
 
 
 
@@ -103,6 +111,10 @@ public class SpeechRecognitionActivity extends AppCompatActivity {
 
             Log.d("App","Exception",e);
         }
+        
+        //animation
+        TransitionManager.beginDelayedTransition(constraintLayout);
+        constr2.applyTo(constraintLayout);
     }
 
     // Create an intent that can start the Speech Recognizer activity
