@@ -44,7 +44,7 @@ public class SpeechRecognitionActivity extends AppCompatActivity {
         FloatingActionButton buttonFloat = (FloatingActionButton) findViewById(R.id.floatingActionButton);
 
 
-        constraintLayout=(ConstraintLayout)findViewById(R.id.activity_speechrecognition);
+        constraintLayout=(ConstraintLayout)findViewById(R.id.layout);
         constr1.clone(this,R.layout.activity_speechrecognition);
         constr2.clone(this,R.layout.activity_speechrecognitionanimation);
 
