@@ -38,19 +38,23 @@ public class Tab2Fragment extends Fragment {
 
         FloatingActionButton buttonFloat = (FloatingActionButton) view.findViewById(R.id.floatingActionButton);
 
+
+        buttonFloat.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+                try {
+                    displaySpeechRecognizer();
+                }catch(Exception e){
+                    Toast.makeText(getActivity(), "Catch listener displaySpeechRecognition", Toast.LENGTH_SHORT).show();
+                }
+
+            }
+        });
+
+
         return view;
     }
 
-    public void onClickFloat(View v){
 
-        try {
-
-            displaySpeechRecognizer();
-        }catch(Exception e){
-
-            Log.d("App","Exception",e);
-        }
-    }
 
     // Create an intent that can start the Speech Recognizer activity
     private void displaySpeechRecognizer() {
@@ -59,7 +63,7 @@ public class Tab2Fragment extends Fragment {
                 RecognizerIntent.LANGUAGE_MODEL_FREE_FORM);
         intent.putExtra(RecognizerIntent.EXTRA_LANGUAGE, Locale.getDefault());
         intent.putExtra(RecognizerIntent.EXTRA_PROMPT, "");
-// Start the activity, the intent will be populated with the speech text
+        // Start the activity, the intent will be populated with the speech text
         try {
             startActivityForResult(intent, SPEECH_REQUEST_CODE);
         }
@@ -70,7 +74,7 @@ public class Tab2Fragment extends Fragment {
             } catch (android.content.ActivityNotFoundException anfe) {
                 startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("https://play.google.com/store/apps/details?id=" + appPackageName)));
             }
-           // Toast.makeText(Tab2Fragment.this, "Fehler", Toast.LENGTH_LONG).show();
+            Toast.makeText(getActivity(), "Catch startActivityFor Result", Toast.LENGTH_SHORT).show();
         }
     }
 
@@ -78,8 +82,7 @@ public class Tab2Fragment extends Fragment {
     // This callback is invoked when the Speech Recognizer returns.
 // This is where you process the intent and extract the speech text from the intent.
     @Override
-    public void onActivityResult(int requestCode, int resultCode,
-                                    Intent data) {
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         if (requestCode == SPEECH_REQUEST_CODE && resultCode == RESULT_OK) {
             List<String> results = data.getStringArrayListExtra(
@@ -89,4 +92,6 @@ public class Tab2Fragment extends Fragment {
         }
 
     }
+
+
 }

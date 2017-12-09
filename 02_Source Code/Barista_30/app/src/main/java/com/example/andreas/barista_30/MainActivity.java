@@ -1,5 +1,6 @@
 package com.example.andreas.barista_30;
 
+import android.content.Intent;
 import android.support.design.widget.TabLayout;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
@@ -18,6 +19,7 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import android.widget.TextView;
+import android.widget.Toast;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -45,5 +47,12 @@ public class MainActivity extends AppCompatActivity {
         adapter.addFragment(new Tab2Fragment(), "SpeechRecognition");
         adapter.addFragment(new Tab3Fragment(), "DrinkLexikon");
         viewPager.setAdapter(adapter);
+        viewPager.setCurrentItem(1, true);
+    }
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data)
+    {
+        super.onActivityResult(requestCode,resultCode,data);
     }
 }
