@@ -2,22 +2,28 @@ package com.example.andreas.barista_30;
 
 
 import android.content.ActivityNotFoundException;
+import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.speech.RecognizerIntent;
 import android.support.annotation.Nullable;
+import android.support.constraint.ConstraintLayout;
+import android.support.constraint.ConstraintSet;
 import android.support.design.widget.FloatingActionButton;
+import android.support.transition.TransitionManager;
 import android.support.v4.app.Fragment;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import java.util.List;
 import java.util.Locale;
+
 
 import static android.app.Activity.RESULT_OK;
 
@@ -30,10 +36,28 @@ public class Tab2Fragment extends Fragment {
     private static final int SPEECH_REQUEST_CODE = 0;
     private TextView text;
 
+    private Context context = super.getContext();
+
+    //Animation für die SpeechRecognition Acitivity. + ein Teil an "onClickFloat"
+    private ConstraintLayout constraintLayout;
+    private ConstraintSet constr = new ConstraintSet();
+
+
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.tab2_fragment, container, false);
+
+        constraintLayout=(ConstraintLayout)view.findViewById(R.id.tab2layout);
+
+        try {
+            constr.clone(getActivity(),R.layout.tab2_fragment_transition);
+        }catch(Exception e){
+            Toast.makeText(getActivity(), "Tried Clone", Toast.LENGTH_SHORT).show();
+            Log.w("APP",e);
+        }
+
+
         text = (TextView) view.findViewById(R.id.textView);
 
         FloatingActionButton buttonFloat = (FloatingActionButton) view.findViewById(R.id.floatingActionButton);
@@ -49,6 +73,7 @@ public class Tab2Fragment extends Fragment {
 
             }
         });
+
 
 
         return view;
@@ -89,6 +114,11 @@ public class Tab2Fragment extends Fragment {
                     RecognizerIntent.EXTRA_RESULTS);
             String spokenText = results.get(0);
             text.setText(spokenText);
+            //animation
+            TransitionManager.beginDelayedTransition(constraintLayout);
+            constr.applyTo(constraintLayout);
+
+
         }
 
     }
