@@ -21,6 +21,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import java.io.IOException;
 import java.util.List;
 import java.util.Locale;
 
@@ -114,6 +115,7 @@ public class Tab2Fragment extends Fragment {
                     RecognizerIntent.EXTRA_RESULTS);
             String spokenText = results.get(0);
             text.setText(spokenText);
+            sendKeyword(spokenText);
             //animation
             TransitionManager.beginDelayedTransition(constraintLayout);
             constr.applyTo(constraintLayout);
@@ -123,5 +125,18 @@ public class Tab2Fragment extends Fragment {
 
     }
 
+    private void sendKeyword(String string){
+
+        //hier das richtige Keyword finden
+
+        String msg = string;
+        try {
+            ((MainActivity)getActivity()).sendData(msg);
+        } catch (Exception e) {
+            Log.w("APP",e);
+            Toast.makeText(getActivity(), "Send Failed", Toast.LENGTH_SHORT).show();
+        }
+
+    }
 
 }
