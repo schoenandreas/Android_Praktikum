@@ -37,6 +37,8 @@ public class MainActivity extends AppCompatActivity {
     //<editor-fold desc="Dialog declarations">
     private ViewPager mViewPager;
 
+    private AlertDialog dialog;
+
     private List pairedList = new ArrayList();
     private List discoveredList = new ArrayList();
     private List pairedListStrings = new ArrayList();
@@ -132,6 +134,7 @@ public class MainActivity extends AppCompatActivity {
             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
                 try{
                     mmDevice = (BluetoothDevice) discoveredList.get(i);
+                    Log.w("APP","Try open " + mmDevice.getName());
                     openBT();
                 }catch(Exception e){
                     Log.w("APP",e);
@@ -142,7 +145,7 @@ public class MainActivity extends AppCompatActivity {
 
 
         mBuilder.setView(mView);
-        AlertDialog dialog = mBuilder.create();
+        dialog = mBuilder.create();
         dialog.setCanceledOnTouchOutside(false);
 
         dialog.show();
@@ -220,7 +223,8 @@ public class MainActivity extends AppCompatActivity {
         mmSocket.connect();
         mmOutputStream = mmSocket.getOutputStream();
         mmInputStream = mmSocket.getInputStream();
-
+        Toast.makeText(this, "Connected", Toast.LENGTH_SHORT).show();
+        dialog.cancel();
         beginListenForData();
 
        // myLabel.setText("Bluetooth Opened");
@@ -285,6 +289,7 @@ public class MainActivity extends AppCompatActivity {
 
     void sendData(String msg) throws IOException
     {
+        Toast.makeText(this, "sending data" + msg, Toast.LENGTH_SHORT).show();
         mmOutputStream.write(msg.getBytes());
       //  myLabel.setText("Data Sent");
     }
