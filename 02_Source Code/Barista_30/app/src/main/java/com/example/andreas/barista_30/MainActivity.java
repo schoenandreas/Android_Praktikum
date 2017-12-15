@@ -61,6 +61,15 @@ public class MainActivity extends AppCompatActivity {
     int readBufferPosition;
     volatile boolean stopWorker;
     //</editor-fold>
+    
+     //popup
+    Dialog myDialog;
+    TextView txt;
+    ImageView img;
+    CardView card1;
+    CardView card2;
+    CardView card3;
+    CardView card4;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -76,6 +85,9 @@ public class MainActivity extends AppCompatActivity {
         tablayout.setupWithViewPager(mViewPager);
 
         bluetoothDialog();
+        
+        //popup
+        myDialog = new Dialog (this);
 
 
 
@@ -90,6 +102,41 @@ public class MainActivity extends AppCompatActivity {
         viewPager.setCurrentItem(1, true);
     }
 
+    //popup
+    public void onClick(View view){
+
+        myDialog.setContentView(R.layout.tab3_fragment_transition);
+
+        txt=(TextView) myDialog.findViewById(R.id.txt);
+        img=(ImageView) myDialog.findViewById(R.id.img);
+        card1=(CardView) findViewById(R.id.card1);
+        card2=(CardView) findViewById(R.id.card2);
+        card3=(CardView) findViewById(R.id.card3);
+        card4=(CardView) findViewById(R.id.card4);
+
+        card1.setOnClickListener(this);
+        card2.setOnClickListener(this);
+        card3.setOnClickListener(this);
+        card4.setOnClickListener(this);
+
+            switch (view.getId()) {
+                case R.id.card1:
+                    txt.setText("Objekt1");
+                    //img.
+                    break;
+                case R.id.card2:
+                    txt.setText("Objekt2");
+                    break;
+                case R.id.card3:
+                    txt.setText("Objekt3");
+                    break;
+                case R.id.card4:
+                    txt.setText("Objekt4");
+
+            }
+        myDialog.show();
+    }
+    
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data)
     {
