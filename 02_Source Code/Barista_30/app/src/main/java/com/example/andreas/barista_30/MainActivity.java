@@ -1,5 +1,8 @@
 package com.example.andreas.barista_30;
 
+import android.app.Dialog;
+import android.app.Fragment;
+import android.app.FragmentTransaction;
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
 import android.bluetooth.BluetoothSocket;
@@ -8,18 +11,24 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.os.Handler;
+import android.preference.PreferenceScreen;
 import android.support.design.widget.TabLayout;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v4.view.ViewPager;
 import android.os.Bundle;
+import android.support.v7.widget.CardView;
 import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.ListView;
+import android.widget.TextView;
 import android.widget.Toast;
+
+import android.preference.PreferenceFragment;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -84,14 +93,34 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         TabLayout tablayout = (TabLayout) findViewById(R.id.tabs);
         tablayout.setupWithViewPager(mViewPager);
 
-        bluetoothDialog();
+        // bluetoothDialog();
+
+        /*Tobias Preference Test
+        Fragment fragment = new Fragment();
+
+        FragmentTransaction fragmentTransaction = getFragmentManager().beginTransaction();
+
+        if(savedInstanceState == null){
+            //created for first time
+            fragmentTransaction.add(R.id.tab1layout, fragment, "settings_fragment");
+            fragmentTransaction.commit();
+        } else {
+            fragment = getFragmentManager().findFragmentByTag("settings_fragment");
+        }*/
         
         //popup
         myDialog = new Dialog (this);
-
-
-
     }
+
+    /* Tobias Preference Test
+    public static class SettingsScreen extends PreferenceFragement{
+
+        @Override
+        public void OnCreate(Bundle savedInstanceState){
+            super.onCreate(savedInstanceState);
+            addPreferencesFromRessource(R.xml.pref_main);
+        }
+    }*/
 
     private void setupViewPager(ViewPager viewPager){
         SectionsPageAdapter adapter = new SectionsPageAdapter(getSupportFragmentManager());
@@ -351,5 +380,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         mmSocket.close();
         //myLabel.setText("Bluetooth Closed");
     }
+
 
 }
