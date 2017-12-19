@@ -38,7 +38,7 @@ import java.util.List;
 import java.util.Set;
 import java.util.UUID;
 
-public class MainActivity extends AppCompatActivity implements View.OnClickListener{
+public class MainActivity extends AppCompatActivity{
 
 
     private SectionsPageAdapter mSectionsPageAdapter;
@@ -70,57 +70,25 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     int readBufferPosition;
     volatile boolean stopWorker;
     //</editor-fold>
-    
-     //popup
-    Dialog myDialog;
-    TextView txt;
-    ImageView img;
-    CardView card1;
-    CardView card2;
-    CardView card3;
-    CardView card4;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        // Building the fragments, attach list to fragment
         mSectionsPageAdapter = new SectionsPageAdapter(getSupportFragmentManager());
 
+        // Builds standard view
         mViewPager = (ViewPager) findViewById(R.id.container);
         setupViewPager(mViewPager);
 
+        //
         TabLayout tablayout = (TabLayout) findViewById(R.id.tabs);
         tablayout.setupWithViewPager(mViewPager);
 
         // bluetoothDialog();
-
-        /*Tobias Preference Test
-        Fragment fragment = new Fragment();
-
-        FragmentTransaction fragmentTransaction = getFragmentManager().beginTransaction();
-
-        if(savedInstanceState == null){
-            //created for first time
-            fragmentTransaction.add(R.id.tab1layout, fragment, "settings_fragment");
-            fragmentTransaction.commit();
-        } else {
-            fragment = getFragmentManager().findFragmentByTag("settings_fragment");
-        }*/
-        
-        //popup
-        myDialog = new Dialog (this);
     }
-
-    /* Tobias Preference Test
-    public static class SettingsScreen extends PreferenceFragement{
-
-        @Override
-        public void OnCreate(Bundle savedInstanceState){
-            super.onCreate(savedInstanceState);
-            addPreferencesFromRessource(R.xml.pref_main);
-        }
-    }*/
 
     private void setupViewPager(ViewPager viewPager){
         SectionsPageAdapter adapter = new SectionsPageAdapter(getSupportFragmentManager());
@@ -129,41 +97,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         adapter.addFragment(new Tab3Fragment(), "DrinkLexikon");
         viewPager.setAdapter(adapter);
         viewPager.setCurrentItem(1, true);
-    }
-
-    //popup
-    public void onClick(View view){
-
-        myDialog.setContentView(R.layout.tab3_fragment_transition);
-
-        txt=(TextView) myDialog.findViewById(R.id.txt);
-        img=(ImageView) myDialog.findViewById(R.id.img);
-        card1=(CardView) findViewById(R.id.card1);
-        card2=(CardView) findViewById(R.id.card2);
-        card3=(CardView) findViewById(R.id.card3);
-        card4=(CardView) findViewById(R.id.card4);
-
-        card1.setOnClickListener(this);
-        card2.setOnClickListener(this);
-        card3.setOnClickListener(this);
-        card4.setOnClickListener(this);
-
-            switch (view.getId()) {
-                case R.id.card1:
-                    txt.setText("Objekt1");
-                    //img.
-                    break;
-                case R.id.card2:
-                    txt.setText("Objekt2");
-                    break;
-                case R.id.card3:
-                    txt.setText("Objekt3");
-                    break;
-                case R.id.card4:
-                    txt.setText("Objekt4");
-
-            }
-        myDialog.show();
     }
     
     @Override
