@@ -252,6 +252,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
                 BluetoothDevice device = intent.getParcelableExtra(BluetoothDevice.EXTRA_DEVICE);
                 discoveredListStrings.add(device.getName());
+                discoveredListStrings.removeAll(Collections.singleton(null));
                 discoveredList.add(device);
                 discoveredListViewAdapter.notifyDataSetChanged();
             }
