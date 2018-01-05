@@ -4,6 +4,9 @@ package com.example.andreas.barista_30;
 import android.content.ActivityNotFoundException;
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Color;
+import android.graphics.drawable.ColorDrawable;
+import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Bundle;
 import android.speech.RecognizerIntent;
@@ -40,6 +43,7 @@ public class Tab2Fragment extends Fragment {
     //Animation für die SpeechRecognition Acitivity. + ein Teil an "onClickFloat"
     private ConstraintLayout constraintLayout;
     private ConstraintSet constr = new ConstraintSet();
+    private ImageView imgView;
 
     //Drinks, sollten noch in R.strings transferiert werden
     String Coca_Cola = "Coca-Cola";
@@ -56,7 +60,7 @@ public class Tab2Fragment extends Fragment {
         constr.clone(getActivity(), R.layout.tab2_fragment_transition);
         text = (TextView) view.findViewById(R.id.textView);
         FloatingActionButton buttonFloat = (FloatingActionButton) view.findViewById(R.id.floatingActionButton);
-
+        imgView = constraintLayout.findViewById(R.id.imgView);
         //FloatingActionButoon onCLickListener
         buttonFloat.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
@@ -113,6 +117,7 @@ public class Tab2Fragment extends Fragment {
             //animation Button nach unten und Bild anzeigen
             TransitionManager.beginDelayedTransition(constraintLayout);
             constr.applyTo(constraintLayout);
+
         }
     }
 
@@ -122,15 +127,19 @@ public class Tab2Fragment extends Fragment {
         String msg = "";
         //aus Speechrecognizer ergebnis das keyword suchen
         if (string.toLowerCase().contains(Coca_Cola.toLowerCase())) {
-            msg = "red";
+            imgView.setImageResource(R.drawable.coca_cola);
+            msg = "brown";
         } else if (string.toLowerCase().contains(Fanta.toLowerCase())) {
+            imgView.setImageResource(R.drawable.fanta);
             msg = "yellow";
         } else if (string.toLowerCase().contains(Wasser.toLowerCase())) {
+            imgView.setImageResource(R.drawable.wasser);
             msg = "white";
         } else {
             Toast.makeText(getActivity(), "No drink found", Toast.LENGTH_SHORT).show();
+            imgView.setImageResource(R.drawable.transparent);
         }
-
+        imgView.setVisibility(View.VISIBLE);
         //keyword per BT senden
         try {
             ((MainActivity) getActivity()).sendData(msg);
