@@ -48,7 +48,9 @@ public class Tab2Fragment extends Fragment {
     //Drinks, sollten noch in R.strings transferiert werden
     String Coca_Cola = "Coca-Cola";
     String Fanta = "Fanta";
+    String Tomatensaft = "Tomatensaft";
     String Wasser = "Water";
+
 
 
     @Nullable
@@ -132,6 +134,9 @@ public class Tab2Fragment extends Fragment {
         } else if (string.toLowerCase().contains(Fanta.toLowerCase())) {
             imgView.setImageResource(R.drawable.fanta);
             msg = "yellow";
+        } else if (string.toLowerCase().contains(Tomatensaft.toLowerCase())) {
+            imgView.setImageResource(R.drawable.tomatensaft);
+            msg = "red";
         } else if (string.toLowerCase().contains(Wasser.toLowerCase())) {
             imgView.setImageResource(R.drawable.wasser);
             msg = "white";

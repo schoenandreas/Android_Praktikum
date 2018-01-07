@@ -9,3 +9,4 @@
                ;User input rahmen eingefügt TODO: Keyword indentifizierung in sendKeyword() 
                ;Arduino connection noch nicht getestet, sollte aber gehn
                ;Arduino Antwort noch nicht gehandelt (erst ab sensor wirklich notwendig)
+
