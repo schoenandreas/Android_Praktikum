@@ -6,6 +6,7 @@ import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.LinearLayoutManager;
@@ -74,6 +75,21 @@ public class Tab3Fragment extends Fragment {
         //view initialiseren
         dialogDrinkName = (TextView) myDialog.findViewById(R.id.dialogDrinkName);
         dialogdescription = (TextView) myDialog.findViewById(R.id.dialogDescription);
+
+        //floating Button um über das Getränk auf Google zu suchen
+        FloatingActionButton floatingsearch =(FloatingActionButton) myDialog.findViewById(R.id.floating_search);
+        floatingsearch.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                try
+                {
+                    floatsearch();
+                }catch (Exception e)
+                {
+                    Toast.makeText(getActivity(), e.toString(), Toast.LENGTH_SHORT).show();
+                }
+            }
+        });
 
         return view;
     }
@@ -194,5 +210,19 @@ public class Tab3Fragment extends Fragment {
             listitems.add(item);
 
         }
+    }
+
+
+    //google search wenn auf FloatingButton geklickt wird
+    public void floatsearch ()
+    {
+        CharSequence drinksearch=dialogDrinkName.getText();
+
+        String url = "http://www.google.com/search?q="+drinksearch;
+
+        Intent i = new Intent(Intent.ACTION_VIEW);
+        i.setData(Uri.parse(url));
+        startActivity(i);
+
     }
 }

@@ -1,11 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<android.support.design.widget.CoordinatorLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="350dp"
     android:layout_height="475dp"
     android:layout_gravity="center"
     android:background="@color/colorPrimary"
     android:paddingHorizontal="20dp"
     android:paddingVertical="10dp">
+
 
 
     <LinearLayout
@@ -23,7 +26,8 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="vertical">
+            android:orientation="vertical"
+            android:id="@+id/linear1">
 
             <ImageView
                 android:id="@+id/img"
@@ -62,7 +66,16 @@
                 android:textColor="@color/white"
                 android:textSize="15dp" />
 
-
         </LinearLayout>
     </LinearLayout>
-</FrameLayout>
+
+    <android.support.design.widget.FloatingActionButton
+        android:id="@+id/floating_search"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_margin="16dp"
+        android:clickable="true"
+        app:layout_anchor="@id/linear1"
+        app:layout_anchorGravity="bottom|right|end"
+        app:srcCompat="@android:drawable/ic_menu_search" />
+</android.support.design.widget.CoordinatorLayout>
