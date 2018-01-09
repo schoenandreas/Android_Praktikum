@@ -51,6 +51,12 @@ public class Tab2Fragment extends Fragment {
     String Tomatensaft = "Tomatensaft";
     String Wasser = "Water";
 
+    String Joint ="Joint";
+    String Right = "Right";
+    String Left = "Left";
+    String Up = "Up";
+    String Down = "Down";
+
 
 
     @Nullable
@@ -83,7 +89,7 @@ public class Tab2Fragment extends Fragment {
         //Intent erstellen
         Intent intent = new Intent(RecognizerIntent.ACTION_RECOGNIZE_SPEECH);
         intent.putExtra(RecognizerIntent.EXTRA_LANGUAGE_MODEL, RecognizerIntent.LANGUAGE_MODEL_FREE_FORM);
-        intent.putExtra(RecognizerIntent.EXTRA_LANGUAGE, Locale.getDefault());
+        intent.putExtra(RecognizerIntent.EXTRA_LANGUAGE, Locale.ENGLISH);
         intent.putExtra(RecognizerIntent.EXTRA_PROMPT, "");
         //Intent starten
         try {
@@ -109,9 +115,44 @@ public class Tab2Fragment extends Fragment {
         if (requestCode == SPEECH_REQUEST_CODE && resultCode == RESULT_OK) {
             //Liste mit allen ideen des Recognizer
             List<String> results = data.getStringArrayListExtra(RecognizerIntent.EXTRA_RESULTS);
+
             //Wahrscheinlichstes Ergebnis
-            String spokenText = results.get(0);
-            //auf Bildschirm anzeigen
+            String spokenText = "";
+            String[] commandArray = getResources().getStringArray(R.array.commands);
+            String[] mappingKeyArray = getResources().getStringArray(R.array.mappingKey);
+            String[] mappingValueArray = getResources().getStringArray(R.array.mappingValue);
+
+            // Compare the 5 (Maximum for Speech Recognition!) best probabilities with the whole string array to increase the possibility to find the wished solution
+            try {
+                int i = 0;
+                while (i < 5){
+                    Log.w("app", results.get(i));
+                    spokenText = results.get(0);
+                    for (int j = 0; j < commandArray.length; j++) {
+                        if (results.get(i).toLowerCase().contains(commandArray[j])) {
+                            //Check der 5 Wahrscheinlichsten Ergebnisse
+                            spokenText = results.get(i);
+                            i = 5;
+                            break;
+                        }
+                    }
+                    if (i < 5) {
+                        for (int j = 0; j < mappingKeyArray.length; j++) {
+                            if (results.get(i).equalsIgnoreCase(mappingKeyArray[j])) {
+                                //Check der 5 Wahrscheinlichsten Ergebnisse zum mappen
+                                spokenText = mappingValueArray[j];
+                                i = 5;
+                                break;
+                            }
+                        }
+                    }
+                    i++;
+                }
+            } catch (Exception e) {
+                Log.w("app", e);
+            }
+
+            //auf Bildschirm anzeigen & Sprachungenauigkeiten ausbessern
             text.setText(spokenText);
             //per BT senden
             sendKeyword(spokenText);
@@ -125,9 +166,58 @@ public class Tab2Fragment extends Fragment {
 
     //Keyword wird an Arduino gesendet
     private void sendKeyword(String string) {
-
+        String substring = "";
         String msg = "";
+
+        /*
+        int degree = 0;
         //aus Speechrecognizer ergebnis das keyword suchen
+
+        // Check if it is a manual assignment on "Joint" directly
+        if (string.toLowerCase().contains(getString(R.string.Joint))){
+            // Cut the string to string without the keyword "Joint" to further work with the string
+            substring = getString(R.string.Joint);
+            string = string.substring(string.indexOf(substring) + substring.length());
+
+            // Braccio is manually addressed
+            imgView.setImageResource(R.drawable.braccio);
+
+            if (string.toLowerCase().contains(getString(R.string.Right))){
+                // Cut the string to string without the keyword "Right" to further work with the string
+                substring = getString(R.string.Right);
+                string = string.substring(string.indexOf(substring) + substring.length());
+
+                degree = Integer.parseInt(string);
+
+            } else if (string.toLowerCase().contains(getString(R.string.Left))){
+                // Cut the string to string without the keyword "Left" to further work with the string
+                substring = getString(R.string.Left);
+                string = string.substring(string.indexOf(substring) + substring.length());
+
+                degree = Integer.parseInt(string);
+
+            } else if (string.toLowerCase().contains(getString(R.string.Up))){
+                // Cut the string to string without the keyword "Up" to further work with the string
+                substring = getString(R.string.Up);
+                string = string.substring(string.indexOf(substring) + substring.length());
+
+                degree = Integer.parseInt(string);
+
+            } else if (string.toLowerCase().contains(getString(R.string.Down))){
+                // Cut the string to string without the keyword "Down" to further work with the string
+                substring = getString(R.string.Down);
+                string = string.substring(string.indexOf(substring) + substring.length());
+
+                degree = Integer.parseInt(string);
+            }
+
+        }
+
+*/
+
+
+
+
         if (string.toLowerCase().contains(Coca_Cola.toLowerCase())) {
             imgView.setImageResource(R.drawable.coca_cola);
             msg = "brown";

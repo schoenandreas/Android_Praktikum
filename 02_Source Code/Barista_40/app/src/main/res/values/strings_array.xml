@@ -1,0 +1,33 @@
+<resources>
+    <string-array name="commands">
+        <item name="Joint">joint</item>
+        <item name="Right">right</item>
+        <item name="Left">left</item>
+        <item name="Up">up</item>
+        <item name="Down">down</item>
+        <item name="One">one</item>
+        <item name="Two">two</item>
+        <item name="Three">three</item>
+        <item name="Four">four</item>
+        <item name="Five">five</item>
+        <item name="Six">six</item>
+        <item name="Water">water</item>
+        <item name="Coke">coke</item>
+        <item name="Fanta">fanta</item>
+        <item name="Water">water</item>
+        <item name="Tomato">tomato</item>
+        <item name="Juice">juice</item>
+    </string-array>
+
+    <!-- Insert mapping key values on one position in the mappingKey array and add at the same position in the mapping Value array the respective string-->
+    <string-array name="mappingKey">
+        <item name="Porta">porta</item>
+        <item name="Warte">warte</item>
+    </string-array>
+
+    <string-array name="mappingValue">
+        <item name="Porta2">water</item>
+        <item name="Warte2">water</item>
+    </string-array>
+
+</resources>

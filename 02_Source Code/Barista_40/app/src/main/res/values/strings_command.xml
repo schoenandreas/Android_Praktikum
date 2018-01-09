@@ -1,0 +1,19 @@
+<resources>
+    <string name="Coca_Cola">Coca-Cola</string>
+    <string name="Fanta">Fanta</string>
+    <string name="Tomato">Tomato</string>
+    <string name="Water">Water</string>
+    <string name="Joint">joint</string>
+    <string name="Ankle">ankle</string>
+    <string name="One">one</string>
+    <string name="Two">two</string>
+    <string name="Three">three</string>
+    <string name="Four">four</string>
+    <string name="Five">five</string>
+    <string name="Six">six</string>
+    <string name="Right">right</string>
+    <string name="Left">left</string>
+    <string name="Up">up</string>
+    <string name="Down">down</string>
+    <string name="Degree">degree</string>
+</resources>
