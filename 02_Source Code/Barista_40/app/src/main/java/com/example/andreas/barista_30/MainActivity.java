@@ -24,6 +24,7 @@ import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.ProgressBar;
+import android.widget.Switch;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -72,7 +73,6 @@ public class MainActivity extends AppCompatActivity {
 
 
 
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -85,8 +85,8 @@ public class MainActivity extends AppCompatActivity {
         TabLayout tablayout = (TabLayout) findViewById(R.id.tabs);
         tablayout.setupWithViewPager(mViewPager);
 
-        //BT Dialog, fuer Entwicklung ohne BT connection zum Shield hier auskommentieren
-       // bluetoothDialog();
+        // BT Dialog, fuer Entwicklung ohne BT connection zum Shield hier auskommentieren
+        bluetoothDialog();
     }
 
     private void setupViewPager(ViewPager viewPager) {
@@ -108,13 +108,14 @@ public class MainActivity extends AppCompatActivity {
     }
 
     //Erstellt den BT Dialog
-    private void bluetoothDialog() {
+    protected void bluetoothDialog() {
         //Builder fuer Dialog
-        AlertDialog.Builder mBuilder = new AlertDialog.Builder(this);
+        final AlertDialog.Builder mBuilder = new AlertDialog.Builder(this);
         mBuilder.setCancelable(false);
         //Views initialisieren
-        View mView = getLayoutInflater().inflate(R.layout.bluetooth_dialog, null);
+        final View mView = getLayoutInflater().inflate(R.layout.bluetooth_dialog, null);
         ImageView imgLoad = mView.findViewById(R.id.imageLoad);
+        ImageView imgClear = mView.findViewById(R.id.imageClear);
         progressBar = mView.findViewById(R.id.progressBar);
         final ListView listView = mView.findViewById(R.id.listView);
         final ListView listView2 = mView.findViewById(R.id.listView2);
@@ -136,6 +137,19 @@ public class MainActivity extends AppCompatActivity {
                 discoverBT(listView2);
             }
         });
+
+        // exit Bluetoothdialog tobi
+        imgClear.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Switch bluetoothSwitchButton = (Switch) findViewById(R.id.btSwitch);
+                TextView switchItemText = (TextView) findViewById(R.id.btSwitchItem);
+                bluetoothSwitchButton.setChecked(false);
+                switchItemText.setText(R.string.bt_disabled);
+                dialog.dismiss();
+            }
+        });
+
         //paired Devices
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override

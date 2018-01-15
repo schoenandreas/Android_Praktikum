@@ -1,6 +1,7 @@
 package com.example.andreas.barista_30;
 
 
+import android.app.Dialog;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
@@ -10,8 +11,9 @@ import android.view.ViewGroup;
 import android.widget.BaseExpandableListAdapter;
 import android.widget.ExpandableListView;
 import android.widget.ExpandableListView.OnChildClickListener;
+import android.widget.Switch;
 import android.widget.TextView;
-
+import android.widget.Toast;
 
 
 /**
@@ -24,7 +26,6 @@ public class Tab1Fragment extends Fragment {
     ExpandableListView lv;
     private String[] groups;
     private String[][] children;
-
 
     public Tab1Fragment() {
 
@@ -44,9 +45,33 @@ public class Tab1Fragment extends Fragment {
     }
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+    public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         rootView = inflater.inflate(R.layout.tab1_fragment, container, false);
 
+        final Switch bluetoothSwitchButton = (Switch) rootView.findViewById(R.id.btSwitch);
+
+        bluetoothSwitchButton.setOnClickListener(new View.OnClickListener(){
+            public void onClick (View v){
+                try {
+                    if (bluetoothSwitchButton.isChecked()){
+                        //popup für bluetooth dialog initialisieren
+                        MainActivity mainActivity = (MainActivity) getActivity();
+                        mainActivity.bluetoothDialog();
+
+                        TextView switchItemText = (TextView) rootView.findViewById(R.id.btSwitchItem);
+                        switchItemText.setText(R.string.bt_enabled + "HMSoft");
+
+                    } else if (!bluetoothSwitchButton.isChecked()){
+                        TextView switchItemText = (TextView) rootView.findViewById(R.id.btSwitchItem);
+                        switchItemText.setText(R.string.bt_disabled);
+                    } else {
+                        Toast.makeText(getActivity(), "Bluetooth Switch not working!", Toast.LENGTH_SHORT).show();
+                    }
+                } catch (Exception e){
+                    Toast.makeText(getActivity(), "Catch listener bluetooth settings", Toast.LENGTH_SHORT).show();
+                }
+            }
+        });
         return rootView;
     }
 
@@ -154,6 +179,8 @@ public class Tab1Fragment extends Fragment {
             TextView text;
         }
     }
+
+
 }
 
 /*

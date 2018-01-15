@@ -6,17 +6,19 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:orientation="horizontal"
     android:elevation="8dp"
-    android:background="@color/colorAccent50"
+    android:background="@color/colorAccent"
     >
     <!-- android:outlineProvider="bounds" Funktioniert mi Shadows-->
 
+    <!-- android:background="@drawable/expand_more" -->
+
     <LinearLayout
+        android:id="@+id/expandableListExpand"
         android:layout_width="40dp"
         android:layout_height="40dp"
         android:layout_marginTop="8dp"
         android:background="@drawable/expand_more"
-        android:orientation="vertical"
-        >
+        android:orientation="vertical">
 
         <ImageView
             android:id="@+id/photo"

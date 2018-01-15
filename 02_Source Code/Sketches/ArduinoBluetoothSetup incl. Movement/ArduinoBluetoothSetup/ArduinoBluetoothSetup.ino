@@ -20,9 +20,28 @@ SoftwareSerial bluetooth(bluetoothTx, bluetoothRx);
  
 void setup()
 {
+  //All the servo motors will be positioned in the "safety" position:
+  //Base (M1):90 degrees
+  //Shoulder (M2): 45 degrees
+  //Elbow (M3): 180 degrees
+  //Wrist vertical (M4): 180 degrees
+  //Wrist rotation (M5): 90 degrees
+  //gripper (M6): 10 degrees
   Braccio.begin();
-  Serial.begin(9600);  
+  // Step Delay: a milliseconds delay between the movement of each servo.  Allowed values from 10 to 30 msec.
+  // M1=base degrees. Allowed values from 0 to 180 degrees
+  // M2=shoulder degrees. Allowed values from 15 to 165 degrees
+  // M3=elbow degrees. Allowed values from 0 to 180 degrees
+  // M4=wrist vertical degrees. Allowed values from 0 to 180 degrees
+  // M5=wrist rotation degrees. Allowed values from 0 to 180 degrees
+  // M6=gripper degrees. Allowed values from 10 to 73 degrees. 10: the toungue is open, 73: the gripper is closed.
+  Braccio.ServoMovement (30,95,90,180,180,65,10);
+  Serial.begin(9600); // Open data rate an sets serial port to 9600 bps  
   bluetooth.begin(9600);
+  Braccio.ServoMovement (30,95,70,180,180,65,10);
+  Braccio.ServoMovement (30,95,80,180,180,65,73);
+  Braccio.ServoMovement (30,95,100,180,180,65,73);
+  Braccio.ServoMovement (30,60,100,180,180,65,73);
   
 }
  
@@ -35,14 +54,14 @@ void loop()
     dataFromBt = bluetooth.read();
     Serial.println((char)dataFromBt);
 
-    if (dataFromBt == 'v') {
+    if (dataFromBt == 'w') {
       Serial.println("Vorne");
-      bluetooth.print("v");
+      bluetooth.print("w");
       vorne();
     }
-    if (dataFromBt == 'h') {
+    if (dataFromBt == 'y') {
       Serial.println("Hinten");
-      bluetooth.print("h");
+      bluetooth.print("y");
       hinten();
     }
     /*if (dataFromBt == 'b') {

@@ -7,9 +7,56 @@
     android:orientation="vertical">
     <!--android:background="@color/colorAccent50" Ganzer Hintergrund-->
 
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="52dp"
+        android:background="@color/colorAccent"
+        android:orientation="vertical"
+        android:elevation="8dp">
+
+        <Switch
+            android:id="@+id/btSwitch"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:gravity="center_vertical"
+            android:paddingLeft="40dip"
+            android:paddingTop="4dip"
+            android:text="Bluetooth Pairing"
+            android:textColor="#020202"
+            android:textSize="16dp"
+            android:textStyle="bold"
+            android:checked="true"
+            android:theme="@style/SCBSwitch" />
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+
+        <TextView
+            android:id="@+id/btSwitchItem"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:background="@color/white"
+            android:paddingBottom="5dp"
+            android:paddingLeft="?android:attr/expandableListPreferredChildPaddingLeft"
+            android:paddingTop="5dp"
+            android:textSize="14sp"
+            android:text="This device is not paired."/>
+
+    </LinearLayout>
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="2dp"
+        android:background="@android:color/black"/>
+
     <ExpandableListView
         android:id="@+id/tab1list"
         android:layout_width="match_parent"
-        android:layout_height="match_parent" />
+        android:layout_height="match_parent"/>
+
 
 </LinearLayout>

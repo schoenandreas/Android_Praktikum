@@ -4,6 +4,7 @@ package com.example.andreas.barista_30;
 import android.content.ActivityNotFoundException;
 import android.content.Context;
 import android.content.Intent;
+import android.content.res.ColorStateList;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.graphics.drawable.Drawable;
@@ -21,12 +22,15 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.Switch;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import java.io.IOException;
 import java.util.List;
 import java.util.Locale;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 
 import static android.app.Activity.RESULT_OK;
@@ -44,19 +48,6 @@ public class Tab2Fragment extends Fragment {
     private ConstraintLayout constraintLayout;
     private ConstraintSet constr = new ConstraintSet();
     private ImageView imgView;
-
-    //Drinks, sollten noch in R.strings transferiert werden
-    String Coca_Cola = "Coca-Cola";
-    String Fanta = "Fanta";
-    String Tomatensaft = "Tomatensaft";
-    String Wasser = "Water";
-
-    String Joint ="Joint";
-    String Right = "Right";
-    String Left = "Left";
-    String Up = "Up";
-    String Down = "Down";
-
 
 
     @Nullable
@@ -76,6 +67,25 @@ public class Tab2Fragment extends Fragment {
                     displaySpeechRecognizer();
                 } catch (Exception e) {
                     Toast.makeText(getActivity(), "Catch listener displaySpeechRecognition", Toast.LENGTH_SHORT).show();
+                }
+            }
+        });
+
+        // Invoke Switch Button tobi
+        final Switch switchModus = (Switch) view.findViewById(R.id.switchCommand);
+        // Check the current state of the switch
+        switchModus.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+                try {
+                    if (switchModus.isChecked() == true){
+                        constraintLayout.setBackgroundColor(Color.LTGRAY);
+                        switchModus.setText(R.string.manual);
+                    } else if (switchModus.isChecked() != true){
+                        constraintLayout.setBackgroundColor(Color.WHITE);
+                        switchModus.setText(R.string.predefined);
+                    }
+                } catch (Exception e) {
+                    Toast.makeText(getActivity(), "Catch listener switchCommand", Toast.LENGTH_SHORT).show();
                 }
             }
         });
@@ -166,11 +176,84 @@ public class Tab2Fragment extends Fragment {
 
     //Keyword wird an Arduino gesendet
     private void sendKeyword(String string) {
-        String substring = "";
+        string.toLowerCase();
         String msg = "";
 
+        if (string.contains("search")) {
+            if (string.contains(getResources().getString(R.string.Coke))){
+                imgView.setImageResource(R.drawable.coca_cola);
+                msg = "brown";
+            } else if (string.contains(getResources().getString(R.string.Fanta))){
+                imgView.setImageResource(R.drawable.fanta);
+                msg = "yellow";
+            } else if (string.contains(getResources().getString(R.string.Tomato))) {
+                imgView.setImageResource(R.drawable.tomatensaft);
+                msg = "red";
+            } else if (string.contains(getResources().getString(R.string.Water))) {
+                imgView.setImageResource(R.drawable.wasser);
+                msg = "white";
+            } else {
+                Toast.makeText(getActivity(), "No valid drink found", Toast.LENGTH_SHORT).show();
+                imgView.setImageResource(R.drawable.transparent);
+            }
+        } else if (string.contains("do")){
+            if (string.contains(getResources().getString(R.string.Standard))){
+                // imgView.setImageResource(R.drawable.);
+                msg = "standard";
+            } else if (string.contains(getResources().getString(R.string.Stretch))){
+                // imgView.setImageResource(R.drawable.);
+                msg = "stretch";
+            } else if (string.contains(getResources().getString(R.string.Goodbye))) {
+                // imgView.setImageResource(R.drawable.);
+                msg = "goodbye";
+            } else if (string.contains(getResources().getString(R.string.Hello))) {
+                // imgView.setImageResource(R.drawable.);
+                msg = "hello";
+            } else if (string.contains(getResources().getString(R.string.Release))) {
+                // imgView.setImageResource(R.drawable.);
+                msg = "release";
+            } else if (string.contains(getResources().getString(R.string.Grap))) {
+                // imgView.setImageResource(R.drawable.);
+                msg = "grap";
+            } else {
+                Toast.makeText(getActivity(), "No valid commando found", Toast.LENGTH_SHORT).show();
+                imgView.setImageResource(R.drawable.transparent);
+            }
+        } else if (string.contains("joint")){
+            String joint = "";
+            String orientation = "";
+            String degreeString;
+            int degree = 0;
+
+            if (string.contains("base")){
+                joint = "base";
+                Pattern p = Pattern.compile("-?\\d+");
+                Matcher m = p.matcher(string);
+                if (string.contains("left")){
+                    orientation = "left";
+                }
+
+                if (m.find()){
+                    degreeString = m.group();
+                    degree = Integer.parseInt(degreeString);
+                }
+
+                if (degree < 180 || degree > 0){
+                    msg = joint + "_" + degree + "/" + orientation + ".";
+                }
+
+
+                /*while (m.find()) {
+                    System.out.println(m.group());
+                }*/
+            } else {
+                Toast.makeText(getActivity(), "No valid manual commando found", Toast.LENGTH_SHORT).show();
+                imgView.setImageResource(R.drawable.transparent);
+            }
+        }
+
+
         /*
-        int degree = 0;
         //aus Speechrecognizer ergebnis das keyword suchen
 
         // Check if it is a manual assignment on "Joint" directly
@@ -211,29 +294,9 @@ public class Tab2Fragment extends Fragment {
                 degree = Integer.parseInt(string);
             }
 
-        }
-
-*/
+        }*/
 
 
-
-
-        if (string.toLowerCase().contains(Coca_Cola.toLowerCase())) {
-            imgView.setImageResource(R.drawable.coca_cola);
-            msg = "brown";
-        } else if (string.toLowerCase().contains(Fanta.toLowerCase())) {
-            imgView.setImageResource(R.drawable.fanta);
-            msg = "yellow";
-        } else if (string.toLowerCase().contains(Tomatensaft.toLowerCase())) {
-            imgView.setImageResource(R.drawable.tomatensaft);
-            msg = "red";
-        } else if (string.toLowerCase().contains(Wasser.toLowerCase())) {
-            imgView.setImageResource(R.drawable.wasser);
-            msg = "white";
-        } else {
-            Toast.makeText(getActivity(), "No drink found", Toast.LENGTH_SHORT).show();
-            imgView.setImageResource(R.drawable.transparent);
-        }
         imgView.setVisibility(View.VISIBLE);
         //keyword per BT senden
         try {

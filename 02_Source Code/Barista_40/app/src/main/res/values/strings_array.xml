@@ -1,22 +1,22 @@
 <resources>
     <string-array name="commands">
-        <item name="Joint">joint</item>
-        <item name="Right">right</item>
-        <item name="Left">left</item>
-        <item name="Up">up</item>
-        <item name="Down">down</item>
-        <item name="One">one</item>
-        <item name="Two">two</item>
-        <item name="Three">three</item>
-        <item name="Four">four</item>
-        <item name="Five">five</item>
-        <item name="Six">six</item>
-        <item name="Water">water</item>
-        <item name="Coke">coke</item>
-        <item name="Fanta">fanta</item>
-        <item name="Water">water</item>
-        <item name="Tomato">tomato</item>
-        <item name="Juice">juice</item>
+        <item>joint</item>
+        <item>right</item>
+        <item>left</item>
+        <item>up</item>
+        <item>down</item>
+        <item>one</item>
+        <item>two</item>
+        <item>three</item>
+        <item>four</item>
+        <item>five</item>
+        <item>six</item>
+        <item>water</item>
+        <item>coke</item>
+        <item>fanta</item>
+        <item>water</item>
+        <item>tomato</item>
+        <item>juice</item>
     </string-array>
 
     <!-- Insert mapping key values on one position in the mappingKey array and add at the same position in the mapping Value array the respective string-->

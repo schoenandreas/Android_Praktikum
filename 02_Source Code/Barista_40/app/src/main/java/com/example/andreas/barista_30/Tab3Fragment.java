@@ -177,8 +177,8 @@ public class Tab3Fragment extends Fragment {
                         img.setImageResource(R.drawable.fanta);
                     }else if (id==R.drawable.tomatensaft){
 
-                        dialogdescription.setText("Tomatensaft Description");
-                        dialogDrinkName.setText("Tomatensaft");
+                        dialogdescription.setText("Tomato Description");
+                        dialogDrinkName.setText("Tomato juice");
                         img.setTag(R.drawable.tomatensaft);
                         img.setImageResource(R.drawable.tomatensaft);
                     }else if (id==R.drawable.wasser){
