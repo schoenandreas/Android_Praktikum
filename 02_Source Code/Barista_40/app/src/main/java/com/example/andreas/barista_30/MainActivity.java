@@ -224,6 +224,12 @@ public class MainActivity extends AppCompatActivity {
         }
     };
 
+    //String an BT device schicken
+    protected void sendData(String msg) throws IOException {
+        Toast.makeText(this, "Sending data: " + msg, Toast.LENGTH_SHORT).show();
+        mmOutputStream.write(msg.getBytes());
+    }
+
     //findet paired BT devices
     private void findBT() {
         //checken ob Handy BT hat
@@ -320,11 +326,6 @@ public class MainActivity extends AppCompatActivity {
         workerThread.start();
     }
 
-    //String an BT device schicken
-    protected void sendData(String msg) throws IOException {
-        Toast.makeText(this, "sending data" + msg, Toast.LENGTH_SHORT).show();
-        mmOutputStream.write(msg.getBytes());
-    }
 
     //BT socket schließen
     void closeBT() throws IOException {

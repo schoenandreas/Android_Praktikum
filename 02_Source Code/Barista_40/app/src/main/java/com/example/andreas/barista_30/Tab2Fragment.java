@@ -1,10 +1,14 @@
 package com.example.andreas.barista_30;
 
 
+import android.app.AlertDialog;
 import android.content.ActivityNotFoundException;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.res.ColorStateList;
+import android.content.res.Resources;
+import android.content.res.TypedArray;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.graphics.drawable.Drawable;
@@ -21,6 +25,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.CompoundButton;
 import android.widget.ImageView;
 import android.widget.Switch;
 import android.widget.TextView;
@@ -53,7 +58,7 @@ public class Tab2Fragment extends Fragment {
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.tab2_fragment, container, false);
+        final View view = inflater.inflate(R.layout.tab2_fragment, container, false);
         //views Initialisieren
         constraintLayout = (ConstraintLayout) view.findViewById(R.id.tab2layout);
         constr.clone(getActivity(), R.layout.tab2_fragment_transition);
@@ -81,8 +86,10 @@ public class Tab2Fragment extends Fragment {
                         constraintLayout.setBackgroundColor(Color.LTGRAY);
                         switchModus.setText(R.string.manual);
                     } else if (switchModus.isChecked() != true){
+                        alertModus(); // Invoke alert dialog tobi
                         constraintLayout.setBackgroundColor(Color.WHITE);
                         switchModus.setText(R.string.predefined);
+
                     }
                 } catch (Exception e) {
                     Toast.makeText(getActivity(), "Catch listener switchCommand", Toast.LENGTH_SHORT).show();
@@ -128,7 +135,7 @@ public class Tab2Fragment extends Fragment {
 
             //Wahrscheinlichstes Ergebnis
             String spokenText = "";
-            String[] commandArray = getResources().getStringArray(R.array.commands);
+            String[] commandArray = getResources().getStringArray(R.array.searchCommands);
             String[] mappingKeyArray = getResources().getStringArray(R.array.mappingKey);
             String[] mappingValueArray = getResources().getStringArray(R.array.mappingValue);
 
@@ -176,136 +183,184 @@ public class Tab2Fragment extends Fragment {
 
     //Keyword wird an Arduino gesendet
     private void sendKeyword(String string) {
-        string.toLowerCase();
+        String btString ="";
+        btString = string.toLowerCase();
+        Log.w("String", btString);
         String msg = "";
+        Resources res = getResources();
+        String joint = "";
+        String orientation = "";
+        String degreeString;
+        int degree = 0;
+        final Switch commandSwitch = (Switch) getActivity().findViewById(R.id.switchCommand);
 
-        if (string.contains("search")) {
-            if (string.contains(getResources().getString(R.string.Coke))){
-                imgView.setImageResource(R.drawable.coca_cola);
-                msg = "brown";
-            } else if (string.contains(getResources().getString(R.string.Fanta))){
-                imgView.setImageResource(R.drawable.fanta);
-                msg = "yellow";
-            } else if (string.contains(getResources().getString(R.string.Tomato))) {
-                imgView.setImageResource(R.drawable.tomatensaft);
-                msg = "red";
-            } else if (string.contains(getResources().getString(R.string.Water))) {
-                imgView.setImageResource(R.drawable.wasser);
-                msg = "white";
-            } else {
-                Toast.makeText(getActivity(), "No valid drink found", Toast.LENGTH_SHORT).show();
-                imgView.setImageResource(R.drawable.transparent);
+        if (btString.contains("search")){
+            if(commandSwitch.isChecked()){
+                alertModus();
+                if(!commandSwitch.isChecked()){
+                    return;
+                }
             }
-        } else if (string.contains("do")){
-            if (string.contains(getResources().getString(R.string.Standard))){
-                // imgView.setImageResource(R.drawable.);
-                msg = "standard";
-            } else if (string.contains(getResources().getString(R.string.Stretch))){
-                // imgView.setImageResource(R.drawable.);
-                msg = "stretch";
-            } else if (string.contains(getResources().getString(R.string.Goodbye))) {
-                // imgView.setImageResource(R.drawable.);
-                msg = "goodbye";
-            } else if (string.contains(getResources().getString(R.string.Hello))) {
-                // imgView.setImageResource(R.drawable.);
-                msg = "hello";
-            } else if (string.contains(getResources().getString(R.string.Release))) {
-                // imgView.setImageResource(R.drawable.);
-                msg = "release";
-            } else if (string.contains(getResources().getString(R.string.Grap))) {
-                // imgView.setImageResource(R.drawable.);
-                msg = "grap";
-            } else {
-                Toast.makeText(getActivity(), "No valid commando found", Toast.LENGTH_SHORT).show();
-                imgView.setImageResource(R.drawable.transparent);
+
+
+            Log.w("String", "contains search");
+            for (int i = 0; i < res.getStringArray(R.array.searchCommands).length; i++){
+                if (btString.contains(res.getStringArray(R.array.searchCommands)[i])){
+                    TypedArray imgs = getResources().obtainTypedArray(R.array.searchCommandsImg);
+                    msg = res.getStringArray(R.array.searchCommands)[i];
+                    imgView.setImageResource(imgs.getResourceId(i, -1));
+                    Log.w("Search", msg);
+                    break;
+                } else if (i == res.getStringArray(R.array.searchCommands).length-1){
+                    Toast.makeText(getActivity(), "No valid drink found", Toast.LENGTH_SHORT).show();
+                    Log.w("Search", "No valid drink found");
+                    imgView.setImageResource(R.drawable.transparent);
+                }
             }
-        } else if (string.contains("joint")){
-            String joint = "";
-            String orientation = "";
-            String degreeString;
-            int degree = 0;
-
-            if (string.contains("base")){
-                joint = "base";
-                Pattern p = Pattern.compile("-?\\d+");
-                Matcher m = p.matcher(string);
-                if (string.contains("left")){
-                    orientation = "left";
+        } else if (btString.contains("do")){
+            if(commandSwitch.isChecked()){
+                alertModus();
+                if(!commandSwitch.isChecked()){
+                    return;
                 }
-
-                if (m.find()){
-                    degreeString = m.group();
-                    degree = Integer.parseInt(degreeString);
+            }
+            for (int i = 0; i < res.getStringArray(R.array.doCommands).length; i++){
+                if (btString.contains(res.getStringArray(R.array.doCommands)[i])){
+                    msg = res.getStringArray(R.array.doCommands)[i];
+                    imgView.setImageResource(res.obtainTypedArray(R.array.doCommandsImg).getResourceId(i, -1));
+                    break;
+                } else if (i == res.getStringArray(R.array.doCommands).length-1){
+                    Toast.makeText(getActivity(), "No valid pattern found", Toast.LENGTH_SHORT).show();
+                    Log.w("Do", "No valid pattern found");
+                    imgView.setImageResource(R.drawable.transparent);
                 }
+            }
+        } else if (btString.contains("move")){
+            setModusOn();
+            for (int i = 0; i < res.getStringArray(R.array.jointCommands).length; i++) {
+                if (btString.contains(res.getStringArray(R.array.jointCommands)[i])) {
+                    Pattern p = Pattern.compile("-?\\d+");
+                    Matcher m = p.matcher(btString);
 
-                if (degree < 180 || degree > 0){
-                    msg = joint + "_" + degree + "/" + orientation + ".";
+                    joint = res.getStringArray(R.array.jointCommands)[i];
+                    imgView.setImageResource(res.obtainTypedArray(R.array.jointCommandsImg).getResourceId(i, -1));
+                    Log.w("MoveJoint", joint);
+
+                    if (m.find()) {
+                        degreeString = m.group();
+                        degree = Integer.parseInt(degreeString);
+                        Log.w("MoveDegree", "Wert: " + degree);
+                    }
+
+                    for (int j = 0; j < res.getStringArray(R.array.orientationCommands).length; j++){
+                        if (btString.contains(res.getStringArray(R.array.orientationCommands)[j])) {
+                            orientation = res.getStringArray(R.array.orientationCommands)[i];
+                            Log.w("MoveOrientation", orientation);
+                            break;
+                        }
+                    }
+
+
+                    /*
+                    for (int j = 0; j < res.getStringArray(R.array.orientationCommandsHorizontal).length; j++) {
+                        if (btString.contains(res.getStringArray(R.array.orientationCommandsHorizontal)[j])) {
+                            if (joint.equalsIgnoreCase("base") || joint.equalsIgnoreCase("wrist")) {
+                                orientation = res.getStringArray(R.array.orientationCommandsHorizontal)[j];
+                                Log.w("MoveOrientation", orientation);
+                                break;
+                            } else {
+                                Toast.makeText(getActivity(), "Orientation " + res.getStringArray(R.array.orientationCommandsHorizontal)[j] + " only for base and wrist", Toast.LENGTH_SHORT).show();
+                                Log.w("MoveOrientation", "No valid orientation found1");
+                            }
+                        }
+                    }
+                    for (int j = 0; j < res.getStringArray(R.array.orientationCommandsVertical).length; j++) {
+                        if (btString.contains(res.getStringArray(R.array.orientationCommandsVertical)[j])) {
+                            if (joint.equalsIgnoreCase("shoulder") || joint.equalsIgnoreCase("underarm") || joint.equalsIgnoreCase("elbow")) {
+                                orientation = res.getStringArray(R.array.orientationCommandsVertical)[j];
+                                Log.w("MoveOrientation", orientation);
+                                break;
+                            } else {
+                                Toast.makeText(getActivity(), "Orientation " + res.getStringArray(R.array.orientationCommandsHorizontal)[j] + " only for shoulder, elbow and underarm", Toast.LENGTH_SHORT).show();
+                                Log.w("MoveOrientation", "No valid orientation found2");
+                            }
+                        }
+                    }
+                    for (int j = 0; j < res.getStringArray(R.array.orientationCommandsContract).length; j++){
+                        if (btString.contains(res.getStringArray(R.array.orientationCommandsContract)[j])) {
+                            if (joint.equalsIgnoreCase("gripper")) {
+                                orientation = res.getStringArray(R.array.orientationCommandsContract)[j];
+                                Log.w("MoveOrientation", orientation);
+                                break;
+                            } else {
+                                Toast.makeText(getActivity(), "Orientation " + res.getStringArray(R.array.orientationCommandsHorizontal)[j] + " only for gripper", Toast.LENGTH_SHORT).show();
+                                Log.w("MoveOrientation", "No valid orientation found3");
+                            }
+                        }
+                    }*/
+
+                    if (orientation.isEmpty()) {
+                        msg = joint + "_" + degree + ".";
+                    } else if (!orientation.isEmpty()){
+                        msg = joint + "_" + degree + "/" + orientation + ".";
+                    }
+                } else if (i == res.getStringArray(R.array.jointCommands).length) {
+                    Toast.makeText(getActivity(), "No manual command found", Toast.LENGTH_SHORT).show();
+                    Log.w("Move", "Not found");
+                    imgView.setImageResource(R.drawable.transparent);
                 }
-
-
-                /*while (m.find()) {
-                    System.out.println(m.group());
-                }*/
-            } else {
-                Toast.makeText(getActivity(), "No valid manual commando found", Toast.LENGTH_SHORT).show();
-                imgView.setImageResource(R.drawable.transparent);
             }
         }
-
-
-        /*
-        //aus Speechrecognizer ergebnis das keyword suchen
-
-        // Check if it is a manual assignment on "Joint" directly
-        if (string.toLowerCase().contains(getString(R.string.Joint))){
-            // Cut the string to string without the keyword "Joint" to further work with the string
-            substring = getString(R.string.Joint);
-            string = string.substring(string.indexOf(substring) + substring.length());
-
-            // Braccio is manually addressed
-            imgView.setImageResource(R.drawable.braccio);
-
-            if (string.toLowerCase().contains(getString(R.string.Right))){
-                // Cut the string to string without the keyword "Right" to further work with the string
-                substring = getString(R.string.Right);
-                string = string.substring(string.indexOf(substring) + substring.length());
-
-                degree = Integer.parseInt(string);
-
-            } else if (string.toLowerCase().contains(getString(R.string.Left))){
-                // Cut the string to string without the keyword "Left" to further work with the string
-                substring = getString(R.string.Left);
-                string = string.substring(string.indexOf(substring) + substring.length());
-
-                degree = Integer.parseInt(string);
-
-            } else if (string.toLowerCase().contains(getString(R.string.Up))){
-                // Cut the string to string without the keyword "Up" to further work with the string
-                substring = getString(R.string.Up);
-                string = string.substring(string.indexOf(substring) + substring.length());
-
-                degree = Integer.parseInt(string);
-
-            } else if (string.toLowerCase().contains(getString(R.string.Down))){
-                // Cut the string to string without the keyword "Down" to further work with the string
-                substring = getString(R.string.Down);
-                string = string.substring(string.indexOf(substring) + substring.length());
-
-                degree = Integer.parseInt(string);
-            }
-
-        }*/
-
 
         imgView.setVisibility(View.VISIBLE);
         //keyword per BT senden
         try {
-            ((MainActivity) getActivity()).sendData(msg);
+            Log.w("Final message", msg);
+            if (degree < 181 && degree >= 0){ //Always 0 for search and do
+                ((MainActivity) getActivity()).sendData(msg);
+            } else {
+                Toast.makeText(getActivity(), "Degree must be between 0 and 180", Toast.LENGTH_SHORT).show();
+            }
         } catch (Exception e) {
             Log.w("APP", e);
             Toast.makeText(getActivity(), "Send Failed", Toast.LENGTH_SHORT).show();
         }
+    }
+
+    protected void setModusOn (){
+        final Switch switchModus = (Switch) getActivity().findViewById(R.id.switchCommand);
+        switchModus.setChecked(true);
+        switchModus.setText(R.string.manual);
 
     }
 
+    protected void setModusOff (){
+        final Switch switchModus = (Switch) getActivity().findViewById(R.id.switchCommand);
+        switchModus.setChecked(false);
+        switchModus.setText(R.string.predefined);
+    }
+
+    protected void alertModus (){
+        //Alert
+        DialogInterface.OnClickListener dialogClickListener = new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                switch (which){
+                    case DialogInterface.BUTTON_POSITIVE:
+                        setModusOff(); //Yes button clicked than continue
+                        break;
+
+                    case DialogInterface.BUTTON_NEGATIVE:
+                        setModusOn(); //No button clicked
+                        break;
+                }
+            }
+        };
+
+        // Alternativ nur context
+        AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
+        builder.setTitle("Question").setMessage("You are about to leave the manual modus. Do you really want to change modus?").setPositiveButton("Yes", dialogClickListener)
+                .setNegativeButton("No", dialogClickListener).show();
+
+    }
 }
