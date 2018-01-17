@@ -69,13 +69,19 @@
 
     <!-- Insert mapping key values on one position in the mappingKey array and add at the same position in the mapping Value array the respective string-->
     <string-array name="mappingKey">
-        <item name="Porta">porta</item>
-        <item name="Warte">warte</item>
+        <item>porta</item>
+        <item>warte</item>
+        <item>hunter</item>
+        <item>panther</item>
+        <item>hunters</item>
     </string-array>
 
     <string-array name="mappingValue">
-        <item name="Porta2">water</item>
-        <item name="Warte2">water</item>
+        <item>water</item>
+        <item>water</item>
+        <item>fanta</item>
+        <item>fanta</item>
+        <item>fanta</item>
     </string-array>
 
 </resources>

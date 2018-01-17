@@ -53,7 +53,7 @@ public class Tab2Fragment extends Fragment {
     private ConstraintLayout constraintLayout;
     private ConstraintSet constr = new ConstraintSet();
     private ImageView imgView;
-
+    private boolean alertModusActive = false;
 
     @Nullable
     @Override
@@ -82,10 +82,10 @@ public class Tab2Fragment extends Fragment {
         switchModus.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
                 try {
-                    if (switchModus.isChecked() == true){
+                    if (switchModus.isChecked() == true) {
                         constraintLayout.setBackgroundColor(Color.LTGRAY);
                         switchModus.setText(R.string.manual);
-                    } else if (switchModus.isChecked() != true){
+                    } else if (switchModus.isChecked() != true) {
                         alertModus(); // Invoke alert dialog tobi
                         constraintLayout.setBackgroundColor(Color.WHITE);
                         switchModus.setText(R.string.predefined);
@@ -135,35 +135,40 @@ public class Tab2Fragment extends Fragment {
 
             //Wahrscheinlichstes Ergebnis
             String spokenText = "";
-            String[] commandArray = getResources().getStringArray(R.array.searchCommands);
+            String[] searchCommandArray = getResources().getStringArray(R.array.searchCommands);
+            String[] doCommandArray = getResources().getStringArray(R.array.doCommands);
+            String[] jointCommandArray = getResources().getStringArray(R.array.jointCommands);
+            String[] orientationCommandArray = getResources().getStringArray(R.array.orientationCommands);
             String[] mappingKeyArray = getResources().getStringArray(R.array.mappingKey);
             String[] mappingValueArray = getResources().getStringArray(R.array.mappingValue);
+            int searchProbability = 0;
+            int doProbability = 0;
+            int manualProbability = 0;
 
             // Compare the 5 (Maximum for Speech Recognition!) best probabilities with the whole string array to increase the possibility to find the wished solution
             try {
-                int i = 0;
-                while (i < 5){
-                    Log.w("app", results.get(i));
-                    spokenText = results.get(0);
-                    for (int j = 0; j < commandArray.length; j++) {
-                        if (results.get(i).toLowerCase().contains(commandArray[j])) {
-                            //Check der 5 Wahrscheinlichsten Ergebnisse
-                            spokenText = results.get(i);
-                            i = 5;
-                            break;
+                for (int i = 0; i < 5; i++){
+                    spokenText = results.get(i).toLowerCase();
+                    Log.w("app", spokenText);
+
+                    for (int j = 0; j < mappingKeyArray.length; j++) {
+                        Log.w("mappingKeyArrayText", results.get(i) + " / " + mappingKeyArray[j] + " / " + mappingValueArray[j]);
+                        if (results.get(i).toLowerCase().contains(mappingKeyArray[j])) {
+                            spokenText = spokenText.replace(mappingKeyArray[j], mappingValueArray[j]);
+                            Log.w("mappingKeyArrayText", spokenText);
                         }
                     }
-                    if (i < 5) {
-                        for (int j = 0; j < mappingKeyArray.length; j++) {
-                            if (results.get(i).equalsIgnoreCase(mappingKeyArray[j])) {
-                                //Check der 5 Wahrscheinlichsten Ergebnisse zum mappen
-                                spokenText = mappingValueArray[j];
-                                i = 5;
-                                break;
-                            }
-                        }
+
+                    searchProbability = calculateProbability(spokenText, searchCommandArray);
+                    doProbability = calculateProbability(spokenText, doCommandArray);
+                    manualProbability = calculateProbability(spokenText, jointCommandArray) + calculateProbability(spokenText, orientationCommandArray);
+
+                    Log.w("mappingKeyArrayProb", "sp " + searchProbability + "dp " + doProbability + "mp " + manualProbability);
+
+                    if (searchProbability == 2 || doProbability == 2 || manualProbability == 4){
+                        Log.w("finalBreak", "baaam");
+                        break;
                     }
-                    i++;
                 }
             } catch (Exception e) {
                 Log.w("app", e);
@@ -172,18 +177,32 @@ public class Tab2Fragment extends Fragment {
             //auf Bildschirm anzeigen & Sprachungenauigkeiten ausbessern
             text.setText(spokenText);
             //per BT senden
-            sendKeyword(spokenText);
+            sendKeyword(buildKeyword(spokenText));
 
             //animation Button nach unten und Bild anzeigen
             TransitionManager.beginDelayedTransition(constraintLayout);
             constr.applyTo(constraintLayout);
-
         }
     }
 
+    private int calculateProbability (String spokenText, String [] commands){
+        int probability = 0;
+        if (spokenText.contains("search") || spokenText.contains("do") || spokenText.contains("move")) {
+            probability = 1;
+        }
+        for (int j = 0; j < commands.length; j++) {
+            if (spokenText.contains(commands[j])) {
+                probability++;
+                break;
+            }
+        }
+        Log.w("probability", spokenText + " " + probability);
+        return probability;
+    }
+
     //Keyword wird an Arduino gesendet
-    private void sendKeyword(String string) {
-        String btString ="";
+    private String buildKeyword(String string) {
+        String btString = "";
         btString = string.toLowerCase();
         Log.w("String", btString);
         String msg = "";
@@ -194,48 +213,44 @@ public class Tab2Fragment extends Fragment {
         int degree = 0;
         final Switch commandSwitch = (Switch) getActivity().findViewById(R.id.switchCommand);
 
-        if (btString.contains("search")){
-            if(commandSwitch.isChecked()){
+        if (btString.contains("search")) {
+
+            if (commandSwitch.isChecked()) {
+                alertModusActive = true; // // Wait for response in alert dialog
                 alertModus();
-                if(!commandSwitch.isChecked()){
-                    return;
-                }
             }
 
-
             Log.w("String", "contains search");
-            for (int i = 0; i < res.getStringArray(R.array.searchCommands).length; i++){
-                if (btString.contains(res.getStringArray(R.array.searchCommands)[i])){
+            for (int i = 0; i < res.getStringArray(R.array.searchCommands).length; i++) {
+                if (btString.contains(res.getStringArray(R.array.searchCommands)[i])) {
                     TypedArray imgs = getResources().obtainTypedArray(R.array.searchCommandsImg);
                     msg = res.getStringArray(R.array.searchCommands)[i];
                     imgView.setImageResource(imgs.getResourceId(i, -1));
                     Log.w("Search", msg);
                     break;
-                } else if (i == res.getStringArray(R.array.searchCommands).length-1){
+                } else if (i == res.getStringArray(R.array.searchCommands).length - 1) {
                     Toast.makeText(getActivity(), "No valid drink found", Toast.LENGTH_SHORT).show();
                     Log.w("Search", "No valid drink found");
                     imgView.setImageResource(R.drawable.transparent);
                 }
             }
-        } else if (btString.contains("do")){
-            if(commandSwitch.isChecked()){
+        } else if (btString.contains("do")) {
+            if (commandSwitch.isChecked()) {
+                alertModusActive = true;
                 alertModus();
-                if(!commandSwitch.isChecked()){
-                    return;
-                }
             }
-            for (int i = 0; i < res.getStringArray(R.array.doCommands).length; i++){
-                if (btString.contains(res.getStringArray(R.array.doCommands)[i])){
+            for (int i = 0; i < res.getStringArray(R.array.doCommands).length; i++) {
+                if (btString.contains(res.getStringArray(R.array.doCommands)[i])) {
                     msg = res.getStringArray(R.array.doCommands)[i];
                     imgView.setImageResource(res.obtainTypedArray(R.array.doCommandsImg).getResourceId(i, -1));
                     break;
-                } else if (i == res.getStringArray(R.array.doCommands).length-1){
+                } else if (i == res.getStringArray(R.array.doCommands).length - 1) {
                     Toast.makeText(getActivity(), "No valid pattern found", Toast.LENGTH_SHORT).show();
                     Log.w("Do", "No valid pattern found");
                     imgView.setImageResource(R.drawable.transparent);
                 }
             }
-        } else if (btString.contains("move")){
+        } else if (btString.contains("move")) {
             setModusOn();
             for (int i = 0; i < res.getStringArray(R.array.jointCommands).length; i++) {
                 if (btString.contains(res.getStringArray(R.array.jointCommands)[i])) {
@@ -252,7 +267,7 @@ public class Tab2Fragment extends Fragment {
                         Log.w("MoveDegree", "Wert: " + degree);
                     }
 
-                    for (int j = 0; j < res.getStringArray(R.array.orientationCommands).length; j++){
+                    for (int j = 0; j < res.getStringArray(R.array.orientationCommands).length; j++) {
                         if (btString.contains(res.getStringArray(R.array.orientationCommands)[j])) {
                             orientation = res.getStringArray(R.array.orientationCommands)[i];
                             Log.w("MoveOrientation", orientation);
@@ -260,48 +275,9 @@ public class Tab2Fragment extends Fragment {
                         }
                     }
 
-
-                    /*
-                    for (int j = 0; j < res.getStringArray(R.array.orientationCommandsHorizontal).length; j++) {
-                        if (btString.contains(res.getStringArray(R.array.orientationCommandsHorizontal)[j])) {
-                            if (joint.equalsIgnoreCase("base") || joint.equalsIgnoreCase("wrist")) {
-                                orientation = res.getStringArray(R.array.orientationCommandsHorizontal)[j];
-                                Log.w("MoveOrientation", orientation);
-                                break;
-                            } else {
-                                Toast.makeText(getActivity(), "Orientation " + res.getStringArray(R.array.orientationCommandsHorizontal)[j] + " only for base and wrist", Toast.LENGTH_SHORT).show();
-                                Log.w("MoveOrientation", "No valid orientation found1");
-                            }
-                        }
-                    }
-                    for (int j = 0; j < res.getStringArray(R.array.orientationCommandsVertical).length; j++) {
-                        if (btString.contains(res.getStringArray(R.array.orientationCommandsVertical)[j])) {
-                            if (joint.equalsIgnoreCase("shoulder") || joint.equalsIgnoreCase("underarm") || joint.equalsIgnoreCase("elbow")) {
-                                orientation = res.getStringArray(R.array.orientationCommandsVertical)[j];
-                                Log.w("MoveOrientation", orientation);
-                                break;
-                            } else {
-                                Toast.makeText(getActivity(), "Orientation " + res.getStringArray(R.array.orientationCommandsHorizontal)[j] + " only for shoulder, elbow and underarm", Toast.LENGTH_SHORT).show();
-                                Log.w("MoveOrientation", "No valid orientation found2");
-                            }
-                        }
-                    }
-                    for (int j = 0; j < res.getStringArray(R.array.orientationCommandsContract).length; j++){
-                        if (btString.contains(res.getStringArray(R.array.orientationCommandsContract)[j])) {
-                            if (joint.equalsIgnoreCase("gripper")) {
-                                orientation = res.getStringArray(R.array.orientationCommandsContract)[j];
-                                Log.w("MoveOrientation", orientation);
-                                break;
-                            } else {
-                                Toast.makeText(getActivity(), "Orientation " + res.getStringArray(R.array.orientationCommandsHorizontal)[j] + " only for gripper", Toast.LENGTH_SHORT).show();
-                                Log.w("MoveOrientation", "No valid orientation found3");
-                            }
-                        }
-                    }*/
-
                     if (orientation.isEmpty()) {
                         msg = joint + "_" + degree + ".";
-                    } else if (!orientation.isEmpty()){
+                    } else if (!orientation.isEmpty()) {
                         msg = joint + "_" + degree + "/" + orientation + ".";
                     }
                 } else if (i == res.getStringArray(R.array.jointCommands).length) {
@@ -311,47 +287,58 @@ public class Tab2Fragment extends Fragment {
                 }
             }
         }
+        return msg;
+    }
 
+    private void sendKeyword(String msg){
+        final Switch commandSwitch = (Switch) getActivity().findViewById(R.id.switchCommand);
         imgView.setVisibility(View.VISIBLE);
-        //keyword per BT senden
-        try {
-            Log.w("Final message", msg);
-            if (degree < 181 && degree >= 0){ //Always 0 for search and do
+
+        if(!alertModusActive) {
+            //keyword per BT senden
+            try {
+                Log.w("Final message", msg);
+                // if (degree < 181 && degree >= 0) { //Always 0 for search and do
                 ((MainActivity) getActivity()).sendData(msg);
-            } else {
-                Toast.makeText(getActivity(), "Degree must be between 0 and 180", Toast.LENGTH_SHORT).show();
+                //} else {
+                //    Toast.makeText(getActivity(), "Degree must be between 0 and 180", Toast.LENGTH_SHORT).show();
+                //}
+            } catch (Exception e) {
+                Log.w("APP", e);
+                Toast.makeText(getActivity(), "Send Failed", Toast.LENGTH_SHORT).show();
             }
-        } catch (Exception e) {
-            Log.w("APP", e);
-            Toast.makeText(getActivity(), "Send Failed", Toast.LENGTH_SHORT).show();
         }
     }
 
-    protected void setModusOn (){
+    protected void setModusOn() {
         final Switch switchModus = (Switch) getActivity().findViewById(R.id.switchCommand);
         switchModus.setChecked(true);
         switchModus.setText(R.string.manual);
+        constraintLayout.setBackgroundColor(Color.LTGRAY);
 
     }
 
-    protected void setModusOff (){
+    protected void setModusOff() {
         final Switch switchModus = (Switch) getActivity().findViewById(R.id.switchCommand);
         switchModus.setChecked(false);
         switchModus.setText(R.string.predefined);
+        constraintLayout.setBackgroundColor(Color.WHITE);
     }
 
-    protected void alertModus (){
+    protected void alertModus() {
         //Alert
         DialogInterface.OnClickListener dialogClickListener = new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
-                switch (which){
+                switch (which) {
                     case DialogInterface.BUTTON_POSITIVE:
-                        setModusOff(); //Yes button clicked than continue
+                        setModusOff(); //Yes button clicked
+                        alertModusActive = false; // Wait for response in alert dialog
                         break;
 
                     case DialogInterface.BUTTON_NEGATIVE:
                         setModusOn(); //No button clicked
+                        alertModusActive = false; // Wait for response in alert dialog
                         break;
                 }
             }
