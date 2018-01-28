@@ -10,16 +10,30 @@
 
     <TextView
         android:id="@+id/textView"
-        android:layout_width="match_parent"
+        android:layout_width="296dp"
         android:layout_height="69dp"
         android:layout_gravity="bottom|bottom"
         android:layout_marginBottom="16dp"
         android:text="Eingabe"
+        android:gravity="center"
         android:textAlignment="center"
         android:textColor="@color/colorPrimaryDark"
         android:textSize="30dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent" />
+
+    <Button
+        android:id="@+id/sendButton"
+        style="@style/Widget.AppCompat.Button"
+        android:layout_width="90dp"
+        android:layout_height="45dp"
+        android:layout_marginBottom="42dp"
+        android:elevation="24dp"
+        android:text="SEND"
+        android:clickable="true"
+        android:visibility="visible"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintRight_toRightOf="parent" />
 
     <android.support.design.widget.FloatingActionButton
         android:id="@+id/floatingActionButton"
@@ -33,7 +47,7 @@
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.95" />
+        app:layout_constraintVertical_bias="0.953" />
 
     <ImageView
         android:id="@+id/imgView"

@@ -25,6 +25,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.CompoundButton;
 import android.widget.ImageView;
 import android.widget.Switch;
@@ -48,12 +49,12 @@ public class Tab2Fragment extends Fragment {
 
     private static final int SPEECH_REQUEST_CODE = 0;
     private TextView text;
+    private Switch switchModus;
 
     //Animation für die SpeechRecognition Acitivity. + ein Teil an "onClickFloat"
     private ConstraintLayout constraintLayout;
     private ConstraintSet constr = new ConstraintSet();
     private ImageView imgView;
-    private boolean alertModusActive = false;
 
     @Nullable
     @Override
@@ -77,7 +78,7 @@ public class Tab2Fragment extends Fragment {
         });
 
         // Invoke Switch Button tobi
-        final Switch switchModus = (Switch) view.findViewById(R.id.switchCommand);
+        switchModus = (Switch) view.findViewById(R.id.switchCommand);
         // Check the current state of the switch
         switchModus.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
@@ -93,6 +94,18 @@ public class Tab2Fragment extends Fragment {
                     }
                 } catch (Exception e) {
                     Toast.makeText(getActivity(), "Catch listener switchCommand", Toast.LENGTH_SHORT).show();
+                }
+            }
+        });
+
+        Button sendButton = (Button) view.findViewById(R.id.sendButton);
+        sendButton.setOnClickListener(new View.OnClickListener(){
+            public void onClick(View v){
+                try {
+                    //per BT senden
+                    sendKeyword(buildKeyword(text.getText().toString()));
+                } catch (Exception e) {
+                    Toast.makeText(getActivity(), "Sending didn't work!", Toast.LENGTH_SHORT).show();
                 }
             }
         });
@@ -176,12 +189,15 @@ public class Tab2Fragment extends Fragment {
 
             //auf Bildschirm anzeigen & Sprachungenauigkeiten ausbessern
             text.setText(spokenText);
-            //per BT senden
-            sendKeyword(buildKeyword(spokenText));
 
             //animation Button nach unten und Bild anzeigen
             TransitionManager.beginDelayedTransition(constraintLayout);
             constr.applyTo(constraintLayout);
+
+            // Check for changing from manual to predefined control
+            if (switchModus.isChecked() == true && (spokenText.contains("search") || spokenText.contains("do"))){
+                alertModus();
+            }
         }
     }
 
@@ -211,14 +227,8 @@ public class Tab2Fragment extends Fragment {
         String orientation = "";
         String degreeString;
         int degree = 0;
-        final Switch commandSwitch = (Switch) getActivity().findViewById(R.id.switchCommand);
 
         if (btString.contains("search")) {
-
-            if (commandSwitch.isChecked()) {
-                alertModusActive = true; // // Wait for response in alert dialog
-                alertModus();
-            }
 
             Log.w("String", "contains search");
             for (int i = 0; i < res.getStringArray(R.array.searchCommands).length; i++) {
@@ -235,10 +245,7 @@ public class Tab2Fragment extends Fragment {
                 }
             }
         } else if (btString.contains("do")) {
-            if (commandSwitch.isChecked()) {
-                alertModusActive = true;
-                alertModus();
-            }
+
             for (int i = 0; i < res.getStringArray(R.array.doCommands).length; i++) {
                 if (btString.contains(res.getStringArray(R.array.doCommands)[i])) {
                     msg = res.getStringArray(R.array.doCommands)[i];
@@ -287,14 +294,14 @@ public class Tab2Fragment extends Fragment {
                 }
             }
         }
+        imgView.setVisibility(View.VISIBLE);
+
         return msg;
     }
 
     private void sendKeyword(String msg){
-        final Switch commandSwitch = (Switch) getActivity().findViewById(R.id.switchCommand);
-        imgView.setVisibility(View.VISIBLE);
 
-        if(!alertModusActive) {
+        if (!msg.equalsIgnoreCase("")){
             //keyword per BT senden
             try {
                 Log.w("Final message", msg);
@@ -307,7 +314,10 @@ public class Tab2Fragment extends Fragment {
                 Log.w("APP", e);
                 Toast.makeText(getActivity(), "Send Failed", Toast.LENGTH_SHORT).show();
             }
+        } else {
+            Toast.makeText(getActivity(), "There is no command to send", Toast.LENGTH_SHORT).show();
         }
+
     }
 
     protected void setModusOn() {
@@ -333,12 +343,12 @@ public class Tab2Fragment extends Fragment {
                 switch (which) {
                     case DialogInterface.BUTTON_POSITIVE:
                         setModusOff(); //Yes button clicked
-                        alertModusActive = false; // Wait for response in alert dialog
                         break;
 
                     case DialogInterface.BUTTON_NEGATIVE:
                         setModusOn(); //No button clicked
-                        alertModusActive = false; // Wait for response in alert dialog
+                        text.setText("");
+                        imgView.setVisibility(View.INVISIBLE);
                         break;
                 }
             }
@@ -346,7 +356,7 @@ public class Tab2Fragment extends Fragment {
 
         // Alternativ nur context
         AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
-        builder.setTitle("Question").setMessage("You are about to leave the manual modus. Do you really want to change modus?").setPositiveButton("Yes", dialogClickListener)
+        builder.setTitle("Question").setMessage("You are about to leave the manual modus. Do you really want to change modus?").setCancelable(false).setPositiveButton("Yes", dialogClickListener)
                 .setNegativeButton("No", dialogClickListener).show();
 
     }
