@@ -49,12 +49,12 @@
     </string-array>
 
     <integer-array name="jointCommandsImg">
-        <item>@drawable/transparent</item>
-        <item>@drawable/transparent</item>
-        <item>@drawable/transparent</item>
-        <item>@drawable/transparent</item>
-        <item>@drawable/transparent</item>
-        <item>@drawable/transparent</item>
+        <item>@drawable/arm0</item>
+        <item>@drawable/arm1</item>
+        <item>@drawable/arm2</item>
+        <item>@drawable/arm3</item>
+        <item>@drawable/arm4</item>
+        <item>@drawable/arm5</item>
     </integer-array>
 
     <!-- Arrays for Orientation Commands-->
