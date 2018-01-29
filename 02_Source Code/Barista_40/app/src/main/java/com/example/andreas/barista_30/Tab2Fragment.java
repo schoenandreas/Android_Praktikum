@@ -343,6 +343,12 @@ public class Tab2Fragment extends Fragment {
                 switch (which) {
                     case DialogInterface.BUTTON_POSITIVE:
                         setModusOff(); //Yes button clicked
+                        try {
+                            //per BT senden
+                            sendKeyword(buildKeyword(text.getText().toString()));
+                        } catch (Exception e) {
+                            Toast.makeText(getActivity(), "Sending didn't work!", Toast.LENGTH_SHORT).show();
+                        }
                         break;
 
                     case DialogInterface.BUTTON_NEGATIVE:

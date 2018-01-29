@@ -74,11 +74,17 @@
         <item>hunter</item>
         <item>panther</item>
         <item>hunters</item>
+        <item>fante</item>
+        <item>fanter</item>
+        <item>panta</item>
     </string-array>
 
     <string-array name="mappingValue">
         <item>water</item>
         <item>water</item>
+        <item>fanta</item>
+        <item>fanta</item>
+        <item>fanta</item>
         <item>fanta</item>
         <item>fanta</item>
         <item>fanta</item>

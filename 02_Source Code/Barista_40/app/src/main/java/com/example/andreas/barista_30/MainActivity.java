@@ -1,6 +1,5 @@
 package com.example.andreas.barista_30;
 
-import android.app.Dialog;
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
 import android.bluetooth.BluetoothSocket;
@@ -8,19 +7,16 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
-import android.media.Image;
 import android.os.Handler;
 import android.support.design.widget.TabLayout;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v4.view.ViewPager;
 import android.os.Bundle;
-import android.support.v7.widget.CardView;
 import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
-import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.ProgressBar;
@@ -52,6 +48,8 @@ public class MainActivity extends AppCompatActivity {
     private List discoveredList = new ArrayList();
     private List pairedListStrings = new ArrayList();
     private List discoveredListStrings = new ArrayList();
+
+    private ListView pairedListView;
 
     private ArrayAdapter pairedListViewAdapter;
     private ArrayAdapter discoveredListViewAdapter;
@@ -101,10 +99,20 @@ public class MainActivity extends AppCompatActivity {
         viewPager.setCurrentItem(1, true);
     }
 
-    //Notwendig fuer onActivityResult aus der Speechrecognition in Tab2Fragment
+    //Result handling from speechRecognition and enableBTHardware()
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        //enableBTHardware
+        if(requestCode==3){
+            if(resultCode==(0)){
+                btCancel();
+            }else{
+                pairedDevices();
+            }
+        }
+        //speechRecognition
         super.onActivityResult(requestCode, resultCode, data);
+
     }
 
     //Erstellt den BT Dialog
@@ -115,16 +123,19 @@ public class MainActivity extends AppCompatActivity {
         //Views initialisieren
         final View mView = getLayoutInflater().inflate(R.layout.bluetooth_dialog, null);
         ImageView imgLoad = mView.findViewById(R.id.imageLoad);
-        ImageView imgClear = mView.findViewById(R.id.imageClear);
+        final ImageView imgClear = mView.findViewById(R.id.imageClear);
         progressBar = mView.findViewById(R.id.progressBar);
-        final ListView listView = mView.findViewById(R.id.listView);
+        pairedListView = mView.findViewById(R.id.listView);
         final ListView listView2 = mView.findViewById(R.id.listView2);
+        final TextView btHeader = mView.findViewById(R.id.btDialogHeader);
 
         //findet paired BT devices
-        findBT();
-        //paired Devices anzeigen
-        pairedListViewAdapter = new ArrayAdapter(this, android.R.layout.simple_list_item_1, pairedListStrings);
-        listView.setAdapter(pairedListViewAdapter);
+        enableBTHardware();
+
+        pairedDevices();
+
+
+
 
         //OnClickListener fuer ListViews und refreshButton setzen
         //<editor-fold desc="setOnclickListeners">
@@ -142,24 +153,25 @@ public class MainActivity extends AppCompatActivity {
         imgClear.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Switch bluetoothSwitchButton = (Switch) findViewById(R.id.btSwitch);
-                TextView switchItemText = (TextView) findViewById(R.id.btSwitchItem);
-                bluetoothSwitchButton.setChecked(false);
-                switchItemText.setText(R.string.bt_disabled);
-                dialog.dismiss();
+                btCancel();
             }
         });
 
         //paired Devices
-        listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+        pairedListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
                 try {
                     //device zuweisen auf den geklickt wurde und versuchen mit dem Device zu verbinden
                     mmDevice = (BluetoothDevice) pairedList.get(i);
+                   // btHeader.setText("Try connecting..");
+                   // imgClear.setVisibility(View.INVISIBLE);
+                    this.wait(10);
                     openBT();
                 } catch (Exception e) {
                     Log.w("APP", e);
+                    //imgClear.setVisibility(View.VISIBLE);
+                    //btHeader.setText("Please try again");
                 }
             }
         });
@@ -170,9 +182,14 @@ public class MainActivity extends AppCompatActivity {
                 try {
                     //device zuweisen auf den geklickt wurde und versuchen mit dem Device zu verbinden
                     mmDevice = (BluetoothDevice) discoveredList.get(i);
+                   // btHeader.setText("Try connecting..");
+                    //imgClear.setVisibility(View.INVISIBLE);
+                    this.wait(10);
                     openBT();
                 } catch (Exception e) {
                     Log.w("APP", e);
+                   // imgClear.setVisibility(View.VISIBLE);
+                    //btHeader.setText("Please try again");
                 }
             }
         });
@@ -185,6 +202,40 @@ public class MainActivity extends AppCompatActivity {
         dialog.show();
         //Devices suchen
         discoverBT(listView2);
+    }
+
+    private void btCancel(){
+        Switch bluetoothSwitchButton = (Switch) findViewById(R.id.btSwitch);
+        TextView switchItemText = (TextView) findViewById(R.id.btSwitchItem);
+        bluetoothSwitchButton.setChecked(false);
+        switchItemText.setText(R.string.bt_disabled);
+        dialog.dismiss();
+        pairedList.clear();
+        discoveredList.clear();
+        pairedListStrings.clear();
+        discoveredListStrings.clear();
+
+    }
+
+    private void pairedDevices(){
+        //Paired BT Geraete
+        Set<BluetoothDevice> pairedDevices = mBluetoothAdapter.getBondedDevices();
+        //Fuegt alle Geraete und deren Namen in Listen ein
+        if (pairedDevices.size() > 0) {
+            for (BluetoothDevice device : pairedDevices) {
+                pairedListStrings.add(device.getName() + "\n");
+                pairedList.add(device);
+                //HMSoft als Standarddevice wenn paired da als BT Shield bekannt
+                if (device.getName().equals("HMSoft")) {
+                    mmDevice = device;
+                    break;
+                }
+            }
+        }
+        //paired Devices anzeigen
+        pairedListViewAdapter = new ArrayAdapter(this, android.R.layout.simple_list_item_1, pairedListStrings);
+        pairedListView.setAdapter(pairedListViewAdapter);
+
     }
 
     private void discoverBT(ListView listView) {
@@ -231,7 +282,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     //findet paired BT devices
-    private void findBT() {
+    private void enableBTHardware() {
         //checken ob Handy BT hat
         mBluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
         if (mBluetoothAdapter == null) {
@@ -240,23 +291,10 @@ public class MainActivity extends AppCompatActivity {
         //checkt ob BT an ist, schaltet an falls nicht
         if (!mBluetoothAdapter.isEnabled()) {
             Intent enableBluetooth = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
-            startActivityForResult(enableBluetooth, 0);
+            startActivityForResult(enableBluetooth, 3);
         }
 
-        //Paired BT Geraete
-        Set<BluetoothDevice> pairedDevices = mBluetoothAdapter.getBondedDevices();
-        //Fuegt alle Geraete und deren Namen in Listen ein
-        if (pairedDevices.size() > 0) {
-            for (BluetoothDevice device : pairedDevices) {
-                pairedListStrings.add(device.getName() + "\n");
-                pairedList.add(device);
-                //HMSoft als Standarddevice wenn paired da als BT Shield bekannt
-                if (device.getName().equals("HMSoft")) {
-                    mmDevice = device;
-                    break;
-                }
-            }
-        }
+
     }
 
 
