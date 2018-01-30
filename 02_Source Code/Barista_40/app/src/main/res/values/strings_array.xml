@@ -7,8 +7,9 @@
         <item>release</item>
         <item>standard</item>
         <item>stretch</item>
-        <item>wave</item>
+        <item>start</item>
     </string-array>
+
 
     <integer-array name="doCommandsImg">
         <item>@drawable/transparent</item>
@@ -23,19 +24,17 @@
 
     <!-- Arrays for Search Commands string and integer array must match position-->
     <string-array name="searchCommands">
-        <item>coke</item>
         <item>tomato</item>
         <item>fanta</item>
         <item>water</item>
-        <item>sport</item>
+        <item>blue</item>
     </string-array>
 
     <integer-array name="searchCommandsImg">
-        <item>@drawable/coca_cola</item>
         <item>@drawable/tomatensaft</item>
         <item>@drawable/fanta</item>
         <item>@drawable/wasser</item>
-        <item>@drawable/drink</item>
+        <item>@drawable/bluedrink</item>
     </integer-array>
 
     <!-- Arrays for Joint Commands string and integer array must match position-->

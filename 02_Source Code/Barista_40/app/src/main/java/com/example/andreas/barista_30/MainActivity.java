@@ -166,7 +166,7 @@ public class MainActivity extends AppCompatActivity {
                     mmDevice = (BluetoothDevice) pairedList.get(i);
                    // btHeader.setText("Try connecting..");
                    // imgClear.setVisibility(View.INVISIBLE);
-                    this.wait(10);
+                    //this.wait(10);
                     openBT();
                 } catch (Exception e) {
                     Log.w("APP", e);
@@ -184,7 +184,7 @@ public class MainActivity extends AppCompatActivity {
                     mmDevice = (BluetoothDevice) discoveredList.get(i);
                    // btHeader.setText("Try connecting..");
                     //imgClear.setVisibility(View.INVISIBLE);
-                    this.wait(10);
+                    //this.wait(10);
                     openBT();
                 } catch (Exception e) {
                     Log.w("APP", e);

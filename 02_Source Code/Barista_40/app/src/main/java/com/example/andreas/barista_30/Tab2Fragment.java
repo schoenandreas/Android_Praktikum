@@ -248,7 +248,7 @@ public class Tab2Fragment extends Fragment {
 
             for (int i = 0; i < res.getStringArray(R.array.doCommands).length; i++) {
                 if (btString.contains(res.getStringArray(R.array.doCommands)[i])) {
-                    msg = res.getStringArray(R.array.doCommands)[i];
+                    msg = String.valueOf(i);
                     imgView.setImageResource(res.obtainTypedArray(R.array.doCommandsImg).getResourceId(i, -1));
                     break;
                 } else if (i == res.getStringArray(R.array.doCommands).length - 1) {
