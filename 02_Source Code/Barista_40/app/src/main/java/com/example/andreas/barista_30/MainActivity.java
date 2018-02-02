@@ -36,10 +36,6 @@ import java.util.UUID;
 
 public class MainActivity extends AppCompatActivity {
 
-    //Fragmentverwaltung
-    private SectionsPageAdapter mSectionsPageAdapter;
-    private ViewPager mViewPager;
-
     //Deklaration der Variablen fuer BT-dialog
     //<editor-fold desc="Dialog declarations">
     private AlertDialog dialog;
@@ -48,7 +44,6 @@ public class MainActivity extends AppCompatActivity {
     private List discoveredList = new ArrayList();
     private List pairedListStrings = new ArrayList();
     private List discoveredListStrings = new ArrayList();
-
     private ListView pairedListView;
 
     private ArrayAdapter pairedListViewAdapter;
@@ -70,18 +65,16 @@ public class MainActivity extends AppCompatActivity {
     //</editor-fold>
 
 
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
         //Setup Fragments
-        mSectionsPageAdapter = new SectionsPageAdapter(getSupportFragmentManager());
-        mViewPager = (ViewPager) findViewById(R.id.container);
-        setupViewPager(mViewPager);
+        ViewPager viewPager = (ViewPager) findViewById(R.id.container);
         TabLayout tablayout = (TabLayout) findViewById(R.id.tabs);
-        tablayout.setupWithViewPager(mViewPager);
+        setupViewPager(viewPager);
+        tablayout.setupWithViewPager(viewPager);
 
         // BT Dialog, fuer Entwicklung ohne BT connection zum Shield hier auskommentieren
         bluetoothDialog();
@@ -103,10 +96,10 @@ public class MainActivity extends AppCompatActivity {
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         //enableBTHardware
-        if(requestCode==3){
-            if(resultCode==(0)){
+        if (requestCode == 3) {
+            if (resultCode == (0)) {
                 btCancel();
-            }else{
+            } else {
                 pairedDevices();
             }
         }
@@ -133,8 +126,6 @@ public class MainActivity extends AppCompatActivity {
         enableBTHardware();
 
         pairedDevices();
-
-
 
 
         //OnClickListener fuer ListViews und refreshButton setzen
@@ -164,9 +155,9 @@ public class MainActivity extends AppCompatActivity {
                 try {
                     //device zuweisen auf den geklickt wurde und versuchen mit dem Device zu verbinden
                     mmDevice = (BluetoothDevice) pairedList.get(i);
-                   // btHeader.setText("Try connecting..");
-                   // imgClear.setVisibility(View.INVISIBLE);
-                    this.wait(10);
+                    // btHeader.setText("Try connecting..");
+                    // imgClear.setVisibility(View.INVISIBLE);
+                    //this.wait(10);
                     openBT();
                 } catch (Exception e) {
                     Log.w("APP", e);
@@ -182,13 +173,13 @@ public class MainActivity extends AppCompatActivity {
                 try {
                     //device zuweisen auf den geklickt wurde und versuchen mit dem Device zu verbinden
                     mmDevice = (BluetoothDevice) discoveredList.get(i);
-                   // btHeader.setText("Try connecting..");
+                    // btHeader.setText("Try connecting..");
                     //imgClear.setVisibility(View.INVISIBLE);
-                    this.wait(10);
+                    //this.wait(10);
                     openBT();
                 } catch (Exception e) {
                     Log.w("APP", e);
-                   // imgClear.setVisibility(View.VISIBLE);
+                    // imgClear.setVisibility(View.VISIBLE);
                     //btHeader.setText("Please try again");
                 }
             }
@@ -204,7 +195,7 @@ public class MainActivity extends AppCompatActivity {
         discoverBT(listView2);
     }
 
-    private void btCancel(){
+    private void btCancel() {
         Switch bluetoothSwitchButton = (Switch) findViewById(R.id.btSwitch);
         TextView switchItemText = (TextView) findViewById(R.id.btSwitchItem);
         bluetoothSwitchButton.setChecked(false);
@@ -217,7 +208,7 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
-    private void pairedDevices(){
+    private void pairedDevices() {
         //Paired BT Geraete
         Set<BluetoothDevice> pairedDevices = mBluetoothAdapter.getBondedDevices();
         //Fuegt alle Geraete und deren Namen in Listen ein
@@ -254,6 +245,7 @@ public class MainActivity extends AppCompatActivity {
         discoveredListViewAdapter = new ArrayAdapter(this, android.R.layout.simple_list_item_1, discoveredListStrings);
         listView.setAdapter(discoveredListViewAdapter);
     }
+
     //Broadcastreceiver der auf BT found Intent reagiert
     BroadcastReceiver myReceiver = new BroadcastReceiver() {
         @Override
@@ -346,7 +338,7 @@ public class MainActivity extends AppCompatActivity {
                                             //  myLabel.setText(data);
                                         }
                                     });
-                                //ansonsten naechstes byte
+                                    //ansonsten naechstes byte
                                 } else {
                                     readBuffer[readBufferPosition++] = b;
                                 }

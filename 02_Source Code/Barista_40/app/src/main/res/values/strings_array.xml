@@ -7,8 +7,9 @@
         <item>release</item>
         <item>standard</item>
         <item>stretch</item>
-        <item>wave</item>
+        <item>start</item>
     </string-array>
+
 
     <integer-array name="doCommandsImg">
         <item>@drawable/transparent</item>
@@ -23,19 +24,17 @@
 
     <!-- Arrays for Search Commands string and integer array must match position-->
     <string-array name="searchCommands">
-        <item>coke</item>
         <item>tomato</item>
         <item>fanta</item>
         <item>water</item>
-        <item>sport</item>
+        <item>blue</item>
     </string-array>
 
     <integer-array name="searchCommandsImg">
-        <item>@drawable/coca_cola</item>
         <item>@drawable/tomatensaft</item>
         <item>@drawable/fanta</item>
         <item>@drawable/wasser</item>
-        <item>@drawable/drink</item>
+        <item>@drawable/bluedrink</item>
     </integer-array>
 
     <!-- Arrays for Joint Commands string and integer array must match position-->
@@ -69,6 +68,8 @@
 
     <!-- Insert mapping key values on one position in the mappingKey array and add at the same position in the mapping Value array the respective string-->
     <string-array name="mappingKey">
+        <item>ride</item>
+        <item>xx</item>
         <item>porta</item>
         <item>warte</item>
         <item>hunter</item>
@@ -77,9 +78,17 @@
         <item>fante</item>
         <item>fanter</item>
         <item>panta</item>
+        <item>movie</item>
+        <item>remove</item>
+        <item>toothpaste</item>
+        <item>bass</item>
+        <item>north face</item>
+        <item>based</item>
     </string-array>
 
     <string-array name="mappingValue">
+        <item>right</item>
+        <item>20</item>
         <item>water</item>
         <item>water</item>
         <item>fanta</item>
@@ -88,6 +97,12 @@
         <item>fanta</item>
         <item>fanta</item>
         <item>fanta</item>
+        <item>move</item>
+        <item>move</item>
+        <item>move base</item>
+        <item>base</item>
+        <item>move base</item>
+        <item>base</item>
     </string-array>
 
 </resources>

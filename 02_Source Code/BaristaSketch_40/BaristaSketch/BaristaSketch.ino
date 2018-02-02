@@ -49,7 +49,8 @@ void setup()
 // M4=wrist vertical degrees. Allowed values from 0 to 180 degrees
 // M5=wrist rotation degrees. Allowed values from 0 to 180 degrees
 // M6=gripper degrees. Allowed values from 10 to 73 degrees. 10: the toungue is open, 73: the gripper is closed.
-  Braccio.ServoMovement (30,92,105,180,180,60,10);
+  //Braccio.ServoMovement (30,92,150,180,20,90,10);
+
   Serial.begin(9600); // Open data rate an sets serial port to 9600 bps  
   bluetooth.begin(9600);
 
@@ -58,8 +59,50 @@ void setup()
     Serial.println("Sensor gefunden");
   } else {
     Serial.println("TCS34725 nicht gefunden ... Ablauf gestoppt!");
-    while (1); // Halt!
+    while (1)
+    delay(100); // Halt!
   } 
+
+ /* startPattern(0);
+  delay(1000);
+  scanSidePattern(0,10);
+  scanSidePattern(0,60);
+  scanSidePattern(0,10);
+  delay(1000);
+  startPattern(0);
+  startPattern(20);
+  delay(1000);
+  scanSidePattern(20,10);
+  delay(1000);
+  scanSidePattern(20,60);
+  scanSidePattern(20,10);
+  delay(1000);
+  startPattern(20);
+  startPattern(40);
+  delay(1000);
+  scanSidePattern(40,10);
+  delay(1000);
+  scanSidePattern(40,60);
+  scanSidePattern(40,10);
+  delay(1000);
+  startPattern(40);
+  startPattern(60);
+  delay(1000);
+  scanSidePattern(60,10);
+  delay(1000);
+  scanSidePattern(60,60);
+  scanSidePattern(60,10);
+  delay(1000);
+  startPattern(60);
+  startPattern(80);
+  delay(1000);
+  scanSidePattern(80,10);
+  delay(1000);
+  scanSidePattern(80,60);
+  scanSidePattern(80,10);
+  delay(1000);
+  */
+   
 }
 
  
@@ -78,6 +121,7 @@ delay(1000);*/
 
   // send data only when you receive data
   if (bluetooth.available()) // Bluetooth input
+ //if (Serial.available()) 
   {
     String btString = "";
     int btStringInt = 0;  // nur für patterns
@@ -87,6 +131,7 @@ delay(1000);*/
 
     // Send any characters the bluetooth prints to the serial monitor
     btString = bluetooth.readString();
+    //btString = Serial.readString();
     Serial.println(btString);
     btString.trim();  // removes possible spaces Important for String comparison!
     btString.toLowerCase();
@@ -255,6 +300,8 @@ void singleCommandRelative (String joint, String orientation, int degree){
   }
 }
 
+
+
 String checkColour (){
    // Der Sensor liefert Werte für R, G, B und einen Clear-Wert zurück
    uint16_t clearcol, red, green, blue;
@@ -294,7 +341,7 @@ String checkColour (){
     Serial.println("\tGRUEN");
     colour = "green";
     return colour;
-   } else if ((r < 0.95) && (g < 1.2) && (b > 1.2)) { // r < 0.8 && g< 1.2
+   } else if ((r < 1.1) && (g < 1.2) && (b > 0.9)) { // r < 0.8 && g< 1.2
     Serial.println("\tBLAU");
     colour = "blue";
     return colour;
@@ -322,37 +369,66 @@ String checkColour (){
 
 void searchBeverage (String btColour) {
     int moveBase = 0;
-    Braccio.ServoMovement (30,ba,sh,el,wrV,wrR,gr); // Standard: (30,95,90,140,180,65,10)
+    startPattern(moveBase,10);
+    //Braccio.ServoMovement (30,ba,sh,el,wrV,wrR,gr); // Standard: (30,95,90,140,180,65,10)
 
     for (int i = 0; i<4; i++){
-      Braccio.ServoMovement (30,2+moveBase,sh,el,wrV,wrR,gr); // Halteposition
-      Braccio.ServoMovement (30,2+moveBase,135,140,180,65,10); // Check durch sensor
-      
-      if (checkColour() == btColour){
+      //Braccio.ServoMovement (30,2+moveBase,sh,el,wrV,wrR,gr); // Halteposition
+      //Braccio.ServoMovement (30,2+moveBase,135,140,180,65,10); // Check durch sensor
+
+      scanSidePattern(moveBase,10);
+
+      //muss noch auf richtige Farbe reagieren
+      //if (checkColour() == btColour){
+      if (i==2){  
         Serial.println("Braccio found a beverage with the right color!");
-        
-        Braccio.ServoMovement (30,5+moveBase,135,140,180,65,73); // greifen
+
+        scanSidePattern(moveBase,60);
+        startPattern(moveBase,60);
+        startPattern(80,60);
+        scanSidePattern(80,60);
+        scanSidePattern(80,10);
+        break;
+        /*Braccio.ServoMovement (30,5+moveBase,135,140,180,65,73); // greifen
         Braccio.ServoMovement (30,5+moveBase,90,140,180,65,73); // greifen hoch
         Braccio.ServoMovement (30,180,90,140,180,65,73); // greifen hoch links
         Braccio.ServoMovement (30,180,135,140,180,65,73); // greifen hoch links runter
         Braccio.ServoMovement (30,180,135,140,180,65,10); // greifen hoch links runter loslassen
         Braccio.ServoMovement (30,180,90,140,180,65,10); // hoch
-        break;
+        break;*/
       } else {
-        Braccio.ServoMovement (30,5+moveBase,sh,el,wrV,wrR,gr); // Halteposition
+        startPattern(moveBase,10);
+        //Braccio.ServoMovement (30,5+moveBase,sh,el,wrV,wrR,gr); // Halteposition
       }
-      moveBase += 30;
+      startPattern(moveBase,10);
+      moveBase += 20;
     }
+    startPattern(80,10);
+    startPattern(0,10);
+    //Braccio.ServoMovement (30,ba,sh,el,wrV,wrR,gr); // --> Standard
     
-    Braccio.ServoMovement (30,ba,sh,el,wrV,wrR,gr); // --> Standard
 }
 
 void stretchPattern() {
-  Braccio.ServoMovement (30,90,45,180,180,90,10); // Stretched Arm position
+  Braccio.ServoMovement (30,90, 90, 90, 90, 90,  73); // Stretched Arm position
 }
 
 void standardPattern() {
   Braccio.ServoMovement (30,ba,sh,el,wrV,wrR,gr);
+}
+
+void scanSidePattern(int base, int gripper) {
+  Braccio.ServoMovement (30,90+base,145,180,30,89,gripper);
+}
+
+void scanSideUpPattern(int base, int gripper) {
+  Braccio.ServoMovement (30,90+base,110,180,65,89, gripper);
+}
+void startPattern(int base, int gripper){
+  Braccio.ServoMovement (30,90+base,90,180,90,89,gripper);
+  }
+void scanTopPattern() {
+  Braccio.ServoMovement (30,92,90,180,180,90,10);
 }
 
 void helloPattern () {

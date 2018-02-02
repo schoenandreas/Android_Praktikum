@@ -21,7 +21,7 @@ const int gr = 10;
 
 //
 const int colourArraySize = 7; 
-const String colours[colourArraySize] = { "red", "blue", "brown", "yellow", "green", "white", "orange" };
+const String colours[colourArraySize] = { "tomato", "blue", "water", "fanta"};
 
 int bluetoothTx = 2;  // TX-O pin of bluetooth mate, Arduino D2
 int bluetoothRx = 3;  // RX-I pin of bluetooth mate, Arduino D3
@@ -63,66 +63,13 @@ void setup()
     delay(100); // Halt!
   } 
 
- /* startPattern(0);
-  delay(1000);
-  scanSidePattern(0,10);
-  scanSidePattern(0,60);
-  scanSidePattern(0,10);
-  delay(1000);
-  startPattern(0);
-  startPattern(20);
-  delay(1000);
-  scanSidePattern(20,10);
-  delay(1000);
-  scanSidePattern(20,60);
-  scanSidePattern(20,10);
-  delay(1000);
-  startPattern(20);
-  startPattern(40);
-  delay(1000);
-  scanSidePattern(40,10);
-  delay(1000);
-  scanSidePattern(40,60);
-  scanSidePattern(40,10);
-  delay(1000);
-  startPattern(40);
-  startPattern(60);
-  delay(1000);
-  scanSidePattern(60,10);
-  delay(1000);
-  scanSidePattern(60,60);
-  scanSidePattern(60,10);
-  delay(1000);
-  startPattern(60);
-  startPattern(80);
-  delay(1000);
-  scanSidePattern(80,10);
-  delay(1000);
-  scanSidePattern(80,60);
-  scanSidePattern(80,10);
-  delay(1000);
-  */
-   
+
 }
 
  
-void loop()
-{
-/*
-Serial.print("Eingabe: ");
-checkColour();
-
-while (Serial.available()==0);
- String a = Serial.readString();
-
-Serial.println(a);
-a.trim();
-delay(1000);*/
-
+void loop(){
   // send data only when you receive data
-  if (bluetooth.available()) // Bluetooth input
- //if (Serial.available()) 
-  {
+  if (bluetooth.available()){
     String btString = "";
     int btStringInt = 0;  // nur für patterns
     String btJointString = "";
@@ -146,41 +93,44 @@ delay(1000);*/
       }
     }
 
+
     // Check for pattern commands
     switch(btStringInt){
-      case 1:
+      case 0:
         goodbyePattern();
-        Serial.println("Braccio is performing Pattern Goodbye(1)!");
+        Serial.println("Braccio is performing Pattern Goodbye(0)!");
+        break;
+        
+      case 1:
+        helloPattern();
+        Serial.println("Braccio is performing Pattern Hello(1)!");
         break;
         
       case 2:
-        helloPattern();
-        Serial.println("Braccio is performing Pattern Hello(2)!");
-        break;
-        
-      case 3:
         stretchPattern();
         break;
         
-      case 4:
+      case 3:
         crocodilePattern();
         break;
         
-      case 5:
+      case 4:
         grapPattern();
         break;
 
-      case 6:
-        releasePattern();
+      case 5:
+        stretchPattern();
+        Serial.println("Braccio is performing Pattern Stretch(5)!");
         break;
 
-      case 7:
+      case 6:
         standardPattern();
         break;
         
       default:
         currentPosition();
     }
+    
 
     // Check for single Joint commands; Commands are either in the form "base_90/right." or "base_90."
     // Direct string comparison with  if (strcmp(dataFromBt, "") == 0) --> true
@@ -335,13 +285,9 @@ String checkColour (){
    // mit der seriellen Ausgabe entsprechend anpassen
    if ((r > 1.4) && (g < 0.9) && (b < 0.9)) {
     Serial.println("\tROT");
-    colour = "red";
+    colour = "tomato";
     return colour;
-   } else if ((r < 0.95) && (g > 1.4) && (b < 0.9)) {
-    Serial.println("\tGRUEN");
-    colour = "green";
-    return colour;
-   } else if ((r < 1.1) && (g < 1.2) && (b > 0.9)) { // r < 0.8 && g< 1.2
+   } else if ((r > 0.5) && (r < 0.8) && (g > 0.95) && (g < 1.05) && (b > 1.1) && (b < 0.9)) { // r < 0.8 && g< 1.2
     Serial.println("\tBLAU");
     colour = "blue";
     return colour;
@@ -349,14 +295,14 @@ String checkColour (){
    // Gelb und Orange sind etwas tricky, aber nach etwas
    // Herumprobieren haben sich bei mir diese Werte als
    // gut erwiesen
-   else if ((r > 1.15) && (g > 1.15) && (b < 0.7)) {
+   else if ((r > 1.25) && (r < 1.35) && (g > 1.05) && (g < 1.15) && (b > 0.55) && (b < 0.65)) {
     Serial.println("\tGELB");
-    colour = "yellow";
+    colour = "fanta";
     return colour;
    }
-   else if ((r > 1.4) && (g < 1.0) && (b < 0.7)) {
-    Serial.println("\tORANGE");
-    colour = "orange";
+   else if ((r > 0.95) && (r < 1.1) && (g > 1.0) && (g < 1.1) && (b > 0.85) && (b < 1.0)) {
+    Serial.println("\tWEISS");
+    colour = "water";
     return colour;
    } 
    // Wenn keine Regel greift, dann ehrlich sein
@@ -373,39 +319,25 @@ void searchBeverage (String btColour) {
     //Braccio.ServoMovement (30,ba,sh,el,wrV,wrR,gr); // Standard: (30,95,90,140,180,65,10)
 
     for (int i = 0; i<4; i++){
-      //Braccio.ServoMovement (30,2+moveBase,sh,el,wrV,wrR,gr); // Halteposition
-      //Braccio.ServoMovement (30,2+moveBase,135,140,180,65,10); // Check durch sensor
-
       scanSidePattern(moveBase,10);
-
-      //muss noch auf richtige Farbe reagieren
-      //if (checkColour() == btColour){
-      if (i==2){  
-        Serial.println("Braccio found a beverage with the right color!");
-
-        scanSidePattern(moveBase,60);
-        startPattern(moveBase,60);
-        startPattern(80,60);
-        scanSidePattern(80,60);
-        scanSidePattern(80,10);
-        break;
-        /*Braccio.ServoMovement (30,5+moveBase,135,140,180,65,73); // greifen
-        Braccio.ServoMovement (30,5+moveBase,90,140,180,65,73); // greifen hoch
-        Braccio.ServoMovement (30,180,90,140,180,65,73); // greifen hoch links
-        Braccio.ServoMovement (30,180,135,140,180,65,73); // greifen hoch links runter
-        Braccio.ServoMovement (30,180,135,140,180,65,10); // greifen hoch links runter loslassen
-        Braccio.ServoMovement (30,180,90,140,180,65,10); // hoch
-        break;*/
+      if (checkColour() == btColour){  
+          Serial.println("Braccio found a beverage with the right color!");
+  
+          scanSidePattern(moveBase,60);
+          startPattern(moveBase,60);
+          startPattern(80,60);
+          scanSidePattern(80,60);
+          scanSidePattern(80,10);
+          break;
       } else {
         startPattern(moveBase,10);
-        //Braccio.ServoMovement (30,5+moveBase,sh,el,wrV,wrR,gr); // Halteposition
       }
       startPattern(moveBase,10);
       moveBase += 20;
     }
     startPattern(80,10);
     startPattern(0,10);
-    //Braccio.ServoMovement (30,ba,sh,el,wrV,wrR,gr); // --> Standard
+
     
 }
 
@@ -438,6 +370,14 @@ void helloPattern () {
 void goodbyePattern () {
   
 }
+
+void colourLoop(){
+  scanSidePattern(80,10);
+  while(1){
+  checkColour();
+  delay(500);
+  }
+  }
 
 // Imitate "Schnappi" hand
 void crocodilePattern() {
