@@ -174,11 +174,11 @@ public class Tab2Fragment extends Fragment {
 
                     searchProbability = calculateProbability(spokenText, searchCommandArray);
                     doProbability = calculateProbability(spokenText, doCommandArray);
-                    manualProbability = calculateProbability(spokenText, jointCommandArray) + calculateProbability(spokenText, orientationCommandArray);
+                    manualProbability = calculateProbability(spokenText, jointCommandArray);
 
                     Log.w("mappingKeyArrayProb", "sp " + searchProbability + "dp " + doProbability + "mp " + manualProbability);
 
-                    if (searchProbability == 2 || doProbability == 2 || manualProbability == 4){
+                    if (searchProbability == 2 || doProbability == 2 || manualProbability == 2){
                         Log.w("finalBreak", "baaam");
                         break;
                     }
