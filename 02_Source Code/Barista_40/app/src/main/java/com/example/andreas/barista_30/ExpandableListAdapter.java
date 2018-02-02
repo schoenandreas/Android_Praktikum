@@ -45,7 +45,6 @@ public class ExpandableListAdapter extends BaseExpandableListAdapter {
                              boolean isLastChild, View convertView, ViewGroup parent) {
 
         final String childText = (String) getChild(groupPosition, childPosition);
-        //final Drawable childIamge = (Drawable) getChild(groupPosition, childPosition);
 
         if (convertView == null) {
             LayoutInflater infalInflater = (LayoutInflater) _context
@@ -56,11 +55,7 @@ public class ExpandableListAdapter extends BaseExpandableListAdapter {
         TextView txtListChild = (TextView) convertView
                 .findViewById(R.id.lblListItem);
 
-        //ImageView imgListChild = (ImageView) convertView
-        //        .findViewById(R.id.lbListImage);
-
         txtListChild.setText(childText);
-        //imgListChild.setImageDrawable(childIamge);
 
         return convertView;
     }

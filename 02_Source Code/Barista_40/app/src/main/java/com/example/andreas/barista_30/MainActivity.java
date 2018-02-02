@@ -84,7 +84,7 @@ public class MainActivity extends AppCompatActivity {
         //Fragemnts zu Adapter hinzufuegen
         SectionsPageAdapter adapter = new SectionsPageAdapter(getSupportFragmentManager());
         adapter.addFragment(new Tab1Fragment(), "Help");
-        adapter.addFragment(new Tab2Fragment(), "SpeechRecognition");
+        adapter.addFragment(new Tab2Fragment(), "Control");
         adapter.addFragment(new Tab3Fragment(), "DrinkLexikon");
         //Adapter auf Viewpager setzen
         viewPager.setAdapter(adapter);

@@ -1,6 +1,5 @@
 package com.example.andreas.barista_30;
 
-import android.graphics.drawable.Drawable;
 import android.support.v4.app.Fragment;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -15,7 +14,6 @@ import android.widget.ExpandableListView.OnChildClickListener;
 import android.widget.ExpandableListView.OnGroupClickListener;
 import android.widget.ExpandableListView.OnGroupCollapseListener;
 import android.widget.ExpandableListView.OnGroupExpandListener;
-import android.widget.ImageView;
 import android.widget.Switch;
 import android.widget.TextView;
 import android.widget.Toast;
