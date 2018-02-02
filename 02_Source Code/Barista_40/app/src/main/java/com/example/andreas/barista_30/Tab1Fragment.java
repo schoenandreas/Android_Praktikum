@@ -1,16 +1,21 @@
 package com.example.andreas.barista_30;
 
-
-import android.app.Dialog;
+import android.graphics.drawable.Drawable;
+import android.support.v4.app.Fragment;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
-import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.BaseExpandableListAdapter;
 import android.widget.ExpandableListView;
 import android.widget.ExpandableListView.OnChildClickListener;
+import android.widget.ExpandableListView.OnGroupClickListener;
+import android.widget.ExpandableListView.OnGroupCollapseListener;
+import android.widget.ExpandableListView.OnGroupExpandListener;
+import android.widget.ImageView;
 import android.widget.Switch;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -23,31 +28,82 @@ import android.widget.Toast;
 public class Tab1Fragment extends Fragment {
 
     View rootView;
-    ExpandableListView lv;
-    private String[] groups;
-    private String[][] children;
+    ExpandableListAdapter listAdapter;
+    ExpandableListView expListView;
+    List<String> listDataHeader;
+    HashMap<String, List<String>> listDataChild;
 
-    public Tab1Fragment() {
-
-    }
 
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        groups = new String[]{"Braccio Introduction", "Braccio Commands", "FAQs", "About"};
-
-        children = new String[][]{
-                {"This simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum."},
-                {"Contrary to popular belief, Lorem Ipsum is not simply random text. It has roots in a piece of classical Latin literature from 45 BC, making it over 2000 years old. Richard McClintock, a Latin professor at Hampden-Sydney College in Virginia, looked up one of the more obscure Latin words, consectetur, from a Lorem Ipsum passage, and going through the cites of the word in classical literature, discovered the undoubtable source. Lorem Ipsum comes from sections 1.10.32 and 1.10.33 of comes from a line in section 1.10.32."},
-                {"It is a long established fact that a reader will be distracted by the readable content of a page when looking at its layout. The point of using Lorem Ipsum is that it has a more-or-less normal distribution of letters, as opposed to using 'Content here, content here', making it look like readable English. Many desktop publishing packages and web page editors now use Lorem Ipsum as their default model text, and a search for 'lorem ipsum' will uncover many web sites still in their infancy. Various versions have evolved over the years, sometimes by accident, sometimes on purpose (injected humour and the like)."},
-                {"There are many variations of passages of Lorem Ipsum available, but the majority have suffered alteration in some form, by injected humour, or randomised words which don't look even slightly believable. If you are going to use a passage of Lorem Ipsum, you need to be sure there isn't anything embarrassing hidden in the middle of text. All the Lorem Ipsum generators on the Internet tend to repeat predefined chunks as necessary, making this the first true generator on the Internet. It uses a dictionary of over 200 Latin words, combined with a handful of model sentence structures, to generate Lorem Ipsum which looks reasonable. The generated Lorem Ipsum is therefore always free from repetition, injected humour, or non-characteristic words etc."}
-        };
+        // preparing list data
+        prepareListData();
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         rootView = inflater.inflate(R.layout.tab1_fragment, container, false);
 
+
+        // get the listview
+        expListView = (ExpandableListView) rootView.findViewById(R.id.lvExp);
+        listAdapter = new ExpandableListAdapter(listDataHeader, listDataChild, getActivity());
+        // setting list adapter
+        expListView.setAdapter(listAdapter);
+
+
+        // Listview Group click listener
+        expListView.setOnGroupClickListener(new OnGroupClickListener() {
+
+            @Override
+            public boolean onGroupClick(ExpandableListView parent, View v,
+                                        int groupPosition, long id) {
+                // Toast.makeText(getApplicationContext(),
+                // "Group Clicked " + listDataHeader.get(groupPosition),
+                // Toast.LENGTH_SHORT).show();
+                return false;
+            }
+        });
+        // Listview Group expanded listener
+        expListView.setOnGroupExpandListener(new OnGroupExpandListener() {
+
+            @Override
+            public void onGroupExpand(int groupPosition) {
+                /*Toast.makeText(getActivity(),
+                        listDataHeader.get(groupPosition) + " Expanded",
+                        Toast.LENGTH_SHORT).show();*/
+            }
+        });
+        // Listview Group collasped listener
+        expListView.setOnGroupCollapseListener(new OnGroupCollapseListener() {
+
+            @Override
+            public void onGroupCollapse(int groupPosition) {
+                /*Toast.makeText(getActivity(),
+                        listDataHeader.get(groupPosition) + " Collapsed",
+                        Toast.LENGTH_SHORT).show();*/
+
+            }
+        });
+        // Listview on child click listener
+        expListView.setOnChildClickListener(new OnChildClickListener() {
+
+            @Override
+            public boolean onChildClick(ExpandableListView parent, View v,
+                                        int groupPosition, int childPosition, long id) {
+                /*Toast.makeText(
+                        getActivity(),
+                        listDataHeader.get(groupPosition)
+                                + " : "
+                                + listDataChild.get(
+                                listDataHeader.get(groupPosition)).get(
+                                childPosition), Toast.LENGTH_SHORT)
+                        .show();*/
+                return false;
+            }
+        });
+        // Gives the bluetooth Switch an OnClickListener
         final Switch bluetoothSwitchButton = (Switch) rootView.findViewById(R.id.btSwitch);
 
         bluetoothSwitchButton.setOnClickListener(new View.OnClickListener(){
@@ -72,195 +128,90 @@ public class Tab1Fragment extends Fragment {
                 }
             }
         });
+
         return rootView;
     }
 
-    @Override
-    public void onViewCreated(View view, Bundle savedInstanceState) {
-        super.onViewCreated(view, savedInstanceState);
+    /*
+     * Preparing the list data
+     */
+    private void prepareListData() {
+        listDataHeader = new ArrayList<String>();
+        listDataChild = new HashMap<String, List<String>>();
 
-        lv = (ExpandableListView) view.findViewById(R.id.tab1list);
-        lv.setAdapter(new ExpandableListAdapter(groups, children));
-        lv.setGroupIndicator(null);
+        // Adding child data
+        listDataHeader.add("Braccio Introduction");
+        listDataHeader.add("Braccio Commands");
+        listDataHeader.add("FAQs");
+        listDataHeader.add("About");
 
+
+        // Adding child data
+        List<String> introduction = new ArrayList<String>();
+        introduction.add("The idea was to create a robotic barkeeper with the Arduino Braccio. " +
+                "Therefor some drinks where realised to search for within the closed alpha. " +
+                "Additionally the possibility to perform predefined patterns is given. " +
+                "In case somebody wants to control single joints of the Braccio you can address them via absolute commands referring to the degree on the plate or via relative commands referring to the current position. " +
+                "The absolute limitations for each joint are listed beneath. " +
+                "\nBase: Allowed values from 0 to 180 degrees" +
+                "\nShoulder: Allowed values from 15 to 165 degrees" +
+                "\nElbow: Allowed values from 0 to 180 degrees" +
+                "\nUnderarm: Allowed values from 0 to 180 degrees" +
+                "\nWrist: Allowed values from 0 to 180 degrees" +
+                "\nGrapper: Allowed values from 10 to 73 degrees (10: open / 73: closed)");
+
+        List<String> commands = new ArrayList<String>();
+        commands.add("PREDEFINED CONTROLS: Search" +
+                "\nSearch Fanta " +
+                "\nSearch Sport drink  " +
+                "\nSearch Water " +
+                "\nSearch Tomato juice ");
+        commands.add("PREDEFINED CONTROLS: Pattern " +
+                "\nDo Goodbye " +
+                "\nDo Hello " +
+                "\nDo Schnappi " +
+                "\nDo Grap " +
+                "\nDo Release ");
+        commands.add("MANUAL CONTROLS: Absolute" +
+                "\nMove Base -degree- " +
+                "\nMove Shoulder -degree- " +
+                "\nMove Elbow -degree- " +
+                "\nMove Underarm -degree- " +
+                "\nMove Wrist -degree- " +
+                "\nMove Grapper -degree- ");
+        commands.add("MANUAL CONTROLS: Relative" +
+                "\nMove Base -degree- (right or left) " +
+                "\nMove Shoulder -degree- (right or left) " +
+                "\nMove Elbow -degree- (right or left) " +
+                "\nMove Underarm -degree- (right or left) " +
+                "\nMove Wrist -degree- (right or left) " +
+                "\nMove Grapper -degree- (right or left)");
+
+        List<String> faqs = new ArrayList<String>();
+        faqs.add("Question: Why is the application so awesome? " +
+                "\nBecause. Just because....");
+        faqs.add("Question: Who are the geniuses behind this idea? " +
+                "\nIt was developed by a bunch of medium skilled programmers who had nothing better to do with their live.");
+        faqs.add("Question: Did you have problems creating this fantastic project? " +
+                "\nThe project got bigger and bigger. On various times our lecturer came up with new stuff to develop without any logic.");
+        faqs.add("Question: What will you develop next? " +
+                "\nYou know... It has always been a dream of mine to develop a shopping app for horse riding equipment.");
+
+        List<String> about = new ArrayList<String>();
+        about.add("THIS PROJECT IN DATA");
+        about.add("Total lines of code android: xxx " +
+                "\nTotal lines of code arduino: xxx " +
+                "\nTotal development time: 700h+" +
+                "\nTotal developer count: 3 " +
+                "\nTotal fun factor: Over 9,000");
+        about.add("This project was a cooperation between: \nThe chair of operating systems (M. Sc. Sebastian Eckl) " +
+                "\n& " +
+                "\nThe Barrista Team (Andreas Schön, Krist Stoja & B. Sc. Tobias Bartsch)");
+
+
+        listDataChild.put(listDataHeader.get(0), introduction); // Header, Child data
+        listDataChild.put(listDataHeader.get(1), commands);
+        listDataChild.put(listDataHeader.get(2), faqs);
+        listDataChild.put(listDataHeader.get(3), about);
     }
-
-    public class ExpandableListAdapter extends BaseExpandableListAdapter {
-
-        private final LayoutInflater inf;
-        private String[] groups;
-        private String[][] children;
-
-        public ExpandableListAdapter(String[] groups, String[][] children) {
-            this.groups = groups;
-            this.children = children;
-            inf = LayoutInflater.from(getActivity());
-        }
-
-        @Override
-        public int getGroupCount() {
-            return groups.length;
-        }
-
-        @Override
-        public int getChildrenCount(int groupPosition) {
-            return children[groupPosition].length;
-        }
-
-        @Override
-        public Object getGroup(int groupPosition) {
-            return groups[groupPosition];
-        }
-
-        @Override
-        public Object getChild(int groupPosition, int childPosition) {
-            return children[groupPosition][childPosition];
-        }
-
-        @Override
-        public long getGroupId(int groupPosition) {
-            return groupPosition;
-        }
-
-        @Override
-        public long getChildId(int groupPosition, int childPosition) {
-            return childPosition;
-        }
-
-        @Override
-        public boolean hasStableIds() {
-            return true;
-        }
-
-        @Override
-        public View getChildView(int groupPosition, final int childPosition, boolean isLastChild, View convertView, ViewGroup parent) {
-
-            ViewHolder holder;
-            if (convertView == null) {
-                convertView = inf.inflate(R.layout.tab1_fragment_item, parent, false);
-                holder = new ViewHolder();
-
-                holder.text = (TextView) convertView.findViewById(R.id.lblListItem);
-                convertView.setTag(holder);
-            } else {
-                holder = (ViewHolder) convertView.getTag();
-            }
-
-            holder.text.setText(getChild(groupPosition, childPosition).toString());
-
-            return convertView;
-        }
-
-        @Override
-        public View getGroupView(int groupPosition, boolean isExpanded, View convertView, ViewGroup parent) {
-            ViewHolder holder;
-
-            if (convertView == null) {
-                convertView = inf.inflate(R.layout.tab1_fragment_groupview, parent, false);
-
-                holder = new ViewHolder();
-                holder.text = (TextView) convertView.findViewById(R.id.lblListHeader);
-                convertView.setTag(holder);
-            } else {
-                holder = (ViewHolder) convertView.getTag();
-            }
-
-            holder.text.setText(getGroup(groupPosition).toString());
-
-            return convertView;
-        }
-
-        @Override
-        public boolean isChildSelectable(int groupPosition, int childPosition) {
-            return true;
-        }
-
-        private class ViewHolder {
-            TextView text;
-        }
-    }
-
-
 }
-
-/*
-public class Tab1Fragment extends Fragment{
-
-    @Nullable
-    @Override
-    public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.tab1_fragment, container, false);
-        ExpandableListView elv = (ExpandableListView) view.findViewById(R.id.tab1list);
-        elv.setAdapter(new SavedTabsListAdapter());
-        return view;
-    }
-
-    public class SavedTabsListAdapter extends BaseExpandableListAdapter {
-
-        private String[] groups = { "Braccio Introduction", "Braccio Commands", "FAQs", "About" };
-
-        private String[][] children = {
-                { "1Arnold", "2Barry", "3Chuck", "4David" },
-                { "1Ace", "2Bandit", "3Cha-Cha", "4Deuce" },
-                { "1Fluffy", "2Snuggles" },
-                { "1Goldy", "2Bubbles" }
-        };
-
-        @Override
-        public int getGroupCount() {
-            return groups.length;
-        }
-
-        @Override
-        public int getChildrenCount(int i) {
-            return children[i].length;
-        }
-
-        @Override
-        public Object getGroup(int i) {
-            return groups[i];
-        }
-
-        @Override
-        public Object getChild(int i, int i1) {
-            return children[i][i1];
-        }
-
-        @Override
-        public long getGroupId(int i) {
-            return i;
-        }
-
-        @Override
-        public long getChildId(int i, int i1) {
-            return i1;
-        }
-
-        @Override
-        public boolean hasStableIds() {
-            return true;
-        }
-
-        @Override
-        public View getGroupView(int i, boolean b, View view, ViewGroup viewGroup) {
-            TextView textView = new TextView(Tab1Fragment.this.getActivity());
-            textView.setText(getGroup(i).toString());
-            return textView;
-        }
-
-        @Override
-        public View getChildView(int i, int i1, boolean b, View view, ViewGroup viewGroup) {
-            TextView textView = new TextView(Tab1Fragment.this.getActivity());
-            textView.setText(getChild(i, i1).toString());
-            return textView;
-        }
-
-        @Override
-        public boolean isChildSelectable(int i, int i1) {
-            return true;
-        }
-
-    }
-
-}
-*/

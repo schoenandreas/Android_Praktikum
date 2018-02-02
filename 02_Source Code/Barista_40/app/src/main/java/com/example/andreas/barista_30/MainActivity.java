@@ -293,8 +293,6 @@ public class MainActivity extends AppCompatActivity {
             Intent enableBluetooth = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
             startActivityForResult(enableBluetooth, 3);
         }
-
-
     }
 
 
@@ -373,5 +371,4 @@ public class MainActivity extends AppCompatActivity {
         mmSocket.close();
         //myLabel.setText("Bluetooth Closed");
     }
-
 }
