@@ -1,11 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout
-    xmlns:android ="http://schemas.android.com/apk/res/android"
-    android:id="@+id/tab1"
-    android:layout_width="fill_parent"
-    android:layout_height="match_parent"
-    android:orientation="vertical">
-    <!--android:background="@color/colorAccent50" Ganzer Hintergrund-->
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+android:layout_width="fill_parent"
+android:layout_height="match_parent"
+android:orientation="vertical">
+<!--android:background="@color/colorAccent50" Ganzer Hintergrund-->
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -27,7 +25,6 @@
             android:textStyle="bold"
             android:checked="true"
             android:theme="@style/SCBSwitch" />
-
     </LinearLayout>
 
     <LinearLayout
@@ -45,18 +42,36 @@
             android:paddingTop="5dp"
             android:textSize="14sp"
             android:text="This device is not paired."/>
-
     </LinearLayout>
 
+    <!-- Dark Line for seperation of content-->
     <View
         android:layout_width="match_parent"
         android:layout_height="2dp"
         android:background="@android:color/black"/>
 
-    <ExpandableListView
-        android:id="@+id/tab1list"
+    <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent"/>
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:elevation="8dp">
 
+        <ImageView
+            android:id="@+id/lbListImage"
+            android:layout_width="match_parent"
+            android:layout_height="150dp"
+            android:src="@drawable/arm0"
+            android:fitsSystemWindows="true" />
 
+        <!-- Dark Line for seperation of content-->
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="2dp"
+            android:background="@android:color/black"/>
+
+        <ExpandableListView
+            android:id="@+id/lvExp"
+            android:layout_height="match_parent"
+            android:layout_width="match_parent"/>
+    </LinearLayout>
 </LinearLayout>

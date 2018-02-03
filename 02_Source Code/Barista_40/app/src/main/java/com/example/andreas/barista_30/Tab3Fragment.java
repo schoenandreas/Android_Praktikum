@@ -1,7 +1,6 @@
 package com.example.andreas.barista_30;
 
 import android.app.Dialog;
-import android.content.ContentResolver;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
@@ -11,16 +10,12 @@ import android.support.v4.app.Fragment;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-    import android.support.v7.widget.Toolbar;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
-
-import com.example.andreas.barista_30.DrinkList;
-import com.example.andreas.barista_30.R;
 
 import java.util.ArrayList;
 
@@ -111,8 +106,7 @@ public class Tab3Fragment extends Fragment {
         @Override
         public MyViewHolder onCreateViewHolder(ViewGroup parent,int viewType) {
             // create a new view
-            View view = LayoutInflater.from(parent.getContext())
-                    .inflate(R.layout.cardfragment, parent, false);
+            View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.cardfragment, parent, false);
             MyViewHolder holder = new MyViewHolder(view);
             return holder;
         }
