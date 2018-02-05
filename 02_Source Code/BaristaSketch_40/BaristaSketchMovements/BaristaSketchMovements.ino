@@ -11,7 +11,7 @@ Servo wrist_ver;
 Servo wrist_rot;
 Servo gripper;
 
-int underarm=wrist_ver.read()-180;
+int forearm=wrist_ver.read()-180;
 int wrist=wrist_rot.read()+180;
 
 // Standard position
@@ -24,7 +24,7 @@ const int gr = 10;
 
 //
 const int colourArraySize = 7; 
-const String colours[colourArraySize] = { "tomato", "blue", "water", "fanta"};
+const String colours[colourArraySize] = { "tomato", "blueberry", "water", "fanta"};
 
 int bluetoothTx = 2;  // TX-O pin of bluetooth mate, Arduino D2
 int bluetoothRx = 3;  // RX-I pin of bluetooth mate, Arduino D3
@@ -99,36 +99,46 @@ void loop(){
 
     // Check for pattern commands
     switch(btStringInt){
-      case 0:
-        helloPattern();
-        Serial.println("Braccio is performing Pattern Hello(0)!");
-        break;
-        
       case 1:
-        goodbyePattern();
-        Serial.println("Braccio is performing Pattern Goodbye(1)!");
+        helloPattern();
+        Serial.println("Braccio is performing Pattern Hello(1)!");
+        bluetooth.print("Pattern: Hello performed");
         break;
         
       case 2:
-        stretchPattern();
+        goodbyePattern();
+        Serial.println("Braccio is performing Pattern Goodbye(2)!");
+        bluetooth.print("Pattern: Goodbye performed");
         break;
         
       case 3:
-        crocodilePattern();
+        colourLoop();
+        Serial.println("Braccio is performing Pattern ColourLoop(3)!");
+        bluetooth.print("Pattern: ColorLoop performed");
         break;
         
       case 4:
-        grapPattern();
+        crocodilePattern();
+        Serial.println("Braccio is performing Pattern Crocodile(4)!");
+        bluetooth.print("Pattern: Crocodile performed");
         break;
-
+        
       case 5:
-        stretchPattern();
-        Serial.println("Braccio is performing Pattern Stretch(5)!");
+        standardPattern();
+        Serial.println("Braccio is performing Pattern Standard(5)!");
+        bluetooth.print("Pattern: Standard performed");
         break;
 
       case 6:
+        stretchPattern();
+        Serial.println("Braccio is performing Pattern Stretch(6)!");
+        bluetooth.print("Pattern: Stretch performed");
+        break;
+
+      case 7:
         startPattern(0,10);
-        Serial.println("Braccio is performing Pattern Start(6)!");
+        Serial.println("Braccio is performing Pattern Start(7)!");
+        bluetooth.print("Pattern: Start performed");
         break;
 
         //default:
@@ -150,7 +160,7 @@ void loop(){
         Serial.print("The Joint " + btJointString + " is chosen. It turns to the relatively " + btOrientation + "position degree ");
         Serial.println(btDegree);
         singleCommandRelative(btJointString, btOrientation, btDegree);
-        bluetooth.print("Relative command working");
+        bluetooth.print("Relative command performed for " + btJointString);
         
         
       } else if (btString.indexOf(".") > 0){
@@ -159,7 +169,7 @@ void loop(){
         Serial.print("The Joint " + btJointString + " is chosen. It turns to the absolute position degree ");
         Serial.println(btDegree);
         singleCommandAbsolute(btJointString, btDegree); 
-        bluetooth.print("Absolute command working");
+        bluetooth.print("Absolute command performed for " + btJointString);
         
       }  
     }
@@ -189,24 +199,24 @@ void singleCommandAbsolute (String joint, int degree){
   
 
   if (joint.equalsIgnoreCase("base")){
-    Braccio.ServoMovement (30,degree,shoulder.read(),elbow.read(),underarm,wrist,gripper.read());
+    Braccio.ServoMovement (30,degree,shoulder.read(),elbow.read(),forearm,wrist,gripper.read());
     Serial.println("sCA base");
   } else if (joint.equalsIgnoreCase("shoulder")){
-    Braccio.ServoMovement (30,base.read(),degree,elbow.read(),underarm,wrist,gripper.read());
+    Braccio.ServoMovement (30,base.read(),degree,elbow.read(),forearm,wrist,gripper.read());
     Serial.println("sCA shoulder");
   } else if (joint.equalsIgnoreCase("elbow")){
-    Braccio.ServoMovement (30,base.read(),shoulder.read(),degree,underarm,wrist,gripper.read());
+    Braccio.ServoMovement (30,base.read(),shoulder.read(),degree,forearm,wrist,gripper.read());
     Serial.println("sCA elbow");
-  } else if (joint.equalsIgnoreCase("underarm")){
+  } else if (joint.equalsIgnoreCase("forearm")){
     Braccio.ServoMovement (30,base.read(),shoulder.read(),elbow.read(),degree,wrist,gripper.read());
-    underarm=degree;
-    Serial.println("sCA underarm");
+    forearm=degree;
+    Serial.println("sCA forearm");
   } else if (joint.equalsIgnoreCase("wrist")){
-    Braccio.ServoMovement (30,base.read(),shoulder.read(),elbow.read(),underarm,degree,gripper.read());
+    Braccio.ServoMovement (30,base.read(),shoulder.read(),elbow.read(),forearm,degree,gripper.read());
     wrist=degree;
     Serial.println("sCA wrist");
   } else if (joint.equalsIgnoreCase("gripper")){
-    Braccio.ServoMovement (30,base.read(),shoulder.read(),elbow.read(),underarm,wrist,degree);
+    Braccio.ServoMovement (30,base.read(),shoulder.read(),elbow.read(),forearm,wrist,degree);
     Serial.println("sCA gripper");
   } else {
     currentPosition();
@@ -226,38 +236,38 @@ void singleCommandRelative (String joint, String orientation, int degree){
   Serial.println(gripper.read());
    if (joint.equalsIgnoreCase("base")){
     if (orientation.equalsIgnoreCase("right")) {
-        Braccio.ServoMovement (30,base.read()+degree,shoulder.read(),elbow.read(),underarm,wrist,gripper.read()); // max 180               
+        Braccio.ServoMovement (30,base.read()+degree,shoulder.read(),elbow.read(),forearm,wrist,gripper.read()); // max 180               
       } else if (orientation.equals("left")) {
-        Braccio.ServoMovement (30,base.read()-degree,shoulder.read(),elbow.read(),underarm,wrist,gripper.read()); // min 0
+        Braccio.ServoMovement (30,base.read()-degree,shoulder.read(),elbow.read(),forearm,wrist,gripper.read()); // min 0
       } else {
         // Only used if necessary for debugging
       }
   } else if (joint.equalsIgnoreCase("shoulder")){
     if (orientation.equalsIgnoreCase("right")) {
-        Braccio.ServoMovement (30,base.read(),shoulder.read()-degree,elbow.read(),underarm,wrist,gripper.read()); // min 15
+        Braccio.ServoMovement (30,base.read(),shoulder.read()-degree,elbow.read(),forearm,wrist,gripper.read()); // min 15
       } else if (orientation.equals("left")) {
-        Braccio.ServoMovement (30,base.read(),shoulder.read()+degree,elbow.read(),underarm,wrist,gripper.read()); // max 165
+        Braccio.ServoMovement (30,base.read(),shoulder.read()+degree,elbow.read(),forearm,wrist,gripper.read()); // max 165
       } else {
         // Only used if necessary for debugging
       }
   } else if (joint.equalsIgnoreCase("elbow")){
     if (orientation.equalsIgnoreCase("right")) {
-        Braccio.ServoMovement (30,base.read(),shoulder.read(),elbow.read()-degree,underarm,wrist,gripper.read()); // min 15
+        Braccio.ServoMovement (30,base.read(),shoulder.read(),elbow.read()-degree,forearm,wrist,gripper.read()); // min 15
       } else if (orientation.equals("left")) {
-        Braccio.ServoMovement (30,base.read(),shoulder.read(),elbow.read()+degree,underarm,wrist,gripper.read()); // max 165
+        Braccio.ServoMovement (30,base.read(),shoulder.read(),elbow.read()+degree,forearm,wrist,gripper.read()); // max 165
       } else {
         // Only used if necessary for debugging
       }
     // ToDo
 
     //funktioniert nicht sehr gut
-  } else if (joint.equalsIgnoreCase("underarm")){
+  } else if (joint.equalsIgnoreCase("forearm")){
     if (orientation.equalsIgnoreCase("right")) {
-        Braccio.ServoMovement (30,base.read(),shoulder.read(),elbow.read(),underarm-degree,wrist,gripper.read()); // min 15
-        underarm=underarm-degree;
+        Braccio.ServoMovement (30,base.read(),shoulder.read(),elbow.read(),forearm-degree,wrist,gripper.read()); // min 15
+        forearm=forearm-degree;
       } else if (orientation.equals("left")) {
-        Braccio.ServoMovement (30,base.read(),shoulder.read(),elbow.read(),underarm,wrist,gripper.read()); // max 165
-        underarm=underarm+degree;
+        Braccio.ServoMovement (30,base.read(),shoulder.read(),elbow.read(),forearm,wrist,gripper.read()); // max 165
+        forearm=forearm+degree;
       } else {
         // Only used if necessary for debugging
       }
@@ -266,10 +276,10 @@ void singleCommandRelative (String joint, String orientation, int degree){
     //funktioniert nicht sehr gut
   } else if (joint.equalsIgnoreCase("wrist")){
     if (orientation.equalsIgnoreCase("right")) {
-        Braccio.ServoMovement (30,base.read(),shoulder.read(),elbow.read(),underarm,wrist-degree,gripper.read()); // max 180      
+        Braccio.ServoMovement (30,base.read(),shoulder.read(),elbow.read(),forearm,wrist-degree,gripper.read()); // max 180      
         wrist=wrist-degree;         
       } else if (orientation.equals("left")) {
-        Braccio.ServoMovement (30,base.read(),shoulder.read(),elbow.read(),underarm,wrist+degree,gripper.read()); // min 0
+        Braccio.ServoMovement (30,base.read(),shoulder.read(),elbow.read(),forearm,wrist+degree,gripper.read()); // min 0
         wrist=wrist+degree;
       } else {
         // Only used if necessary for debugging
@@ -277,7 +287,7 @@ void singleCommandRelative (String joint, String orientation, int degree){
     // ToDo
   } else if (joint.equalsIgnoreCase("gripper")){
     if (orientation.equalsIgnoreCase("open")) {
-        Braccio.ServoMovement (30,base.read(),shoulder.read(),elbow.read(),underarm,wrist,gripper.read()+degree); // max 73
+        Braccio.ServoMovement (30,base.read(),shoulder.read(),elbow.read(),forearm,wrist,gripper.read()+degree); // max 73
       } else if (orientation.equals("down")) {
         Braccio.ServoMovement (30,base.read(),shoulder.read(),elbow.read(),wrist_ver.read()-180,wrist,gripper.read()-degree); // min 10
       } else {
@@ -325,29 +335,31 @@ String checkColour (){
    if ((r > 1.4) && (g < 0.9) && (b < 0.9)) {
     Serial.println("\tROT");
     colour = "tomato";
+    bluetooth.print(colour + " color found!"); //Returns answer to android device
     return colour;
    } else if ((r > 0.5) && (r < 0.8) && (g > 0.95) && (g < 1.05) && (b > 1.1) && (b < 0.9)) { // r < 0.8 && g< 1.2
     Serial.println("\tBLAU");
-    colour = "blue";
+    colour = "blueberry";
+    bluetooth.print(colour + " color found!"); //Returns answer to android device
     return colour;
    }
-   // Gelb und Orange sind etwas tricky, aber nach etwas
-   // Herumprobieren haben sich bei mir diese Werte als
-   // gut erwiesen
    else if ((r > 1.25) && (r < 1.35) && (g > 1.05) && (g < 1.15) && (b > 0.55) && (b < 0.65)) {
     Serial.println("\tGELB");
     colour = "fanta";
+    bluetooth.print(colour + " color found!"); //Returns answer to android device
     return colour;
    }
    else if ((r > 0.95) && (r < 1.1) && (g > 1.0) && (g < 1.1) && (b > 0.85) && (b < 1.0)) {
     Serial.println("\tWEISS");
     colour = "water";
+    bluetooth.print(colour + " color found!"); //Returns answer to android device
     return colour;
    } 
    // Wenn keine Regel greift, dann ehrlich sein
    else {
     Serial.println("\tNICHT ERKANNT"); 
     colour = "no";
+    bluetooth.print(colour + " color found!"); //Returns answer to android device
     return colour;
    }
 }
@@ -361,7 +373,7 @@ void searchBeverage (String btColour) {
       scanSidePattern(moveBase,10);
       if (checkColour() == btColour){  
           Serial.println("Braccio found a beverage with the right color!");
-  
+          
           scanSidePattern(moveBase,60);
           startPattern(moveBase,60);
           startPattern(80,60);
@@ -380,14 +392,6 @@ void searchBeverage (String btColour) {
     
 }
 
-void stretchPattern() {
-  Braccio.ServoMovement (30,90, 90, 90, 90, 90,  73); // Stretched Arm position
-}
-
-void standardPattern() {
-  Braccio.ServoMovement (30,ba,sh,el,wrV,wrR,gr);
-}
-
 void scanSidePattern(int base, int gripper) {
   Braccio.ServoMovement (30,90+base,145,180,30,89,gripper);
 }
@@ -395,11 +399,21 @@ void scanSidePattern(int base, int gripper) {
 void scanSideUpPattern(int base, int gripper) {
   Braccio.ServoMovement (30,90+base,110,180,65,89, gripper);
 }
-void startPattern(int base, int gripper){
-  Braccio.ServoMovement (30,90+base,90,180,90,89,gripper);
-  }
+
 void scanTopPattern() {
   Braccio.ServoMovement (30,92,90,180,180,90,10);
+}
+
+void startPattern(int base, int gripper){
+  Braccio.ServoMovement (30,90+base,90,180,90,89,gripper);
+}
+
+void stretchPattern() {
+  Braccio.ServoMovement (30,90, 90, 90, 90, 90,  73); // Stretched Arm position
+}
+
+void standardPattern() {
+  Braccio.ServoMovement (30,ba,sh,el,wrV,wrR,gr);
 }
 
 void helloPattern () {
@@ -412,24 +426,16 @@ void helloPattern () {
 }
 
 void goodbyePattern () {
-    Braccio.ServoMovement (20,90,90,180,135,60,73);
+    Braccio.ServoMovement (20,90,90,180,135,90,73);
     delay(2000);
-    Braccio.ServoMovement (20,90,90,90,135,60,73);
-    Braccio.ServoMovement (20,140,90,180,135,60,73);
+    Braccio.ServoMovement (20,90,90,90,135,90,73);
+    Braccio.ServoMovement (20,140,90,180,135,90,73);
     delay(2000);
-    Braccio.ServoMovement (20,140,90,90,135,60,73);
-    Braccio.ServoMovement (20,90,90,90,135,60,73);
+    Braccio.ServoMovement (20,140,90,90,135,90,73);
+    Braccio.ServoMovement (20,90,90,90,135,90,73);
 
   
 }
-
-void colourLoop(){
-  scanSidePattern(80,10);
-  while(1){
-  checkColour();
-  delay(500);
-  }
-  }
 
 // Imitate "Schnappi" hand
 void crocodilePattern() {
@@ -439,15 +445,27 @@ void crocodilePattern() {
   }
 }
 
+//Not used
 void grapPattern() {
   Braccio.ServoMovement (30,base.read(),shoulder.read(),elbow.read(),wrist_ver.read(),wrist_rot.read(),10);
   Braccio.ServoMovement (30,base.read(),shoulder.read(),elbow.read(),wrist_ver.read(),wrist_rot.read(),73);
 }
 
+//Not used
 void releasePattern() {
   Braccio.ServoMovement (30,base.read(),shoulder.read(),elbow.read(),wrist_ver.read(),wrist_rot.read(),73);
   Braccio.ServoMovement (30,base.read(),shoulder.read(),elbow.read(),wrist_ver.read(),wrist_rot.read(),10);
 }
+
+// Method to test and identfy colors
+void colourLoop(){
+  scanSidePattern(80,10);
+  while(1){
+  checkColour();
+  delay(500);
+  }
+}
+
 
 /*
 Archive
