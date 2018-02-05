@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">Barista_3.0</string>
+    <string name="app_name">Barista</string>
     <string name="tab_text_1">Tab 1</string>
     <string name="tab_text_2">Tab 2</string>
     <string name="tab_text_3">Tab 3</string>
@@ -33,5 +33,46 @@
     <string name="Underarm">underarm</string>
     <string name="Wrist">wrist</string>
     <string name="Gripper">gripper</string>
+
+    <!-- Drink Descriptions-->
+    <string name="colaDesc">
+        Ingredients: \n
+        \n
+        - Caffeine citrate\n
+        - Citric acid\n
+        - Vanilla extract\n
+        - Lime juice\n
+        - Sugar\n
+        - Fluid extraxt of cola leaves</string>
+    <string name="fantaDesc">
+        Ingredients: \n
+        \n
+        - Carbonated Water \n
+        - Sugar\n
+        - Orange friut from concentrate\n
+        - Citric acid\n
+        - Natural orange flavouring\n
+        - Preservative\
+        - Malic acid\
+        - Acidity regulator</string>
+    <string name="waterDesc">
+        Ingredients:\n
+        \n
+        - Sodium\n
+        - Potassium\n
+        - Calcium\n
+        - Magnesium\n
+        - Chloride\n
+        - Sulfat\n
+        - Hydrogen carbonate
+        </string>
+    <string name="tomatoDesc">
+        Ingredients: \n
+        \n
+        - Tomato juice from concentrate\n
+        - Lemon juice from concentrate\n
+        - Salt\n
+        - Ascorbic acid</string>
+    <string name="blueDesc">wrist</string>
 
 </resources>

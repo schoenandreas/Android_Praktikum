@@ -158,26 +158,26 @@ public class Tab3Fragment extends Fragment {
                     //dialog befüllen je nachdem auf welche card geklickt wurde
                     if( id == R.drawable.coca_cola){
 
-                        dialogdescription.setText("Coca Cola Description");
-                        dialogDrinkName.setText("Coca Cola");
+                        dialogdescription.setText(R.string.colaDesc);
+                        dialogDrinkName.setText("Coke");
                         img.setTag(R.drawable.coca_cola);
                         img.setImageResource(R.drawable.coca_cola);
 
                     }else if (id==R.drawable.fanta){
 
-                        dialogdescription.setText("Fanta Description");
+                        dialogdescription.setText(R.string.fantaDesc);
                         dialogDrinkName.setText("Fanta");
                         img.setTag(R.drawable.fanta);
                         img.setImageResource(R.drawable.fanta);
                     }else if (id==R.drawable.tomatensaft){
 
-                        dialogdescription.setText("Tomato Description");
+                        dialogdescription.setText(R.string.tomatoDesc);
                         dialogDrinkName.setText("Tomato juice");
                         img.setTag(R.drawable.tomatensaft);
                         img.setImageResource(R.drawable.tomatensaft);
                     }else if (id==R.drawable.wasser){
 
-                        dialogdescription.setText("Wasser Description");
+                        dialogdescription.setText(R.string.waterDesc);
                         dialogDrinkName.setText("Wasser");
                         img.setTag(R.drawable.wasser);
                         img.setImageResource(R.drawable.wasser);

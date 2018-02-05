@@ -84,6 +84,27 @@
         <item>bass</item>
         <item>north face</item>
         <item>based</item>
+        <item>for arm</item>
+        <item>moved</item>
+        <item>4 arm</item>
+        <item>four arm</item>
+        <item>alarm</item>
+        <item>roof</item>
+        <item>wolf</item>
+        <item>forum</item>
+        <item>blue </item>
+        <item>due</item>
+        <item>door</item>
+        <item>who</item>
+        <item>new</item>
+        <item>du</item>
+        <item>to</item>
+        <item>serge</item>
+        <item>news</item>
+        <item>cheese</item>
+        <item>mover</item>
+        <item>race</item>
+        <item>grip</item>
     </string-array>
 
     <string-array name="mappingValue">
@@ -103,6 +124,27 @@
         <item>base</item>
         <item>move base</item>
         <item>base</item>
+        <item>forearm</item>
+        <item>move</item>
+        <item>forearm</item>
+        <item>forearm</item>
+        <item>forearm</item>
+        <item>move</item>
+        <item>move</item>
+        <item>forearm</item>
+        <item>do </item>
+        <item>do</item>
+        <item>do</item>
+        <item>do</item>
+        <item>do</item>
+        <item>do</item>
+        <item>do</item>
+        <item>search</item>
+        <item>juice</item>
+        <item>juice</item>
+        <item>move</item>
+        <item>wrist</item>
+        <item>gripper</item>
     </string-array>
 
 </resources>

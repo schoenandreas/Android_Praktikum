@@ -174,16 +174,17 @@ public class Tab1Fragment extends Fragment {
                 "\nMove Base -degree- " +
                 "\nMove Shoulder -degree- " +
                 "\nMove Elbow -degree- " +
-                "\nMove Underarm -degree- " +
+                "\nMove Forearm -degree- " +
                 "\nMove Wrist -degree- " +
                 "\nMove Grapper -degree- ");
         commands.add("MANUAL CONTROLS: Relative" +
                 "\nMove Base -degree- (right or left) " +
                 "\nMove Shoulder -degree- (right or left) " +
                 "\nMove Elbow -degree- (right or left) " +
-                "\nMove Underarm -degree- (right or left) " +
+                "\nMove Forearm -degree- (right or left) " +
                 "\nMove Wrist -degree- (right or left) " +
-                "\nMove Grapper -degree- (right or left)");
+                "\nMove Grapper -degree- (right or left)"+
+                "\n\n Info: For the right point of view the base motor must be visible! ");
 
         List<String> faqs = new ArrayList<String>();
         faqs.add("Question: Why is the application so awesome? " +

@@ -87,7 +87,7 @@ public class Tab2Fragment extends Fragment {
                         constraintLayout.setBackgroundColor(Color.LTGRAY);
                         switchModus.setText(R.string.manual);
                     } else if (switchModus.isChecked() != true) {
-                        alertModus(); // Invoke alert dialog tobi
+                        //alertModus(); // Invoke alert dialog tobi
                         constraintLayout.setBackgroundColor(Color.WHITE);
                         switchModus.setText(R.string.predefined);
 
@@ -98,17 +98,7 @@ public class Tab2Fragment extends Fragment {
             }
         });
 
-        Button sendButton = (Button) view.findViewById(R.id.sendButton);
-        sendButton.setOnClickListener(new View.OnClickListener(){
-            public void onClick(View v){
-                try {
-                    //per BT senden
-                    sendKeyword(buildKeyword(text.getText().toString()));
-                } catch (Exception e) {
-                    Toast.makeText(getActivity(), "Sending didn't work!", Toast.LENGTH_SHORT).show();
-                }
-            }
-        });
+
 
         return view;
     }
@@ -160,7 +150,7 @@ public class Tab2Fragment extends Fragment {
 
             // Compare the 5 (Maximum for Speech Recognition!) best probabilities with the whole string array to increase the possibility to find the wished solution
             try {
-                for (int i = 0; i < 5; i++){
+                for (int i = 0; i < 5; i++) {
                     spokenText = results.get(i).toLowerCase();
                     Log.w("app", spokenText);
 
@@ -178,7 +168,7 @@ public class Tab2Fragment extends Fragment {
 
                     Log.w("mappingKeyArrayProb", "sp " + searchProbability + "dp " + doProbability + "mp " + manualProbability);
 
-                    if (searchProbability == 2 || doProbability == 2 || manualProbability == 2){
+                    if (searchProbability == 2 || doProbability == 2 || manualProbability == 2) {
                         Log.w("finalBreak", "baaam");
                         break;
                     }
@@ -195,8 +185,10 @@ public class Tab2Fragment extends Fragment {
             constr.applyTo(constraintLayout);
 
             // Check for changing from manual to predefined control
-            if (switchModus.isChecked() == true && (spokenText.contains("search") || spokenText.contains("do"))){
+            if (switchModus.isChecked() == true && ((spokenText.contains("search") || spokenText.contains("do")))) {
                 alertModus();
+            } else if ((switchModus.isChecked() == false && ((spokenText.contains("search") || spokenText.contains("do")))) || (spokenText.contains("move"))) {
+                sendKeyword(buildKeyword(text.getText().toString()));
             }
         }
     }
@@ -244,11 +236,12 @@ public class Tab2Fragment extends Fragment {
                     imgView.setImageResource(R.drawable.transparent);
                 }
             }
+
         } else if (btString.contains("do")) {
 
             for (int i = 0; i < res.getStringArray(R.array.doCommands).length; i++) {
                 if (btString.contains(res.getStringArray(R.array.doCommands)[i])) {
-                    msg = String.valueOf(i);
+                    msg = String.valueOf(i+1);
                     imgView.setImageResource(res.obtainTypedArray(R.array.doCommandsImg).getResourceId(i, -1));
                     break;
                 } else if (i == res.getStringArray(R.array.doCommands).length - 1) {
@@ -257,6 +250,7 @@ public class Tab2Fragment extends Fragment {
                     imgView.setImageResource(R.drawable.transparent);
                 }
             }
+
         } else if (btString.contains("move")) {
             setModusOn();
             for (int i = 0; i < res.getStringArray(R.array.jointCommands).length; i++) {
