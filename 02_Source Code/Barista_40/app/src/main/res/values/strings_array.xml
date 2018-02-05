@@ -42,7 +42,7 @@
         <item>base</item>
         <item>shoulder</item>
         <item>elbow</item>
-        <item>underarm</item>
+        <item>forearm</item>
         <item>wrist</item>
         <item>gripper</item>
     </string-array>

@@ -270,7 +270,7 @@ public class Tab2Fragment extends Fragment {
 
                     for (int j = 0; j < res.getStringArray(R.array.orientationCommands).length; j++) {
                         if (btString.contains(res.getStringArray(R.array.orientationCommands)[j])) {
-                            orientation = res.getStringArray(R.array.orientationCommands)[i];
+                            orientation = res.getStringArray(R.array.orientationCommands)[j];
                             Log.w("MoveOrientation", orientation);
                             break;
                         }
