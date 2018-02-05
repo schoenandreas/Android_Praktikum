@@ -335,7 +335,7 @@ public class MainActivity extends AppCompatActivity {
                                     //ausfuehren was mit data passieren soll
                                     handler.post(new Runnable() {
                                         public void run() {
-                                            //  myLabel.setText(data);
+                                            Toast.makeText(getApplicationContext(), "Returned String: " + data, Toast.LENGTH_SHORT).show();
                                         }
                                     });
                                     //ansonsten naechstes byte

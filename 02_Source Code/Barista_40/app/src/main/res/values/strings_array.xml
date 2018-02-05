@@ -69,6 +69,7 @@
     <!-- Insert mapping key values on one position in the mappingKey array and add at the same position in the mapping Value array the respective string-->
     <string-array name="mappingKey">
         <item>ride</item>
+        <item>write</item>
         <item>xx</item>
         <item>porta</item>
         <item>warte</item>
@@ -104,10 +105,13 @@
         <item>cheese</item>
         <item>mover</item>
         <item>race</item>
-        <item>grip</item>
+        <item>grip </item>
+
+
     </string-array>
 
     <string-array name="mappingValue">
+        <item>right</item>
         <item>right</item>
         <item>20</item>
         <item>water</item>
@@ -144,7 +148,7 @@
         <item>juice</item>
         <item>move</item>
         <item>wrist</item>
-        <item>gripper</item>
+        <item>gripper </item>
     </string-array>
 
 </resources>
