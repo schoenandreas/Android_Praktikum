@@ -11,9 +11,6 @@ Servo wrist_ver;
 Servo wrist_rot;
 Servo gripper;
 
-int forearm=wrist_ver.read()-180;
-int wrist=wrist_rot.read()+180;
-
 // Standard position
 const int ba = 95;
 const int sh = 90;
@@ -200,26 +197,24 @@ void singleCommandAbsolute (String joint, int degree){
   
 
   if (joint.equalsIgnoreCase("base")){
-    Braccio.ServoMovement (30,degree,shoulder.read(),elbow.read(),forearm,wrist,gripper.read());
+    Braccio.ServoMovement (30,degree,shoulder.read(),elbow.read(),wrist_ver.read(),wrist_rot.read(),gripper.read());
     Serial.println("sCA base");
     Serial.println(wrist_ver.read());
   Serial.println(wrist_rot.read());
   } else if (joint.equalsIgnoreCase("shoulder")){
-    Braccio.ServoMovement (30,base.read(),degree,elbow.read(),forearm,wrist,gripper.read());
+    Braccio.ServoMovement (30,base.read(),degree,elbow.read(),wrist_ver.read(),wrist_rot.read(),gripper.read());
     Serial.println("sCA shoulder");
   } else if (joint.equalsIgnoreCase("elbow")){
-    Braccio.ServoMovement (30,base.read(),shoulder.read(),degree,forearm,wrist,gripper.read());
+    Braccio.ServoMovement (30,base.read(),shoulder.read(),degree,wrist_ver.read(),wrist_rot.read(),gripper.read());
     Serial.println("sCA elbow");
   } else if (joint.equalsIgnoreCase("forearm")){
-    Braccio.ServoMovement (30,base.read(),shoulder.read(),elbow.read(),degree,wrist,gripper.read());
-    forearm=degree;
+    Braccio.ServoMovement (30,base.read(),shoulder.read(),elbow.read(),degree,wrist_rot.read(),gripper.read());
     Serial.println("sCA forearm");
   } else if (joint.equalsIgnoreCase("wrist")){
-    Braccio.ServoMovement (30,base.read(),shoulder.read(),elbow.read(),forearm,degree,gripper.read());
-    wrist=degree;
+    Braccio.ServoMovement (30,base.read(),shoulder.read(),elbow.read(),wrist_ver.read(),degree,gripper.read());
     Serial.println("sCA wrist");
   } else if (joint.equalsIgnoreCase("gripper")){
-    Braccio.ServoMovement (30,base.read(),shoulder.read(),elbow.read(),forearm,wrist,degree);
+    Braccio.ServoMovement (30,base.read(),shoulder.read(),elbow.read(),wrist_ver.read(),wrist_rot.read(),degree);
     Serial.println("sCA gripper");
   } else {
     currentPosition();
@@ -239,60 +234,51 @@ void singleCommandRelative (String joint, String orientation, int degree){
   Serial.println(gripper.read());
    if (joint.equalsIgnoreCase("base")){
     if (orientation.equalsIgnoreCase("right")) {
-        Braccio.ServoMovement (30,base.read()+degree,shoulder.read(),elbow.read(),forearm,wrist,gripper.read()); // max 180               
+        Braccio.ServoMovement (30,base.read()+degree,shoulder.read(),elbow.read(),wrist_ver.read(),wrist_rot.read(),gripper.read()); // max 180               
       } else if (orientation.equals("left")) {
-        Braccio.ServoMovement (30,base.read()-degree,shoulder.read(),elbow.read(),forearm,wrist,gripper.read()); // min 0
+        Braccio.ServoMovement (30,base.read()-degree,shoulder.read(),elbow.read(),wrist_ver.read(),wrist_rot.read(),gripper.read()); // min 0
       } else {
         // Only used if necessary for debugging
       }
   } else if (joint.equalsIgnoreCase("shoulder")){
     if (orientation.equalsIgnoreCase("right")) {
-        Braccio.ServoMovement (30,base.read(),shoulder.read()-degree,elbow.read(),forearm,wrist,gripper.read()); // min 15
+        Braccio.ServoMovement (30,base.read(),shoulder.read()-degree,elbow.read(),wrist_ver.read(),wrist_rot.read(),gripper.read()); // min 15
       } else if (orientation.equals("left")) {
-        Braccio.ServoMovement (30,base.read(),shoulder.read()+degree,elbow.read(),forearm,wrist,gripper.read()); // max 165
+        Braccio.ServoMovement (30,base.read(),shoulder.read()+degree,elbow.read(),wrist_ver.read(),wrist_rot.read(),gripper.read()); // max 165
       } else {
         // Only used if necessary for debugging
       }
   } else if (joint.equalsIgnoreCase("elbow")){
     if (orientation.equalsIgnoreCase("right")) {
-        Braccio.ServoMovement (30,base.read(),shoulder.read(),elbow.read()-degree,forearm,wrist,gripper.read()); // min 15
+        Braccio.ServoMovement (30,base.read(),shoulder.read(),elbow.read()-degree,wrist_ver.read(),wrist_rot.read(),gripper.read()); // min 15
       } else if (orientation.equals("left")) {
-        Braccio.ServoMovement (30,base.read(),shoulder.read(),elbow.read()+degree,forearm,wrist,gripper.read()); // max 165
+        Braccio.ServoMovement (30,base.read(),shoulder.read(),elbow.read()+degree,wrist_ver.read(),wrist_rot.read(),gripper.read()); // max 165
       } else {
         // Only used if necessary for debugging
       }
-    // ToDo
 
-    //funktioniert nicht sehr gut
   } else if (joint.equalsIgnoreCase("forearm")){
     if (orientation.equalsIgnoreCase("right")) {
-        Braccio.ServoMovement (30,base.read(),shoulder.read(),elbow.read(),forearm-degree,wrist,gripper.read()); // min 15
-        forearm=forearm-degree;
+        Braccio.ServoMovement (30,base.read(),shoulder.read(),elbow.read(),wrist_ver.read()-degree,wrist_rot.read(),gripper.read()); // min 15
       } else if (orientation.equals("left")) {
-        Braccio.ServoMovement (30,base.read(),shoulder.read(),elbow.read(),forearm,wrist,gripper.read()); // max 165
-        forearm=forearm+degree;
+        Braccio.ServoMovement (30,base.read(),shoulder.read(),elbow.read(),wrist_ver.read()+degree,wrist_rot.read(),gripper.read()); // max 165
       } else {
         // Only used if necessary for debugging
       }
-    // ToDo
 
-    //funktioniert nicht sehr gut
   } else if (joint.equalsIgnoreCase("wrist")){
     if (orientation.equalsIgnoreCase("right")) {
-        Braccio.ServoMovement (30,base.read(),shoulder.read(),elbow.read(),forearm,wrist-degree,gripper.read()); // max 180      
-        wrist=wrist-degree;         
+        Braccio.ServoMovement (30,base.read(),shoulder.read(),elbow.read(),wrist_ver.read(),wrist_rot.read()-degree,gripper.read()); // max 180      
       } else if (orientation.equals("left")) {
-        Braccio.ServoMovement (30,base.read(),shoulder.read(),elbow.read(),forearm,wrist+degree,gripper.read()); // min 0
-        wrist=wrist+degree;
+        Braccio.ServoMovement (30,base.read(),shoulder.read(),elbow.read(),wrist_ver.read(),wrist_rot.read()+degree,gripper.read()); // min 0
       } else {
         // Only used if necessary for debugging
       }
-    // ToDo
   } else if (joint.equalsIgnoreCase("gripper")){
     if (orientation.equalsIgnoreCase("open")) {
-        Braccio.ServoMovement (30,base.read(),shoulder.read(),elbow.read(),forearm,wrist,gripper.read()+degree); // max 73
+        Braccio.ServoMovement (30,base.read(),shoulder.read(),elbow.read(),wrist_ver.read(),wrist_rot.read(),gripper.read()+degree); // max 73
       } else if (orientation.equals("down")) {
-        Braccio.ServoMovement (30,base.read(),shoulder.read(),elbow.read(),wrist_ver.read()-180,wrist,gripper.read()-degree); // min 10
+        Braccio.ServoMovement (30,base.read(),shoulder.read(),elbow.read(),wrist_ver.read(),wrist_rot.read(),gripper.read()-degree); // min 10
       } else {
         // Only used if necessary for debugging
       }
@@ -336,7 +322,7 @@ String checkColour (){
     Serial.println("\tROT");
     colour = "tomato";
     return colour;
-   } else if ((r > 0.5) && (r < 0.8) && (g > 0.95) && (g < 1.05) && (b > 1.1) && (b < 0.9)) { // r < 0.8 && g< 1.2
+   } else if ((r > 0.5) && (r < 1) && (g > 0.95) && (g < 1.05) && (b > 0.9) && (b < 1.4)) { // r < 0.8 && g< 1.2
     Serial.println("\tBLAU");
     colour = "blueberry";
     return colour;
