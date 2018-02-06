@@ -7,17 +7,19 @@
         <item>release</item>
         <item>standard</item>
         <item>stretch</item>
+        <item>crocodile</item>
         <item>start</item>
+        <item>check</item>
     </string-array>
 
-
     <integer-array name="doCommandsImg">
+        <item>@drawable/hello</item>
+        <item>@drawable/goodbye</item>
         <item>@drawable/transparent</item>
         <item>@drawable/transparent</item>
-        <item>@drawable/transparent</item>
-        <item>@drawable/transparent</item>
-        <item>@drawable/transparent</item>
-        <item>@drawable/transparent</item>
+        <item>@drawable/standard</item>
+        <item>@drawable/stretch</item>
+        <item>@drawable/schnappi</item>
         <item>@drawable/transparent</item>
         <item>@drawable/transparent</item>
     </integer-array>
@@ -27,7 +29,7 @@
         <item>tomato</item>
         <item>fanta</item>
         <item>water</item>
-        <item>blue</item>
+        <item>blueberry</item>
     </string-array>
 
     <integer-array name="searchCommandsImg">
@@ -106,8 +108,6 @@
         <item>mover</item>
         <item>race</item>
         <item>grip </item>
-
-
     </string-array>
 
     <string-array name="mappingValue">
@@ -142,7 +142,7 @@
         <item>do</item>
         <item>do</item>
         <item>do</item>
-     
+
         <item>search</item>
         <item>juice</item>
         <item>juice</item>
