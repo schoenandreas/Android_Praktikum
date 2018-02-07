@@ -12,6 +12,7 @@ Servo wrist_ver;
 Servo wrist_rot;
 Servo gripper;
 
+<<<<<<< HEAD
 int forearm=wrist_ver.read()-180;
 int wrist=wrist_rot.read()+180;
 
@@ -24,6 +25,9 @@ SoftwareSerial bluetooth(bluetoothTx, bluetoothRx);
 Adafruit_TCS34725 tcs = Adafruit_TCS34725(TCS34725_INTEGRATIONTIME_50MS, TCS34725_GAIN_1X);
 
 // Define Standard position
+=======
+// Standard position
+>>>>>>> 78592a95c7d6dc57c7ef7a841c838dbd6f403ffb
 const int ba = 95;
 const int sh = 90;
 const int el = 140;
@@ -172,6 +176,7 @@ void singleCommandAbsolute (String joint, int degree){
 
   // Checks for the addressed
   if (joint.equalsIgnoreCase("base")){
+<<<<<<< HEAD
     Braccio.ServoMovement (30,degree,shoulder.read(),elbow.read(), wrist_ver.read(), wrist_rot.read(), gripper.read());
   } else if (joint.equalsIgnoreCase("shoulder")){
     Braccio.ServoMovement (30,base.read(),degree,elbow.read(), wrist_ver.read(), wrist_rot.read(), gripper.read());
@@ -183,6 +188,27 @@ void singleCommandAbsolute (String joint, int degree){
     Braccio.ServoMovement (30,base.read(),shoulder.read(),elbow.read(), wrist_ver.read(),degree, gripper.read());
   } else if (joint.equalsIgnoreCase("gripper")){
     Braccio.ServoMovement (30,base.read(),shoulder.read(),elbow.read(), wrist_ver.read(), wrist_rot.read(), degree);
+=======
+    Braccio.ServoMovement (30,degree,shoulder.read(),elbow.read(),wrist_ver.read(),wrist_rot.read(),gripper.read());
+    Serial.println("sCA base");
+    Serial.println(wrist_ver.read());
+  Serial.println(wrist_rot.read());
+  } else if (joint.equalsIgnoreCase("shoulder")){
+    Braccio.ServoMovement (30,base.read(),degree,elbow.read(),wrist_ver.read(),wrist_rot.read(),gripper.read());
+    Serial.println("sCA shoulder");
+  } else if (joint.equalsIgnoreCase("elbow")){
+    Braccio.ServoMovement (30,base.read(),shoulder.read(),degree,wrist_ver.read(),wrist_rot.read(),gripper.read());
+    Serial.println("sCA elbow");
+  } else if (joint.equalsIgnoreCase("forearm")){
+    Braccio.ServoMovement (30,base.read(),shoulder.read(),elbow.read(),degree,wrist_rot.read(),gripper.read());
+    Serial.println("sCA forearm");
+  } else if (joint.equalsIgnoreCase("wrist")){
+    Braccio.ServoMovement (30,base.read(),shoulder.read(),elbow.read(),wrist_ver.read(),degree,gripper.read());
+    Serial.println("sCA wrist");
+  } else if (joint.equalsIgnoreCase("gripper")){
+    Braccio.ServoMovement (30,base.read(),shoulder.read(),elbow.read(),wrist_ver.read(),wrist_rot.read(),degree);
+    Serial.println("sCA gripper");
+>>>>>>> 78592a95c7d6dc57c7ef7a841c838dbd6f403ffb
   } else {
     currentPosition();
     Serial.println("No command matched in singleCommandAbsolute method!");
@@ -203,22 +229,35 @@ void singleCommandRelative (String joint, String orientation, int degree){
   
   if (joint.equalsIgnoreCase("base")){
     if (orientation.equalsIgnoreCase("right")) {
+<<<<<<< HEAD
         Braccio.ServoMovement (30,base.read()+degree,shoulder.read(),elbow.read(), wrist_ver.read(), wrist_rot.read(), gripper.read()); // max 180               
       } else if (orientation.equals("left")) {
         Braccio.ServoMovement (30,base.read()-degree,shoulder.read(),elbow.read(), wrist_ver.read(), wrist_rot.read(), gripper.read()); // min 0
+=======
+        Braccio.ServoMovement (30,base.read()+degree,shoulder.read(),elbow.read(),wrist_ver.read(),wrist_rot.read(),gripper.read()); // max 180               
+      } else if (orientation.equals("left")) {
+        Braccio.ServoMovement (30,base.read()-degree,shoulder.read(),elbow.read(),wrist_ver.read(),wrist_rot.read(),gripper.read()); // min 0
+>>>>>>> 78592a95c7d6dc57c7ef7a841c838dbd6f403ffb
       } else {
         // Only used if necessary for debugging
       }
   } else if (joint.equalsIgnoreCase("shoulder")){
     if (orientation.equalsIgnoreCase("right")) {
+<<<<<<< HEAD
         Braccio.ServoMovement (30,base.read(),shoulder.read()-degree,elbow.read(), wrist_ver.read(), wrist_rot.read(), gripper.read()); // min 15
       } else if (orientation.equals("left")) {
         Braccio.ServoMovement (30,base.read(),shoulder.read()+degree,elbow.read(), wrist_ver.read(), wrist_rot.read(), gripper.read()); // max 165
+=======
+        Braccio.ServoMovement (30,base.read(),shoulder.read()-degree,elbow.read(),wrist_ver.read(),wrist_rot.read(),gripper.read()); // min 15
+      } else if (orientation.equals("left")) {
+        Braccio.ServoMovement (30,base.read(),shoulder.read()+degree,elbow.read(),wrist_ver.read(),wrist_rot.read(),gripper.read()); // max 165
+>>>>>>> 78592a95c7d6dc57c7ef7a841c838dbd6f403ffb
       } else {
         // Only used if necessary for debugging
       }
   } else if (joint.equalsIgnoreCase("elbow")){
     if (orientation.equalsIgnoreCase("right")) {
+<<<<<<< HEAD
         Braccio.ServoMovement (30,base.read(),shoulder.read(),elbow.read()-degree, wrist_ver.read(), wrist_rot.read(), gripper.read()); // min 15
       } else if (orientation.equals("left")) {
         Braccio.ServoMovement (30,base.read(),shoulder.read(),elbow.read()+degree, wrist_ver.read(), wrist_rot.read(), gripper.read()); // max 165
@@ -240,14 +279,43 @@ void singleCommandRelative (String joint, String orientation, int degree){
       } else if (orientation.equals("left")) {
         Braccio.ServoMovement (30,base.read(),shoulder.read(),elbow.read(), wrist_ver.read(), wrist_rot.read()+degree, gripper.read()); // min 0
         wrist=wrist+degree;
+=======
+        Braccio.ServoMovement (30,base.read(),shoulder.read(),elbow.read()-degree,wrist_ver.read(),wrist_rot.read(),gripper.read()); // min 15
+      } else if (orientation.equals("left")) {
+        Braccio.ServoMovement (30,base.read(),shoulder.read(),elbow.read()+degree,wrist_ver.read(),wrist_rot.read(),gripper.read()); // max 165
+      } else {
+        // Only used if necessary for debugging
+      }
+
+  } else if (joint.equalsIgnoreCase("forearm")){
+    if (orientation.equalsIgnoreCase("right")) {
+        Braccio.ServoMovement (30,base.read(),shoulder.read(),elbow.read(),wrist_ver.read()-degree,wrist_rot.read(),gripper.read()); // min 15
+      } else if (orientation.equals("left")) {
+        Braccio.ServoMovement (30,base.read(),shoulder.read(),elbow.read(),wrist_ver.read()+degree,wrist_rot.read(),gripper.read()); // max 165
+      } else {
+        // Only used if necessary for debugging
+      }
+
+  } else if (joint.equalsIgnoreCase("wrist")){
+    if (orientation.equalsIgnoreCase("right")) {
+        Braccio.ServoMovement (30,base.read(),shoulder.read(),elbow.read(),wrist_ver.read(),wrist_rot.read()-degree,gripper.read()); // max 180      
+      } else if (orientation.equals("left")) {
+        Braccio.ServoMovement (30,base.read(),shoulder.read(),elbow.read(),wrist_ver.read(),wrist_rot.read()+degree,gripper.read()); // min 0
+>>>>>>> 78592a95c7d6dc57c7ef7a841c838dbd6f403ffb
       } else {
         // Only used if necessary for debugging
       }
   } else if (joint.equalsIgnoreCase("gripper")){
     if (orientation.equalsIgnoreCase("open")) {
+<<<<<<< HEAD
         Braccio.ServoMovement (30,base.read(),shoulder.read(),elbow.read(), wrist_ver.read(), wrist_rot.read(), gripper.read()+degree); // max 73
       } else if (orientation.equals("down")) {
         Braccio.ServoMovement (30,base.read(),shoulder.read(),elbow.read(), wrist_ver.read(), wrist_rot.read(), gripper.read()-degree); // min 10
+=======
+        Braccio.ServoMovement (30,base.read(),shoulder.read(),elbow.read(),wrist_ver.read(),wrist_rot.read(),gripper.read()+degree); // max 73
+      } else if (orientation.equals("down")) {
+        Braccio.ServoMovement (30,base.read(),shoulder.read(),elbow.read(),wrist_ver.read(),wrist_rot.read(),gripper.read()-degree); // min 10
+>>>>>>> 78592a95c7d6dc57c7ef7a841c838dbd6f403ffb
       } else {
         // Only used if necessary for debugging
       }
@@ -284,8 +352,13 @@ String checkColour (){
     Serial.println("\tRed");
     colour = "tomato";
     return colour;
+<<<<<<< HEAD
    } else if ((r > 0.5) && (r < 0.8) && (g > 0.95) && (g < 1.05) && (b > 1.1) && (b < 0.9)) { // r < 0.8 && g< 1.2
     Serial.println("\tBlue");
+=======
+   } else if ((r > 0.5) && (r < 1) && (g > 0.95) && (g < 1.05) && (b > 0.9) && (b < 1.4)) { // r < 0.8 && g< 1.2
+    Serial.println("\tBLAU");
+>>>>>>> 78592a95c7d6dc57c7ef7a841c838dbd6f403ffb
     colour = "blueberry";
     return colour;
    }

@@ -1,0 +1,48 @@
+﻿Android Structure Description
+
+
+5.4.1: Tab3Fragment Layout:
+
+First we created the layout file tab3_fragment.xml for the RecyclerView. On the cardfragment.xml we designed the CardView layout using an LinearLayout with ImageView and TextView for the photo and the name of the drinks.
+
+The second part of the design was the popup, which would show up when one CardView was clicked. It uses a CoordinatorLayout on the tab3_dialog.xml and combines two LinearLayouts with ImageView and TextView. On top of it there is also a FloatingActionButton which is used to directly search on Google for the drink defined on the Card clicked.
+
+
+
+
+5.4.2: Tab3Fragment.java
+
+The drinklist.java list that we created must be initialized and that we do with initializeList() method which is called on onCreate() method. The number of elements is defined on the paramter i, which must be incremented for every element added. Array Drinks and Images are used to store the name and imageid for every one of the drinks.
+
+We need a ViewHolder extending the RecyclerView.ViewHolder class in order to hold on the views and to reference the ImageView and TextView for each view they will be holding. Also we set the coverImageView on OnClickListener, which fills the popup dialog with information based on which card was clicked:
+
+public void onClick(View v) {
+
+
+                    int id = (int)coverImageView.getTag();
+
+                    if( id == R.drawable.coca_cola){
+
+                        dialogdescription.setText(R.string.colaDesc);
+                        dialogDrinkName.setText("Coke");
+                        img.setTag(R.drawable.coca_cola);
+                        img.setImageResource(R.drawable.coca_cola);
+
+                    }else if [...]
+                    
+                    }
+                    
+                    myDialog.show();
+
+                }
+            });
+        }
+    }
+
+Next we need an adapter to link the RecyclerView and the data we want to the list. This adapter extends the RecyclerView.Adapter class which also creates a ViewHolder and binds it with the data from the DrinkList class. For it there are three methods needed: onCreateViewHolder() to create the new ViewHolder, onBildViewHolder() to bind the data and getItemCount() to return the size of the data being displayed.
+
+In the onCreateView() we first reference the RecyclerView of the layout file and later create a LinearLayoutManager in order to handle the positioning of the items and scrolling. Finaly we set the RecyclerView to use it. 
+
+Last but not least we reference the Floating ActionButton and set it OnClickListener, which in case of a click calls for the floatsearch method. This method starts an Intent to search in browser depending on the drink it is clicked on. 
+
+
