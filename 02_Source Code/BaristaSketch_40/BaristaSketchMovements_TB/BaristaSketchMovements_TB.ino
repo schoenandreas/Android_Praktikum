@@ -4,6 +4,7 @@
 #include "Wire.h"
 #include "Adafruit_TCS34725.h"
 
+// Instantiate object
 Servo base;
 Servo shoulder;
 Servo elbow;
@@ -14,7 +15,15 @@ Servo gripper;
 int forearm=wrist_ver.read()-180;
 int wrist=wrist_rot.read()+180;
 
-// Standard position
+// Instantiate object
+int bluetoothTx = 2;  // TX-O pin of bluetooth mate, Arduino D2
+int bluetoothRx = 3;  // RX-I pin of bluetooth mate, Arduino D3
+SoftwareSerial bluetooth(bluetoothTx, bluetoothRx);
+
+// Instantiate object
+Adafruit_TCS34725 tcs = Adafruit_TCS34725(TCS34725_INTEGRATIONTIME_50MS, TCS34725_GAIN_1X);
+
+// Define Standard position
 const int ba = 95;
 const int sh = 90;
 const int el = 140;
@@ -22,70 +31,48 @@ const int wrV = 180;
 const int wrR = 65;
 const int gr = 10;
 
-//
-const int colourArraySize = 7; 
-const String colours[colourArraySize] = { "tomato", "blueberry", "water", "fanta"};
-
-int bluetoothTx = 2;  // TX-O pin of bluetooth mate, Arduino D2
-int bluetoothRx = 3;  // RX-I pin of bluetooth mate, Arduino D3
- 
-SoftwareSerial bluetooth(bluetoothTx, bluetoothRx);
-
-// Color Sensor-Objekt initialisieren
-// Parameter siehe: https://learn.adafruit.com/adafruit-color-sensors/program-it
-Adafruit_TCS34725 tcs = Adafruit_TCS34725(TCS34725_INTEGRATIONTIME_50MS, TCS34725_GAIN_1X);
+// Define known drinks in array
+const int colourArraySize = 4; 
+const String colours[colourArraySize] = {"tomato", "blueberry", "water", "fanta"}; // Insert new drink
  
 void setup()
 {
-//All the servo motors will be positioned in the "safety" position:
-//Base (M1):90 degrees
-//Shoulder (M2): 45 degrees
-//Elbow (M3): 180 degrees
-//Wrist vertical (M4): 180 degrees
-//Wrist rotation (M5): 90 degrees
-//gripper (M6): 10 degrees
+  // Starts Braccio
   Braccio.begin();
-// Step Delay: a milliseconds delay between the movement of each servo.  Allowed values from 10 to 30 msec.
-// M1=base degrees. Allowed values from 0 to 180 degrees
-// M2=shoulder degrees. Allowed values from 15 to 165 degrees
-// M3=elbow degrees. Allowed values from 0 to 180 degrees
-// M4=wrist vertical degrees. Allowed values from 0 to 180 degrees
-// M5=wrist rotation degrees. Allowed values from 0 to 180 degrees
-// M6=gripper degrees. Allowed values from 10 to 73 degrees. 10: the toungue is open, 73: the gripper is closed.
-  //Braccio.ServoMovement (30,92,150,180,20,90,10);
 
-  Serial.begin(9600); // Open data rate an sets serial port to 9600 bps  
+  // Open data rate an sets serial port to 9600 bps
+  Serial.begin(9600);   
   bluetooth.begin(9600);
 
-  // Überprüfen, ob Color Sensor sich auch zurückmeldet
+  // Check if color sensor is returning data
   if (tcs.begin()) {
-    Serial.println("Sensor gefunden");
+    Serial.println("Sensor found");
   } else {
-    Serial.println("TCS34725 nicht gefunden ... Ablauf gestoppt!");
+    Serial.println("TCS34725 not gefunden ... Process stopped!");
     while (1)
-    delay(100); // Halt!
+    delay(100); // Wait!
   } 
 }
 
- 
 void loop(){
-  // send data only when you receive data
+  // Send data only when you receive data
   if (bluetooth.available()){
-    String btString = "";
-    int btStringInt = 0;  // nur für patterns
+
+    // Assigns the received string from the android device
+    String btString = bluetooth.readString();
+    Serial.println(btString);
+    int btStringInt = btString.toInt();  // Only used for patterns
+
+    // Prepares string for further usage
+    btString.trim(); // Important for String comparison 
+    btString.toLowerCase();
+
+    // Initializes values to cut substrings for absolute and relative movements 
     String btJointString = "";
     int btDegree = 0;
     String btOrientation = "";
 
-    // Send any characters the bluetooth prints to the serial monitor
-    btString = bluetooth.readString();
-    //btString = Serial.readString();
-    Serial.println(btString);
-    btString.trim();  // removes possible spaces Important for String comparison!
-    btString.toLowerCase();
-    btStringInt = btString.toInt(); //nur für patterns
-
-    // Check for drink commands !!Is Working!!
+    // Check for drink commands 
     for (int i = 0; i < colourArraySize; i++){
       if (btString.equalsIgnoreCase(colours[i])){
         Serial.println("Braccio is searching for: " + btString);
@@ -94,8 +81,7 @@ void loop(){
       }
     }
 
-
-    // Check for pattern commands
+    // Check for pattern commands that are sent with numbers
     switch(btStringInt){
       case 1:
         helloPattern();
@@ -139,39 +125,26 @@ void loop(){
         
       case 9:
         String color = checkColour();
-        Serial.println("Braccio is performing Pattern CheckColor(9)! Drink " + color + " found");
-
+        Serial.println("Braccio is performing Pattern CheckColor(9)! " + color + " drink found");
         break;
-        
-      //default:
-        //currentPosition();
     }
-    
 
-    // Check for single Joint commands; Commands are either in the form "base_90/right." or "base_90."
-    // Direct string comparison with  if (strcmp(dataFromBt, "") == 0) --> true
+    // Check for move commands; Commands are either in the form "base_90/right." or "base_90."
     if (btString.indexOf("_") > 0){
       btJointString = btString.substring(0, btString.indexOf("_"));
-      Serial.println("The extracted btJointString is: " + btJointString);
 
       if(btString.indexOf("/") > 0){
-        Serial.println("Relative command initiated!");
         btDegree = btString.substring(btString.indexOf("_")+1, btString.indexOf("/")).toInt();
         btOrientation = btString.substring(btString.indexOf("/")+1, btString.indexOf("."));
-        Serial.print("The Joint " + btJointString + " is chosen. It turns to the relatively " + btOrientation + "position degree ");
+        Serial.print("The Joint " + btJointString + " is chosen. It turns to the relative " + btOrientation + "position degree ");
         Serial.println(btDegree);
-        singleCommandRelative(btJointString, btOrientation, btDegree);
-        bluetooth.print("Relative command working");
+        singleCommandRelative(btJointString, btOrientation, btDegree);  
         
-        
-      } else if (btString.indexOf(".") > 0){
-        Serial.println("Absolute command initiated!");  
+      } else if (btString.indexOf(".") > 0){  
         btDegree = btString.substring(btString.indexOf("_")+1, btString.indexOf(".")).toInt();
         Serial.print("The Joint " + btJointString + " is chosen. It turns to the absolute position degree ");
         Serial.println(btDegree);
-        singleCommandAbsolute(btJointString, btDegree); 
-        bluetooth.print("Absolute command working");
-        
+        singleCommandAbsolute(btJointString, btDegree);         
       }  
     }
   }
@@ -183,11 +156,10 @@ void loop(){
   }
 }
 
-void currentPosition (){
-  Braccio.ServoMovement (30,base.read(),shoulder.read(),elbow.read(),wrist_ver.read(),wrist_rot.read(),gripper.read()); //current position
-}
-
+/* MOVE SINGLE JOINTS */
+// Is used to apply absolute joint changes
 void singleCommandAbsolute (String joint, int degree){
+  // Prints the current position to the console
   Serial.println(joint);
   Serial.println(degree);
   Serial.println(base.read());
@@ -197,36 +169,27 @@ void singleCommandAbsolute (String joint, int degree){
   Serial.println(wrist_ver.read());
   Serial.println(wrist_rot.read());
   Serial.println(gripper.read());
-  
 
+  // Checks for the addressed
   if (joint.equalsIgnoreCase("base")){
-    Braccio.ServoMovement (30,degree,shoulder.read(),elbow.read(),forearm,wrist,gripper.read());
-    Serial.println("sCA base");
-    Serial.println(wrist_ver.read());
-  Serial.println(wrist_rot.read());
+    Braccio.ServoMovement (30,degree,shoulder.read(),elbow.read(), wrist_ver.read(), wrist_rot.read(), gripper.read());
   } else if (joint.equalsIgnoreCase("shoulder")){
-    Braccio.ServoMovement (30,base.read(),degree,elbow.read(),forearm,wrist,gripper.read());
-    Serial.println("sCA shoulder");
+    Braccio.ServoMovement (30,base.read(),degree,elbow.read(), wrist_ver.read(), wrist_rot.read(), gripper.read());
   } else if (joint.equalsIgnoreCase("elbow")){
-    Braccio.ServoMovement (30,base.read(),shoulder.read(),degree,forearm,wrist,gripper.read());
-    Serial.println("sCA elbow");
+    Braccio.ServoMovement (30,base.read(),shoulder.read(),degree, wrist_ver.read(), wrist_rot.read(), gripper.read());
   } else if (joint.equalsIgnoreCase("forearm")){
-    Braccio.ServoMovement (30,base.read(),shoulder.read(),elbow.read(),degree,wrist,gripper.read());
-    forearm=degree;
-    Serial.println("sCA forearm");
+    Braccio.ServoMovement (30,base.read(),shoulder.read(),elbow.read(), degree, wrist_rot.read(), gripper.read());
   } else if (joint.equalsIgnoreCase("wrist")){
-    Braccio.ServoMovement (30,base.read(),shoulder.read(),elbow.read(),forearm,degree,gripper.read());
-    wrist=degree;
-    Serial.println("sCA wrist");
+    Braccio.ServoMovement (30,base.read(),shoulder.read(),elbow.read(), wrist_ver.read(),degree, gripper.read());
   } else if (joint.equalsIgnoreCase("gripper")){
-    Braccio.ServoMovement (30,base.read(),shoulder.read(),elbow.read(),forearm,wrist,degree);
-    Serial.println("sCA gripper");
+    Braccio.ServoMovement (30,base.read(),shoulder.read(),elbow.read(), wrist_ver.read(), wrist_rot.read(), degree);
   } else {
     currentPosition();
-    Serial.println("No command matched in singleCommandAbsolute");
+    Serial.println("No command matched in singleCommandAbsolute method!");
   }
 }
 
+// Is used to apply relative joint changes
 void singleCommandRelative (String joint, String orientation, int degree){
   Serial.println(joint);
   Serial.println(degree);
@@ -237,136 +200,119 @@ void singleCommandRelative (String joint, String orientation, int degree){
   Serial.println(wrist_ver.read());
   Serial.println(wrist_rot.read());
   Serial.println(gripper.read());
-   if (joint.equalsIgnoreCase("base")){
+  
+  if (joint.equalsIgnoreCase("base")){
     if (orientation.equalsIgnoreCase("right")) {
-        Braccio.ServoMovement (30,base.read()+degree,shoulder.read(),elbow.read(),forearm,wrist,gripper.read()); // max 180               
+        Braccio.ServoMovement (30,base.read()+degree,shoulder.read(),elbow.read(), wrist_ver.read(), wrist_rot.read(), gripper.read()); // max 180               
       } else if (orientation.equals("left")) {
-        Braccio.ServoMovement (30,base.read()-degree,shoulder.read(),elbow.read(),forearm,wrist,gripper.read()); // min 0
+        Braccio.ServoMovement (30,base.read()-degree,shoulder.read(),elbow.read(), wrist_ver.read(), wrist_rot.read(), gripper.read()); // min 0
       } else {
         // Only used if necessary for debugging
       }
   } else if (joint.equalsIgnoreCase("shoulder")){
     if (orientation.equalsIgnoreCase("right")) {
-        Braccio.ServoMovement (30,base.read(),shoulder.read()-degree,elbow.read(),forearm,wrist,gripper.read()); // min 15
+        Braccio.ServoMovement (30,base.read(),shoulder.read()-degree,elbow.read(), wrist_ver.read(), wrist_rot.read(), gripper.read()); // min 15
       } else if (orientation.equals("left")) {
-        Braccio.ServoMovement (30,base.read(),shoulder.read()+degree,elbow.read(),forearm,wrist,gripper.read()); // max 165
+        Braccio.ServoMovement (30,base.read(),shoulder.read()+degree,elbow.read(), wrist_ver.read(), wrist_rot.read(), gripper.read()); // max 165
       } else {
         // Only used if necessary for debugging
       }
   } else if (joint.equalsIgnoreCase("elbow")){
     if (orientation.equalsIgnoreCase("right")) {
-        Braccio.ServoMovement (30,base.read(),shoulder.read(),elbow.read()-degree,forearm,wrist,gripper.read()); // min 15
+        Braccio.ServoMovement (30,base.read(),shoulder.read(),elbow.read()-degree, wrist_ver.read(), wrist_rot.read(), gripper.read()); // min 15
       } else if (orientation.equals("left")) {
-        Braccio.ServoMovement (30,base.read(),shoulder.read(),elbow.read()+degree,forearm,wrist,gripper.read()); // max 165
+        Braccio.ServoMovement (30,base.read(),shoulder.read(),elbow.read()+degree, wrist_ver.read(), wrist_rot.read(), gripper.read()); // max 165
       } else {
         // Only used if necessary for debugging
       }
-    // ToDo
-
-    //funktioniert nicht sehr gut
   } else if (joint.equalsIgnoreCase("forearm")){
     if (orientation.equalsIgnoreCase("right")) {
-        Braccio.ServoMovement (30,base.read(),shoulder.read(),elbow.read(),forearm-degree,wrist,gripper.read()); // min 15
-        forearm=forearm-degree;
+        Braccio.ServoMovement (30,base.read(),shoulder.read(),elbow.read(), wrist_ver.read()-degree, wrist_rot.read(), gripper.read()); // min 15
       } else if (orientation.equals("left")) {
-        Braccio.ServoMovement (30,base.read(),shoulder.read(),elbow.read(),forearm,wrist,gripper.read()); // max 165
-        forearm=forearm+degree;
+        Braccio.ServoMovement (30,base.read(),shoulder.read(),elbow.read(), wrist_ver.read()+degree, wrist_rot.read(), gripper.read()); // max 165
       } else {
         // Only used if necessary for debugging
       }
-    // ToDo
-
-    //funktioniert nicht sehr gut
   } else if (joint.equalsIgnoreCase("wrist")){
     if (orientation.equalsIgnoreCase("right")) {
-        Braccio.ServoMovement (30,base.read(),shoulder.read(),elbow.read(),forearm,wrist-degree,gripper.read()); // max 180      
+        Braccio.ServoMovement (30,base.read(),shoulder.read(),elbow.read(), wrist_ver.read(), wrist_rot.read()-degree, gripper.read()); // max 180      
         wrist=wrist-degree;         
       } else if (orientation.equals("left")) {
-        Braccio.ServoMovement (30,base.read(),shoulder.read(),elbow.read(),forearm,wrist+degree,gripper.read()); // min 0
+        Braccio.ServoMovement (30,base.read(),shoulder.read(),elbow.read(), wrist_ver.read(), wrist_rot.read()+degree, gripper.read()); // min 0
         wrist=wrist+degree;
       } else {
         // Only used if necessary for debugging
       }
-    // ToDo
   } else if (joint.equalsIgnoreCase("gripper")){
     if (orientation.equalsIgnoreCase("open")) {
-        Braccio.ServoMovement (30,base.read(),shoulder.read(),elbow.read(),forearm,wrist,gripper.read()+degree); // max 73
+        Braccio.ServoMovement (30,base.read(),shoulder.read(),elbow.read(), wrist_ver.read(), wrist_rot.read(), gripper.read()+degree); // max 73
       } else if (orientation.equals("down")) {
-        Braccio.ServoMovement (30,base.read(),shoulder.read(),elbow.read(),wrist_ver.read()-180,wrist,gripper.read()-degree); // min 10
+        Braccio.ServoMovement (30,base.read(),shoulder.read(),elbow.read(), wrist_ver.read(), wrist_rot.read(), gripper.read()-degree); // min 10
       } else {
         // Only used if necessary for debugging
       }
   } else {
     currentPosition();
-    Serial.println("No command matched in singleCommandRelative");
+    Serial.println("No command matched in singleCommandRelative!");
   }
 }
 
+/* SEARCH DRINKS */
+// Senses the color in front of the sensor. THe easiest ones are Red, Green and Blue
 String checkColour (){
-   // Der Sensor liefert Werte für R, G, B und einen Clear-Wert zurück
+   // The sensor returns a value for R, G, B and a clear value
    uint16_t clearcol, red, green, blue;
    float average, r, g, b;
    String colour = "";
-   delay(100); // Farbmessung dauert c. 50ms 
+   delay(100); // Color sensing takes about 50 ms
    tcs.getRawData(&red, &green, &blue, &clearcol);
    
-   // Mein Versuch einer Farbbestimmung für 
-   // die 5 M&M-Farben Rot, Grün, Blau, Orange und Gelb
-   
-   // Durchschnitt von RGB ermitteln
+   // Calcualte Average from RGB
    average = (red+green+blue)/3;
-   // Farbwerte durch Durchschnitt, 
-   // alle Werte bewegen sich jetzt rund um 1 
+   // Calculate colors divided by average to get values around 1.0 
    r = red/average;
    g = green/average;
    b = blue/average;
-   // Clear-Wert und r,g,b seriell ausgeben zur Kontrolle
-   // r,g und b sollten sich ca. zwischen 0,5 und 1,5 
-   // bewegen. Sieht der Sensor rot, dann sollte r deutlich über 1.0
-   // liegen, g und b zwischen 0.5 und 1.0 usw.
+   // Print clear value and r, g, b serialized to the console
    Serial.print("\tClear:"); Serial.print(clearcol);
    Serial.print("\tRed:"); Serial.print(r);
    Serial.print("\tGreen:"); Serial.print(g);
    Serial.print("\tBlue:"); Serial.print(b);
    
-   // Versuch der Farbfeststellung anhand der r,g,b-Werte.
-   // Am besten mit Rot, Grün, Blau anfangen die die Schwellenwerte
-   // mit der seriellen Ausgabe entsprechend anpassen
+   // Color detection. Adapt for different outcomes
    if ((r > 1.4) && (g < 0.9) && (b < 0.9)) {
-    Serial.println("\tROT");
+    Serial.println("\tRed");
     colour = "tomato";
     return colour;
    } else if ((r > 0.5) && (r < 0.8) && (g > 0.95) && (g < 1.05) && (b > 1.1) && (b < 0.9)) { // r < 0.8 && g< 1.2
-    Serial.println("\tBLAU");
+    Serial.println("\tBlue");
     colour = "blueberry";
     return colour;
    }
-   // Gelb und Orange sind etwas tricky, aber nach etwas
-   // Herumprobieren haben sich bei mir diese Werte als
-   // gut erwiesen
    else if ((r > 1.25) && (r < 1.35) && (g > 1.05) && (g < 1.15) && (b > 0.55) && (b < 0.65)) {
-    Serial.println("\tGELB");
+    Serial.println("\tYellow");
     colour = "fanta";
     return colour;
    }
    else if ((r > 0.95) && (r < 1.1) && (g > 1.0) && (g < 1.1) && (b > 0.85) && (b < 1.0)) {
-    Serial.println("\tWEISS");
+    Serial.println("\tWHITE");
     colour = "water";
     return colour;
    } 
-   // Wenn keine Regel greift, dann ehrlich sein
    else {
-    Serial.println("\tNICHT ERKANNT"); 
+    Serial.println("\tNo color detected!"); 
     colour = "no";
     return colour;
    }
 }
 
+// Performs a predefined pattern to search a drink within preset positions 
 void searchBeverage (String btColour) {
     int moveBase = 0;
+    // Brings the arm to the startPosition
     startPattern(moveBase,10);
-    //Braccio.ServoMovement (30,ba,sh,el,wrV,wrR,gr); // Standard: (30,95,90,140,180,65,10)
 
+    // Checking the different positions. For more positions change the i in the for loop
     for (int i = 0; i<4; i++){
       scanSidePattern(moveBase,10);
       if (checkColour() == btColour){  
@@ -386,8 +332,11 @@ void searchBeverage (String btColour) {
     }
     startPattern(80,10);
     startPattern(0,10);
+}
 
-    
+/* PATTERNS */
+void currentPosition (){
+  Braccio.ServoMovement (30,base.read(),shoulder.read(),elbow.read(),wrist_ver.read(),wrist_rot.read(),gripper.read()); //current position
 }
 
 void stretchPattern() {
@@ -431,14 +380,6 @@ void goodbyePattern () {
     Braccio.ServoMovement (20,90,90,90,135,90,73);
 }
 
-void colourLoop(){
-  scanSidePattern(80,10);
-  while(1){
-  checkColour();
-  delay(500);
-  }
-}
-
 // Imitate "Schnappi" hand
 void crocodilePattern() {
   for (int i = 0; i < 5; i++){
@@ -457,95 +398,11 @@ void releasePattern() {
   Braccio.ServoMovement (30,base.read(),shoulder.read(),elbow.read(),wrist_ver.read(),wrist_rot.read(),10);
 }
 
-/*
-Archive
-  Braccio.ServoMovement (30,95,135,140,180,65,10); // Check durch sensor
-  Braccio.ServoMovement (30,95,135,140,180,65,73); // greifen
-  Braccio.ServoMovement (30,95,90,140,180,65,73); // greifen hoch
-  Braccio.ServoMovement (30,20,90,140,180,65,73); // greifen hoch links
-  Braccio.ServoMovement (30,20,135,140,180,65,73); // greifen hoch links runter
-  Braccio.ServoMovement (30,20,135,140,180,65,10); // greifen hoch links runter loslassen
-  Braccio.ServoMovement (30,20,90,140,180,65,10); // hoch
-  Braccio.ServoMovement (30,95,90,140,180,65,10); // standard
-
-  void singleCommandAbsolute (char joint, long degree){
-  switch (joint){
-    case 'b':
-      Braccio.ServoMovement (30,degree,shoulder.read(),elbow.read(),wrist_ver.read(),wrist_rot.read(),gripper.read());
-      break;
-      
-    case 's':
-      Braccio.ServoMovement (30,base.read(),degree,elbow.read(),wrist_ver.read(),wrist_rot.read(),gripper.read());
-      break;
-      
-    case 'e':
-      Braccio.ServoMovement (30,base.read(),shoulder.read(),degree,wrist_ver.read(),wrist_rot.read(),gripper.read());
-      break;
-      
-    case 'u':
-      Braccio.ServoMovement (30,base.read(),shoulder.read(),elbow.read(),degree,wrist_rot.read(),gripper.read());
-      break;
-      
-    case 'w':
-      Braccio.ServoMovement (30,base.read(),shoulder.read(),elbow.read(),wrist_ver.read(),degree,gripper.read());
-      break;
-      
-    case 'g':
-      Braccio.ServoMovement (30,base.read(),shoulder.read(),elbow.read(),wrist_ver.read(),wrist_rot.read(),degree);
-      break;
-      
-    default: 
-      currentPosition();
+// This pattern exists for test purposes to cosntantly check the color
+void colourLoop(){
+  scanSidePattern(80,10);
+  while(1){
+  checkColour();
+  delay(500);
   }
 }
-
-void singleCommandRelative (char joint, String orientation, int degree){
-   switch (joint){
-    case 'b':
-      if (orientation.equalsIgnoreCase("right")) {
-        Braccio.ServoMovement (30,base.read()+degree,shoulder.read(),elbow.read(),wrist_ver.read(),wrist_rot.read(),gripper.read()); // max 180
-      } else if (orientation.equals("left")) {
-        Braccio.ServoMovement (30,base.read()-degree,shoulder.read(),elbow.read(),wrist_ver.read(),wrist_rot.read(),gripper.read()); // min 0
-      } else {
-        // Only used if necessary for debugging
-      }
-      break;
-      
-    case 's':
-      if (orientation.equalsIgnoreCase("up")) {
-        Braccio.ServoMovement (30,base.read(),shoulder.read()-degree,elbow.read(),wrist_ver.read(),wrist_rot.read(),gripper.read()); // min 15
-      } else if (orientation.equals("down")) {
-        Braccio.ServoMovement (30,base.read(),shoulder.read()+degree,elbow.read(),wrist_ver.read(),wrist_rot.read(),gripper.read()); // max 165
-      } else {
-        // Only used if necessary for debugging
-      }
-      break;
-      
-    case 'e':
-      // To identify
-      break;
-      
-    case 'u':
-      // To identify
-      break;
-      
-    case 'w':
-      // To identify
-      break;
-      
-    case 'g':
-      if (orientation.equalsIgnoreCase("open")) {
-        Braccio.ServoMovement (30,base.read(),shoulder.read(),elbow.read(),wrist_ver.read(),wrist_rot.read(),gripper.read()+degree); // max 73
-      } else if (orientation.equals("down")) {
-        Braccio.ServoMovement (30,base.read(),shoulder.read(),elbow.read(),wrist_ver.read(),wrist_rot.read(),gripper.read()-degree); // min 10
-      } else {
-        // Only used if necessary for debugging
-      }
-      break;
-      
-    default: 
-      currentPosition();
-  }
-}
-*/
-
