@@ -3,15 +3,11 @@ package com.example.andreas.barista_30;
 
 import android.app.AlertDialog;
 import android.content.ActivityNotFoundException;
-import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.content.res.ColorStateList;
 import android.content.res.Resources;
 import android.content.res.TypedArray;
 import android.graphics.Color;
-import android.graphics.drawable.ColorDrawable;
-import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Bundle;
 import android.speech.RecognizerIntent;
@@ -25,14 +21,10 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
-import android.widget.CompoundButton;
 import android.widget.ImageView;
 import android.widget.Switch;
 import android.widget.TextView;
 import android.widget.Toast;
-
-import java.io.IOException;
 import java.util.List;
 import java.util.Locale;
 import java.util.regex.Matcher;
@@ -49,24 +41,24 @@ public class Tab2Fragment extends Fragment {
 
     private static final int SPEECH_REQUEST_CODE = 0;
     private TextView text;
-    private Switch switchModus;
+    private Switch switchMode;
 
-    //Animation für die SpeechRecognition Acitivity. + ein Teil an "onClickFloat"
+    //Animation for SpeechRecognition Activity. + one part "onClickFloat"
     private ConstraintLayout constraintLayout;
-    private ConstraintSet constr = new ConstraintSet();
+    private ConstraintSet constraintSet = new ConstraintSet();
     private ImageView imgView;
 
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         final View view = inflater.inflate(R.layout.tab2_fragment, container, false);
-        //views Initialisieren
-        constraintLayout = (ConstraintLayout) view.findViewById(R.id.tab2layout);
-        constr.clone(getActivity(), R.layout.tab2_fragment_transition);
-        text = (TextView) view.findViewById(R.id.textView);
-        FloatingActionButton buttonFloat = (FloatingActionButton) view.findViewById(R.id.floatingActionButton);
+        //initialise views
+        constraintLayout = view.findViewById(R.id.tab2layout);
+        constraintSet.clone(getActivity(), R.layout.tab2_fragment_transition);
+        text =  view.findViewById(R.id.textView);
+        FloatingActionButton buttonFloat = view.findViewById(R.id.floatingActionButton);
         imgView = constraintLayout.findViewById(R.id.imgView);
-        //FloatingActionButoon onCLickListener
+        //FloatingActionButton onCLickListener
         buttonFloat.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
                 try {
@@ -77,50 +69,45 @@ public class Tab2Fragment extends Fragment {
             }
         });
 
-        // Invoke Switch Button tobi
-        switchModus = (Switch) view.findViewById(R.id.switchCommand);
+        // Invoke Switch Button
+        switchMode = view.findViewById(R.id.switchCommand);
         // Check the current state of the switch
-        switchModus.setOnClickListener(new View.OnClickListener() {
+        switchMode.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
                 try {
-                    if (switchModus.isChecked() == true) {
+                    if (switchMode.isChecked() == true) {
                         constraintLayout.setBackgroundColor(Color.LTGRAY);
-                        switchModus.setText(R.string.manual);
-                    } else if (switchModus.isChecked() != true) {
-                        //alertModus(); // Invoke alert dialog tobi
+                        switchMode.setText(R.string.manual);
+                    } else if (switchMode.isChecked() != true) {
+                        //alertMode(); // Invoke alert dialog
                         constraintLayout.setBackgroundColor(Color.WHITE);
-                        switchModus.setText(R.string.predefined);
-
+                        switchMode.setText(R.string.predefined);
                     }
                 } catch (Exception e) {
                     Toast.makeText(getActivity(), "Catch listener switchCommand", Toast.LENGTH_SHORT).show();
                 }
             }
         });
-
-
-
         return view;
     }
 
 
-    //erstellt Intent fuer Speechrecognotion
+    //create intent for speech recognition
     private void displaySpeechRecognizer() {
-        //Intent erstellen
         Intent intent = new Intent(RecognizerIntent.ACTION_RECOGNIZE_SPEECH);
         intent.putExtra(RecognizerIntent.EXTRA_LANGUAGE_MODEL, RecognizerIntent.LANGUAGE_MODEL_FREE_FORM);
         intent.putExtra(RecognizerIntent.EXTRA_LANGUAGE, Locale.ENGLISH);
         intent.putExtra(RecognizerIntent.EXTRA_PROMPT, "");
-        //Intent starten
+        //Intent start
         try {
             startActivityForResult(intent, SPEECH_REQUEST_CODE);
         }
-        //falls keine App den Intent erfuellen kann wird auf App verwiesen, die den Intent erfuellen kann
+        //if no suiting app is available redirect to download of an app
         catch (ActivityNotFoundException e) {
             String appPackageName = "com.google.android.googlequicksearchbox";
             try {
                 startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("market://details?id=" + appPackageName)));
-            } catch (android.content.ActivityNotFoundException anfe) {
+            } catch (android.content.ActivityNotFoundException ex) {
                 startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("https://play.google.com/store/apps/details?id=" + appPackageName)));
             }
             Toast.makeText(getActivity(), "Catch startActivityFor Result", Toast.LENGTH_SHORT).show();
@@ -128,20 +115,19 @@ public class Tab2Fragment extends Fragment {
     }
 
 
-    //empfaengt Ergebnis von Speechrecognizer
+    //receives result of Speechrecognizer
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         if (requestCode == SPEECH_REQUEST_CODE && resultCode == RESULT_OK) {
-            //Liste mit allen ideen des Recognizer
+            //result ideas
             List<String> results = data.getStringArrayListExtra(RecognizerIntent.EXTRA_RESULTS);
 
-            //Wahrscheinlichstes Ergebnis
+            //most likely result
             String spokenText = "";
             String[] searchCommandArray = getResources().getStringArray(R.array.searchCommands);
             String[] doCommandArray = getResources().getStringArray(R.array.doCommands);
             String[] jointCommandArray = getResources().getStringArray(R.array.jointCommands);
-            String[] orientationCommandArray = getResources().getStringArray(R.array.orientationCommands);
             String[] mappingKeyArray = getResources().getStringArray(R.array.mappingKey);
             String[] mappingValueArray = getResources().getStringArray(R.array.mappingValue);
             int searchProbability = 0;
@@ -177,17 +163,17 @@ public class Tab2Fragment extends Fragment {
                 Log.w("app", e);
             }
 
-            //auf Bildschirm anzeigen & Sprachungenauigkeiten ausbessern
+            //display on screen
             text.setText(spokenText);
 
-            //animation Button nach unten und Bild anzeigen
+            //animation and show picture
             TransitionManager.beginDelayedTransition(constraintLayout);
-            constr.applyTo(constraintLayout);
+            constraintSet.applyTo(constraintLayout);
 
             // Check for changing from manual to predefined control
-            if (switchModus.isChecked() == true && ((spokenText.contains("search") || spokenText.contains("do")))) {
-                alertModus();
-            } else if ((switchModus.isChecked() == false && ((spokenText.contains("search") || spokenText.contains("do")))) || (spokenText.contains("move"))) {
+            if (switchMode.isChecked() == true && ((spokenText.contains("search") || spokenText.contains("do")))) {
+                alertMode();
+            } else if ((switchMode.isChecked() == false && ((spokenText.contains("search") || spokenText.contains("do")))) || (spokenText.contains("move"))) {
                 sendKeyword(buildKeyword(text.getText().toString()));
             }
         }
@@ -208,7 +194,7 @@ public class Tab2Fragment extends Fragment {
         return probability;
     }
 
-    //Keyword wird an Arduino gesendet
+    //Keyword building
     private String buildKeyword(String string) {
         String btString = "";
         btString = string.toLowerCase();
@@ -221,7 +207,6 @@ public class Tab2Fragment extends Fragment {
         int degree = 0;
 
         if (btString.contains("search")) {
-
             Log.w("String", "contains search");
             for (int i = 0; i < res.getStringArray(R.array.searchCommands).length; i++) {
                 if (btString.contains(res.getStringArray(R.array.searchCommands)[i])) {
@@ -236,9 +221,7 @@ public class Tab2Fragment extends Fragment {
                     imgView.setImageResource(R.drawable.transparent);
                 }
             }
-
         } else if (btString.contains("do")) {
-
             for (int i = 0; i < res.getStringArray(R.array.doCommands).length; i++) {
                 if (btString.contains(res.getStringArray(R.array.doCommands)[i])) {
                     msg = String.valueOf(i+1);
@@ -250,9 +233,8 @@ public class Tab2Fragment extends Fragment {
                     imgView.setImageResource(R.drawable.transparent);
                 }
             }
-
         } else if (btString.contains("move")) {
-            setModusOn();
+            setModeOn();
             for (int i = 0; i < res.getStringArray(R.array.jointCommands).length; i++) {
                 if (btString.contains(res.getStringArray(R.array.jointCommands)[i])) {
                     Pattern p = Pattern.compile("-?\\d+");
@@ -292,18 +274,12 @@ public class Tab2Fragment extends Fragment {
 
         return msg;
     }
-
+    //send keyword
     private void sendKeyword(String msg){
-
         if (!msg.equalsIgnoreCase("")){
-            //keyword per BT senden
             try {
                 Log.w("Final message", msg);
-                // if (degree < 181 && degree >= 0) { //Always 0 for search and do
                 ((MainActivity) getActivity()).sendData(msg);
-                //} else {
-                //    Toast.makeText(getActivity(), "Degree must be between 0 and 180", Toast.LENGTH_SHORT).show();
-                //}
             } catch (Exception e) {
                 Log.w("APP", e);
                 Toast.makeText(getActivity(), "Send Failed", Toast.LENGTH_SHORT).show();
@@ -311,34 +287,32 @@ public class Tab2Fragment extends Fragment {
         } else {
             Toast.makeText(getActivity(), "There is no command to send", Toast.LENGTH_SHORT).show();
         }
-
     }
 
-    protected void setModusOn() {
-        final Switch switchModus = (Switch) getActivity().findViewById(R.id.switchCommand);
-        switchModus.setChecked(true);
-        switchModus.setText(R.string.manual);
+    private void setModeOn() {
+        final Switch switchMode = getActivity().findViewById(R.id.switchCommand);
+        switchMode.setChecked(true);
+        switchMode.setText(R.string.manual);
         constraintLayout.setBackgroundColor(Color.LTGRAY);
-
     }
 
-    protected void setModusOff() {
-        final Switch switchModus = (Switch) getActivity().findViewById(R.id.switchCommand);
-        switchModus.setChecked(false);
-        switchModus.setText(R.string.predefined);
+    private void setModeOff() {
+        final Switch switchMode = getActivity().findViewById(R.id.switchCommand);
+        switchMode.setChecked(false);
+        switchMode.setText(R.string.predefined);
         constraintLayout.setBackgroundColor(Color.WHITE);
     }
 
-    protected void alertModus() {
+    protected void alertMode() {
         //Alert
         DialogInterface.OnClickListener dialogClickListener = new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
                 switch (which) {
                     case DialogInterface.BUTTON_POSITIVE:
-                        setModusOff(); //Yes button clicked
+                        setModeOff(); //Yes button clicked
                         try {
-                            //per BT senden
+                            //bt send
                             sendKeyword(buildKeyword(text.getText().toString()));
                         } catch (Exception e) {
                             Toast.makeText(getActivity(), "Sending didn't work!", Toast.LENGTH_SHORT).show();
@@ -346,7 +320,7 @@ public class Tab2Fragment extends Fragment {
                         break;
 
                     case DialogInterface.BUTTON_NEGATIVE:
-                        setModusOn(); //No button clicked
+                        setModeOn(); //No button clicked
                         text.setText("");
                         imgView.setVisibility(View.INVISIBLE);
                         break;
@@ -354,10 +328,9 @@ public class Tab2Fragment extends Fragment {
             }
         };
 
-        // Alternativ nur context
+        // Alternativ only context
         AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
         builder.setTitle("Question").setMessage("You are about to leave the manual modus. Do you really want to change modus?").setCancelable(false).setPositiveButton("Yes", dialogClickListener)
                 .setNegativeButton("No", dialogClickListener).show();
-
     }
 }

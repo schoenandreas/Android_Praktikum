@@ -43,7 +43,8 @@
         - Vanilla extract\n
         - Lime juice\n
         - Sugar\n
-        - Fluid extraxt of cola leaves</string>
+        - Fluid extraxt of cola leaves
+    </string>
     <string name="fantaDesc">
         Ingredients: \n
         \n
@@ -54,7 +55,8 @@
         - Natural orange flavouring\n
         - Preservative\
         - Malic acid\
-        - Acidity regulator</string>
+        - Acidity regulator
+    </string>
     <string name="waterDesc">
         Ingredients:\n
         \n
@@ -65,14 +67,17 @@
         - Chloride\n
         - Sulfat\n
         - Hydrogen carbonate
-        </string>
+    </string>
     <string name="tomatoDesc">
         Ingredients: \n
         \n
         - Tomato juice from concentrate\n
         - Lemon juice from concentrate\n
         - Salt\n
-        - Ascorbic acid</string>
-    <string name="blueDesc">wrist</string>
+        - Ascorbic acid
+    </string>
+    <string name="blueDesc">
+
+    </string>
 
 </resources>

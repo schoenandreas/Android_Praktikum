@@ -5,8 +5,8 @@ package com.example.andreas.barista_30;
  */
 public class DrinkList {
 
-    String cardName;
-    int imageResourceId;
+    private String cardName;
+    private int imageResourceId;
 
 
 
