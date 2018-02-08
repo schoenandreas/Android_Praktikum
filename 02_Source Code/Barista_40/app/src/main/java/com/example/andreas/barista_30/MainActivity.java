@@ -73,16 +73,16 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
 
         //Setup Fragments
-        ViewPager viewPager = findViewById(R.id.container);
-        TabLayout tablayout = findViewById(R.id.tabs);
-        setupViewPager(viewPager);
-        tablayout.setupWithViewPager(viewPager);
+        setupViewPager();
 
         // BT Dialog
         bluetoothDialog();
     }
 
-    private void setupViewPager(ViewPager viewPager) {
+    private void setupViewPager() {
+        ViewPager viewPager = findViewById(R.id.container);
+        TabLayout tablayout = findViewById(R.id.tabs);
+
         //add fragments to adapter
         SectionsPageAdapter adapter = new SectionsPageAdapter(getSupportFragmentManager());
         adapter.addFragment(new Tab1Fragment(), "Help");
@@ -92,6 +92,8 @@ public class MainActivity extends AppCompatActivity {
         viewPager.setAdapter(adapter);
         //Tab2Fragment as start fragment
         viewPager.setCurrentItem(1, true);
+        //setup TabLayout with viewPager
+        tablayout.setupWithViewPager(viewPager);
     }
 
     //create BT Dialog
