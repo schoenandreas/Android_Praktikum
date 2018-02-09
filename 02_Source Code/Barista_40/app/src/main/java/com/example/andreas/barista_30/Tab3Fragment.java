@@ -23,22 +23,21 @@ import java.util.ArrayList;
 
 public class Tab3Fragment extends Fragment {
 
-    //dialog Variablen
-    Dialog myDialog;
-    TextView dialogDrinkName;
-    TextView dialogdescription;
-    ImageView img;
+    //dialog variables
+    private Dialog myDialog;
+    private TextView dialogDrinkName;
+    private TextView dialogDescription;
+    private ImageView img;
 
 
-    ArrayList<DrinkList> listitems = new ArrayList<>();
-    RecyclerView MyRecyclerView;
-    String Drinks[] = {"Coca-Cola","Fanta","Tomatensaft","Wasser"};
-    int  Images[] = {R.drawable.coca_cola,R.drawable.fanta,R.drawable.tomatensaft,R.drawable.wasser};
+    private ArrayList<DrinkList> listItems = new ArrayList<>();
+    private RecyclerView MyRecyclerView;
+    private String Drinks[] = {"Coca-Cola","Fanta","Tomatensaft","Wasser"};
+    private int  Images[] = {R.drawable.coca_cola,R.drawable.fanta,R.drawable.tomatensaft,R.drawable.wasser};
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
-
-        //arraylist initialisieren
+        //initialise ArrayList
         super.onCreate(savedInstanceState);
         initializeList();
         getActivity().setTitle("DrinkList");
@@ -51,54 +50,49 @@ public class Tab3Fragment extends Fragment {
 
         View view = inflater.inflate(R.layout.tab3_fragment, container, false);
 
-        //RecyclerView binden
-        MyRecyclerView = (RecyclerView) view.findViewById(R.id.cardView);
+        //RecyclerView bind
+        MyRecyclerView = view.findViewById(R.id.cardView);
         MyRecyclerView.setHasFixedSize(true);
 
-        //Manager erstellen, um die Position der Daten während der Scrolling zu kontrollieren
+        //Manager creation, to control data while scrolling
         LinearLayoutManager MyLayoutManager = new LinearLayoutManager(getActivity());
         MyLayoutManager.setOrientation(LinearLayoutManager.VERTICAL);
-        if (listitems.size() > 0 & MyRecyclerView != null) {
-            MyRecyclerView.setAdapter(new MyAdapter(listitems));
+        if (listItems.size() > 0 & MyRecyclerView != null) {
+            MyRecyclerView.setAdapter(new MyAdapter(listItems));
         }
         MyRecyclerView.setLayoutManager(MyLayoutManager);
 
-        //popup initialisieren
+        //popup initialisation
         myDialog = new Dialog(getActivity());
         myDialog.setContentView(R.layout.tab3_dialog);
 
-        //view initialiseren
-        dialogDrinkName = (TextView) myDialog.findViewById(R.id.dialogDrinkName);
-        dialogdescription = (TextView) myDialog.findViewById(R.id.dialogDescription);
+        //view initialisation
+        dialogDrinkName = myDialog.findViewById(R.id.dialogDrinkName);
+        dialogDescription =  myDialog.findViewById(R.id.dialogDescription);
 
-        //floating Button um über das Getränk auf Google zu suchen
-        FloatingActionButton floatingsearch =(FloatingActionButton) myDialog.findViewById(R.id.floating_search);
-        floatingsearch.setOnClickListener(new View.OnClickListener() {
+        //floating Button for google search
+        FloatingActionButton floatingSearchButton = myDialog.findViewById(R.id.floating_search);
+        floatingSearchButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                try
-                {
-                    floatsearch();
-                }catch (Exception e)
-                {
+                try {
+                    floatSearch();
+                }catch (Exception e){
                     Toast.makeText(getActivity(), e.toString(), Toast.LENGTH_SHORT).show();
                 }
             }
         });
-
         return view;
     }
 
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
-
     }
 
-    //adapter um die Recyclerview und die Daten zu verbinden
+    //adapter to connect RecyclerView and data
     public class MyAdapter extends RecyclerView.Adapter<MyViewHolder> {
         private ArrayList<DrinkList> list;
-
         public MyAdapter(ArrayList<DrinkList> Data) {
             list = Data;
         }
@@ -111,17 +105,13 @@ public class Tab3Fragment extends Fragment {
             return holder;
         }
 
-        //ViewHolder wird mit die Daten von DrinkList verbunden
+        //ViewHolder connected with data of DrinkList
         @Override
         public void onBindViewHolder(final MyViewHolder holder, int position) {
-
             holder.titleTextView.setText(list.get(position).getCardName());
             holder.coverImageView.setImageResource(list.get(position).getImageResourceId());
             holder.coverImageView.setTag(list.get(position).getImageResourceId());
-
-
         }
-
         @Override
         public int getItemCount() {
             return list.size();
@@ -129,7 +119,7 @@ public class Tab3Fragment extends Fragment {
     }
 
 
-    //viewHolder für alle Views
+    //viewHolder for all views
     public class MyViewHolder extends RecyclerView.ViewHolder {
 
         public TextView titleTextView;
@@ -140,83 +130,70 @@ public class Tab3Fragment extends Fragment {
         public MyViewHolder(View v) {
             super(v);
 
-            img = (ImageView) myDialog.findViewById(R.id.img);
-            dialogDrinkName = (TextView) myDialog.findViewById(R.id.dialogDrinkName);
-            dialogdescription = (TextView) myDialog.findViewById(R.id.dialogDescription);
-            card = (CardView) v.findViewById(R.id.card1);
-            titleTextView = (TextView) v.findViewById(R.id.txtcard);
-            coverImageView = (ImageView) v.findViewById(R.id.imagecrd);
+            img =  myDialog.findViewById(R.id.img);
+            dialogDrinkName =  myDialog.findViewById(R.id.dialogDrinkName);
+            dialogDescription =  myDialog.findViewById(R.id.dialogDescription);
+            card =  v.findViewById(R.id.card1);
+            titleTextView = v.findViewById(R.id.txtcard);
+            coverImageView =  v.findViewById(R.id.imagecrd);
             coverImageView.setOnClickListener(new View.OnClickListener() {
 
-                //onClick von listener wenn auf cards geklickt wird
+                //onClick if card are clicked
                 @Override
                 public void onClick(View v) {
-
-
                     int id = (int)coverImageView.getTag();
 
-                    //dialog befüllen je nachdem auf welche card geklickt wurde
+                    //dialog filling depending on which card was chosen
                     if( id == R.drawable.coca_cola){
 
-                        dialogdescription.setText(R.string.colaDesc);
+                        dialogDescription.setText(R.string.colaDesc);
                         dialogDrinkName.setText("Coke");
                         img.setTag(R.drawable.coca_cola);
                         img.setImageResource(R.drawable.coca_cola);
 
                     }else if (id==R.drawable.fanta){
 
-                        dialogdescription.setText(R.string.fantaDesc);
+                        dialogDescription.setText(R.string.fantaDesc);
                         dialogDrinkName.setText("Fanta");
                         img.setTag(R.drawable.fanta);
                         img.setImageResource(R.drawable.fanta);
                     }else if (id==R.drawable.tomatensaft){
 
-                        dialogdescription.setText(R.string.tomatoDesc);
+                        dialogDescription.setText(R.string.tomatoDesc);
                         dialogDrinkName.setText("Tomato juice");
                         img.setTag(R.drawable.tomatensaft);
                         img.setImageResource(R.drawable.tomatensaft);
                     }else if (id==R.drawable.wasser){
 
-                        dialogdescription.setText(R.string.waterDesc);
-                        dialogDrinkName.setText("Wasser");
+                        dialogDescription.setText(R.string.waterDesc);
+                        dialogDrinkName.setText("Water");
                         img.setTag(R.drawable.wasser);
                         img.setImageResource(R.drawable.wasser);
                     }
-
                     myDialog.show();
-
                 }
             });
         }
     }
 
     public void initializeList() {
-        listitems.clear();
-
-        //for every Drink added, i musst be incremented
-
+        listItems.clear();
+        //for every Drink added, i must be incremented
         for(int i =0;i<4;i++){
-
-
-            DrinkList item = new DrinkList();
+           DrinkList item = new DrinkList();
             item.setCardName(Drinks[i]);
             item.setImageResourceId(Images[i]);
-            listitems.add(item);
-
+            listItems.add(item);
         }
     }
 
-
-    //google search wenn auf FloatingButton geklickt wird
-    public void floatsearch ()
-    {
-        CharSequence drinksearch=dialogDrinkName.getText();
-
-        String url = "http://www.google.com/search?q="+drinksearch;
+    //google search
+    public void floatSearch() {
+        CharSequence drinkSearch=dialogDrinkName.getText();
+        String url = "http://www.google.com/search?q="+drinkSearch;
 
         Intent i = new Intent(Intent.ACTION_VIEW);
         i.setData(Uri.parse(url));
         startActivity(i);
-
     }
 }

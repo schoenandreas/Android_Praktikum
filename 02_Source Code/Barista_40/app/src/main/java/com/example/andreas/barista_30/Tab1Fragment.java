@@ -1,9 +1,11 @@
 package com.example.andreas.barista_30;
 
 import android.support.v4.app.Fragment;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.view.LayoutInflater;
@@ -20,11 +22,11 @@ import android.widget.Toast;
 
 public class Tab1Fragment extends Fragment {
 
-    View rootView;
-    ExpandableListAdapter listAdapter;
-    ExpandableListView expListView;
-    List<String> listDataHeader;
-    HashMap<String, List<String>> listDataChild;
+    private View rootView;
+    private ExpandableListAdapter listAdapter;
+    private ExpandableListView expListView;
+    private List<String> listDataHeader;
+    private HashMap<String, List<String>> listDataChild;
 
 
     public void onCreate(Bundle savedInstanceState) {
@@ -37,56 +39,75 @@ public class Tab1Fragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         rootView = inflater.inflate(R.layout.tab1_fragment, container, false);
 
+<<<<<<< HEAD
         // Getting the expndablelistview
         expListView = (ExpandableListView) rootView.findViewById(R.id.lvExp);
+=======
+
+        // get the listView
+        expListView = rootView.findViewById(R.id.lvExp);
+>>>>>>> f705baca48828e51e60692239d2d5da32518667f
         listAdapter = new ExpandableListAdapter(listDataHeader, listDataChild, getActivity());
 
         // Setting the list adapter
         expListView.setAdapter(listAdapter);
 
-        // Listview Group click listener
+        //listView Group click listener
         expListView.setOnGroupClickListener(new OnGroupClickListener() {
 
             @Override
             public boolean onGroupClick(ExpandableListView parent, View v,
                                         int groupPosition, long id) {
+<<<<<<< HEAD
                 // Placeholder
+=======
+>>>>>>> f705baca48828e51e60692239d2d5da32518667f
                 return false;
             }
         });
-        // Listview Group expanded listener
+        //listViewGroup expanded listener
         expListView.setOnGroupExpandListener(new OnGroupExpandListener() {
 
             @Override
             public void onGroupExpand(int groupPosition) {
+<<<<<<< HEAD
                 // Placeholder
+=======
+>>>>>>> f705baca48828e51e60692239d2d5da32518667f
             }
         });
-        // Listview Group collasped listener
+        //listView Group collapsed listener
         expListView.setOnGroupCollapseListener(new OnGroupCollapseListener() {
 
             @Override
             public void onGroupCollapse(int groupPosition) {
+<<<<<<< HEAD
                 // Placeholder
+=======
+>>>>>>> f705baca48828e51e60692239d2d5da32518667f
             }
         });
-        // Listview on child click listener
+        //listView on child click listener
         expListView.setOnChildClickListener(new OnChildClickListener() {
 
             @Override
             public boolean onChildClick(ExpandableListView parent, View v,
                                         int groupPosition, int childPosition, long id) {
+<<<<<<< HEAD
                 // Placeholder
+=======
+>>>>>>> f705baca48828e51e60692239d2d5da32518667f
                 return false;
             }
         });
 
         // Gives the bluetooth Switch an OnClickListener
-        final Switch bluetoothSwitchButton = (Switch) rootView.findViewById(R.id.btSwitch);
+        final Switch bluetoothSwitchButton = rootView.findViewById(R.id.btSwitch);
 
-        bluetoothSwitchButton.setOnClickListener(new View.OnClickListener(){
-            public void onClick (View v){
+        bluetoothSwitchButton.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
                 try {
+<<<<<<< HEAD
                     if (bluetoothSwitchButton.isChecked()){
                         // Popup for bluetooth dialog open
                         MainActivity mainActivity = (MainActivity) getActivity();
@@ -95,11 +116,23 @@ public class Tab1Fragment extends Fragment {
                         switchItemText.setText(R.string.bt_enabled + "HMSoft");
                     } else if (!bluetoothSwitchButton.isChecked()){
                         TextView switchItemText = (TextView) rootView.findViewById(R.id.btSwitchItem);
+=======
+                    if (bluetoothSwitchButton.isChecked()) {
+                        //popup for bluetooth dialog initialisation
+                        MainActivity mainActivity = (MainActivity) getActivity();
+                        mainActivity.bluetoothDialog();
+
+                        TextView switchItemText = rootView.findViewById(R.id.btSwitchItem);
+                        switchItemText.setText(R.string.bt_enabled + "HMSoft");
+
+                    } else if (!bluetoothSwitchButton.isChecked()) {
+                        TextView switchItemText = rootView.findViewById(R.id.btSwitchItem);
+>>>>>>> f705baca48828e51e60692239d2d5da32518667f
                         switchItemText.setText(R.string.bt_disabled);
                     } else {
                         Toast.makeText(getActivity(), "Bluetooth Switch not working!", Toast.LENGTH_SHORT).show();
                     }
-                } catch (Exception e){
+                } catch (Exception e) {
                     Toast.makeText(getActivity(), "Catch listener bluetooth settings", Toast.LENGTH_SHORT).show();
                 }
             }
@@ -160,7 +193,7 @@ public class Tab1Fragment extends Fragment {
                 "\nMove Elbow -degree- (right or left) " +
                 "\nMove Forearm -degree- (right or left) " +
                 "\nMove Wrist -degree- (right or left) " +
-                "\nMove Grapper -degree- (right or left)"+
+                "\nMove Grapper -degree- (right or left)" +
                 "\n\n Info: For the right point of view the base motor must be visible! ");
 
         List<String> faqs = new ArrayList<String>();

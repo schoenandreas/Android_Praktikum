@@ -23,8 +23,6 @@ import android.widget.ProgressBar;
 import android.widget.Switch;
 import android.widget.TextView;
 import android.widget.Toast;
-
-
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -34,16 +32,20 @@ import java.util.List;
 import java.util.Set;
 import java.util.UUID;
 
+/**
+ * Created by Andreas on 06.12.2017.
+ */
+
 public class MainActivity extends AppCompatActivity {
 
-    //Deklaration der Variablen fuer BT-dialog
+    //declaration of variables for BT-dialog
     //<editor-fold desc="Dialog declarations">
     private AlertDialog dialog;
 
-    private List pairedList = new ArrayList();
-    private List discoveredList = new ArrayList();
-    private List pairedListStrings = new ArrayList();
-    private List discoveredListStrings = new ArrayList();
+    private List<BluetoothDevice> pairedList = new ArrayList();
+    private List<BluetoothDevice>discoveredList = new ArrayList();
+    private List<String> pairedListStrings = new ArrayList();
+    private List<String> discoveredListStrings = new ArrayList();
     private ListView pairedListView;
 
     private ArrayAdapter pairedListViewAdapter;
@@ -71,30 +73,267 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
 
         //Setup Fragments
-        ViewPager viewPager = (ViewPager) findViewById(R.id.container);
-        TabLayout tablayout = (TabLayout) findViewById(R.id.tabs);
-        setupViewPager(viewPager);
-        tablayout.setupWithViewPager(viewPager);
+        setupViewPager();
 
-        // BT Dialog, fuer Entwicklung ohne BT connection zum Shield hier auskommentieren
+        // BT Dialog
         bluetoothDialog();
     }
 
-    private void setupViewPager(ViewPager viewPager) {
-        //Fragemnts zu Adapter hinzufuegen
+    private void setupViewPager() {
+        ViewPager viewPager = findViewById(R.id.container);
+        TabLayout tablayout = findViewById(R.id.tabs);
+
+        //add fragments to adapter
         SectionsPageAdapter adapter = new SectionsPageAdapter(getSupportFragmentManager());
         adapter.addFragment(new Tab1Fragment(), "Help");
         adapter.addFragment(new Tab2Fragment(), "Control");
         adapter.addFragment(new Tab3Fragment(), "DrinkLexikon");
-        //Adapter auf Viewpager setzen
+        //apply adapter on viewpager
         viewPager.setAdapter(adapter);
-        //Tab2Fragment als Start setzen
+        //Tab2Fragment as start fragment
         viewPager.setCurrentItem(1, true);
+        //setup TabLayout with viewPager
+        tablayout.setupWithViewPager(viewPager);
+    }
+
+    //create BT Dialog
+    protected void bluetoothDialog() {
+        //Builder for Dialog
+        final AlertDialog.Builder mBuilder = new AlertDialog.Builder(this);
+        mBuilder.setCancelable(false);
+        //Views initialisation
+        final View mView = getLayoutInflater().inflate(R.layout.bluetooth_dialog, null);
+        ImageView imgLoad = mView.findViewById(R.id.imageLoad);
+        final ImageView imgClear = mView.findViewById(R.id.imageClear);
+        progressBar = mView.findViewById(R.id.progressBar);
+        pairedListView = mView.findViewById(R.id.listView);
+        final ListView listView2 = mView.findViewById(R.id.listView2);
+
+        //enable BT Hardware
+        enableBTHardware();
+        //list already paired devices
+        pairedDevices();
+
+
+        //OnClickListener for ListViews and refreshButton
+        //<editor-fold desc="setOnclickListeners">
+        imgLoad.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                //load icon visible
+                progressBar.setVisibility(View.VISIBLE);
+                //discover BT devices
+                discoverBT(listView2);
+            }
+        });
+
+        // exit BT dialog
+        imgClear.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                btCancel();
+            }
+        });
+
+        //paired Devices onItemClickListener
+        pairedListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
+                try {
+                    mmDevice = pairedList.get(i);
+                    openBT();
+                } catch (Exception e) { //connecting failed
+                    Log.w("APP", e);
+                }
+            }
+        });
+        //discovered Devices onItemClickListener
+        listView2.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
+                try {
+                    mmDevice = discoveredList.get(i);
+                    openBT();
+                } catch (Exception e) { //connecting failed
+                    Log.w("APP", e);
+                }
+            }
+        });
+        //</editor-fold>
+
+        //initialise dialog and show
+        mBuilder.setView(mView);
+        dialog = mBuilder.create();
+        dialog.setCanceledOnTouchOutside(false);
+        dialog.show();
+        //discover devices
+        discoverBT(listView2);
+    }
+
+    //enables BT hardware
+    private void enableBTHardware() {
+        //check if phone has BT
+        mBluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
+        if (mBluetoothAdapter == null) {
+            Toast.makeText(this, "Bluetooth is not available on this device!", Toast.LENGTH_SHORT).show();
+        }
+        //turn on BT
+        if (!mBluetoothAdapter.isEnabled()) {
+            Intent enableBluetooth = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
+            startActivityForResult(enableBluetooth, 3);
+        }
+    }
+
+    //list paired BT devices
+    private void pairedDevices() {
+        Set<BluetoothDevice> pairedDevices = mBluetoothAdapter.getBondedDevices();
+        //adds devices and their names in lists
+        if (pairedDevices.size() > 0) {
+            for (BluetoothDevice device : pairedDevices) {
+                pairedListStrings.add(device.getName() + "\n");
+                pairedList.add(device);
+                //HMSoft as standard device as probably wanted
+                if (device.getName().equals("HMSoft")) {
+                    mmDevice = device;
+                    break;
+                }
+            }
+        }
+        //show paired devices in lists
+        pairedListViewAdapter = new ArrayAdapter(this, android.R.layout.simple_list_item_1, pairedListStrings);
+        pairedListView.setAdapter(pairedListViewAdapter);
+
+    }
+
+    //close BT dialog
+    private void btCancel() {
+        Switch bluetoothSwitchButton = findViewById(R.id.btSwitch);
+        TextView switchItemText = findViewById(R.id.btSwitchItem);
+        bluetoothSwitchButton.setChecked(false);
+        switchItemText.setText(R.string.bt_disabled);
+        dialog.dismiss();
+        pairedList.clear();
+        discoveredList.clear();
+        pairedListStrings.clear();
+        discoveredListStrings.clear();
+        mBluetoothAdapter.cancelDiscovery();
+    }
+
+
+
+    //BT discovery
+    private void discoverBT(ListView listView) {
+        //clear old discovery results
+        discoveredList.clear();
+        discoveredListStrings.clear();
+
+        //start discovery
+        mBluetoothAdapter.startDiscovery();
+
+        IntentFilter intentFilter = new IntentFilter((BluetoothDevice.ACTION_FOUND));
+        //register BroadcastReceiver
+        registerReceiver(myReceiver, intentFilter);
+        //discovered Devices list show
+        discoveredListViewAdapter = new ArrayAdapter(this, android.R.layout.simple_list_item_1, discoveredListStrings);
+        listView.setAdapter(discoveredListViewAdapter);
+    }
+
+    //BroadcastReceiver to react to found devices
+    BroadcastReceiver myReceiver = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            String action = intent.getAction();
+            //if BT device found
+            if (BluetoothDevice.ACTION_FOUND.equals(action)) {
+                //save device and its name
+                BluetoothDevice device = intent.getParcelableExtra(BluetoothDevice.EXTRA_DEVICE);
+                discoveredListStrings.add(device.getName());
+                discoveredList.add(device);
+                //crashfix
+                discoveredListStrings.removeAll(Collections.singleton(null));
+                //listView refresh
+                discoveredListViewAdapter.notifyDataSetChanged();
+                //load icon invisible
+                progressBar.setVisibility(View.INVISIBLE);
+            }
+        }
+    };
+
+    //send string to Arduino
+    protected void sendData(String msg) throws IOException {
+        Toast.makeText(this, "Sending data: " + msg, Toast.LENGTH_SHORT).show();
+        mmOutputStream.write(msg.getBytes());
+    }
+
+    private void openBT() throws IOException {
+        //create socket
+        UUID uuid = UUID.fromString("00001101-0000-1000-8000-00805F9B34FB"); //Standard SerialPortService ID
+        mmSocket = mmDevice.createRfcommSocketToServiceRecord(uuid);
+        mmSocket.connect();
+        mmOutputStream = mmSocket.getOutputStream();
+        mmInputStream = mmSocket.getInputStream();
+        Toast.makeText(this, "Connected", Toast.LENGTH_SHORT).show();
+        //close BT dialog
+        dialog.cancel();
+        //create inputstream listener thread
+        beginListenForData();
+    }
+
+    //create inputstream listener thread
+    private void beginListenForData() {
+        final Handler handler = new Handler();
+        //ASCII newline
+        final byte newline = 10;
+
+        stopWorker = false;
+        readBufferPosition = 0;
+        readBuffer = new byte[1024];
+        //create thread
+        workerThread = new Thread(new Runnable() {
+            public void run() {
+                while (!Thread.currentThread().isInterrupted() && !stopWorker) {
+                    try {
+                        int bytesAvailable = mmInputStream.available();
+                        //if data was sent
+                        if (bytesAvailable > 0) {
+                            byte[] packetBytes = new byte[bytesAvailable];
+                            mmInputStream.read(packetBytes);
+                            //read bytes from inputstream
+                            for (int i = 0; i < bytesAvailable; i++) {
+                                byte b = packetBytes[i];
+                                //stop read at newline char
+                                if (b == newline) {
+                                    //convert buffer to String
+                                    byte[] encodedBytes = new byte[readBufferPosition];
+                                    System.arraycopy(readBuffer, 0, encodedBytes, 0, encodedBytes.length);
+                                    final String data = new String(encodedBytes, "US-ASCII");
+                                    //readBUferPosition reset
+                                    readBufferPosition = 0;
+                                    //execute what happens with received data
+                                    handler.post(new Runnable() {
+                                        public void run() {
+                                            Toast.makeText(getApplicationContext(), "Returned String: " + data, Toast.LENGTH_SHORT).show();
+                                        }
+                                    });
+                                //otherwise next byte
+                                } else {
+                                    readBuffer[readBufferPosition++] = b;
+                                }
+                            }
+                        }
+                    } catch (IOException ex) {
+                        stopWorker = true;
+                    }
+                }
+            }
+        });
+        //thread start
+        workerThread.start();
     }
 
     //Result handling from speechRecognition and enableBTHardware()
     @Override
-    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         //enableBTHardware
         if (requestCode == 3) {
             if (resultCode == (0)) {
@@ -108,259 +347,11 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
-    //Erstellt den BT Dialog
-    protected void bluetoothDialog() {
-        //Builder fuer Dialog
-        final AlertDialog.Builder mBuilder = new AlertDialog.Builder(this);
-        mBuilder.setCancelable(false);
-        //Views initialisieren
-        final View mView = getLayoutInflater().inflate(R.layout.bluetooth_dialog, null);
-        ImageView imgLoad = mView.findViewById(R.id.imageLoad);
-        final ImageView imgClear = mView.findViewById(R.id.imageClear);
-        progressBar = mView.findViewById(R.id.progressBar);
-        pairedListView = mView.findViewById(R.id.listView);
-        final ListView listView2 = mView.findViewById(R.id.listView2);
-        final TextView btHeader = mView.findViewById(R.id.btDialogHeader);
-
-        //findet paired BT devices
-        enableBTHardware();
-
-        pairedDevices();
-
-
-        //OnClickListener fuer ListViews und refreshButton setzen
-        //<editor-fold desc="setOnclickListeners">
-        imgLoad.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                //Lade icon sichtbar
-                progressBar.setVisibility(View.VISIBLE);
-                //nach BT devices suchen
-                discoverBT(listView2);
-            }
-        });
-
-        // exit Bluetoothdialog tobi
-        imgClear.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                btCancel();
-            }
-        });
-
-        //paired Devices
-        pairedListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
-                try {
-                    //device zuweisen auf den geklickt wurde und versuchen mit dem Device zu verbinden
-                    mmDevice = (BluetoothDevice) pairedList.get(i);
-                    // btHeader.setText("Try connecting..");
-                    // imgClear.setVisibility(View.INVISIBLE);
-                    //this.wait(10);
-                    openBT();
-                } catch (Exception e) {
-                    Log.w("APP", e);
-                    //imgClear.setVisibility(View.VISIBLE);
-                    //btHeader.setText("Please try again");
-                }
-            }
-        });
-        //discovered Devices
-        listView2.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
-                try {
-                    //device zuweisen auf den geklickt wurde und versuchen mit dem Device zu verbinden
-                    mmDevice = (BluetoothDevice) discoveredList.get(i);
-                    // btHeader.setText("Try connecting..");
-                    //imgClear.setVisibility(View.INVISIBLE);
-                    //this.wait(10);
-                    openBT();
-                } catch (Exception e) {
-                    Log.w("APP", e);
-                    // imgClear.setVisibility(View.VISIBLE);
-                    //btHeader.setText("Please try again");
-                }
-            }
-        });
-        //</editor-fold>
-
-        //Dialog initialisieren und zeigen
-        mBuilder.setView(mView);
-        dialog = mBuilder.create();
-        dialog.setCanceledOnTouchOutside(false);
-        dialog.show();
-        //Devices suchen
-        discoverBT(listView2);
-    }
-
-    private void btCancel() {
-        Switch bluetoothSwitchButton = (Switch) findViewById(R.id.btSwitch);
-        TextView switchItemText = (TextView) findViewById(R.id.btSwitchItem);
-        bluetoothSwitchButton.setChecked(false);
-        switchItemText.setText(R.string.bt_disabled);
-        dialog.dismiss();
-        pairedList.clear();
-        discoveredList.clear();
-        pairedListStrings.clear();
-        discoveredListStrings.clear();
-
-    }
-
-    private void pairedDevices() {
-        //Paired BT Geraete
-        Set<BluetoothDevice> pairedDevices = mBluetoothAdapter.getBondedDevices();
-        //Fuegt alle Geraete und deren Namen in Listen ein
-        if (pairedDevices.size() > 0) {
-            for (BluetoothDevice device : pairedDevices) {
-                pairedListStrings.add(device.getName() + "\n");
-                pairedList.add(device);
-                //HMSoft als Standarddevice wenn paired da als BT Shield bekannt
-                if (device.getName().equals("HMSoft")) {
-                    mmDevice = device;
-                    break;
-                }
-            }
-        }
-        //paired Devices anzeigen
-        pairedListViewAdapter = new ArrayAdapter(this, android.R.layout.simple_list_item_1, pairedListStrings);
-        pairedListView.setAdapter(pairedListViewAdapter);
-
-    }
-
-    private void discoverBT(ListView listView) {
-
-        //alten gefundenen Geraete loeschen
-        discoveredList.clear();
-        discoveredListStrings.clear();
-
-        //BT discovery starten
-        mBluetoothAdapter.startDiscovery();
-
-        IntentFilter intentFilter = new IntentFilter((BluetoothDevice.ACTION_FOUND));
-        //Broadcastreceiver der auf BT found Intent reagiert registrieren
-        registerReceiver(myReceiver, intentFilter);
-        //discovered Devices liste in listView zeigen
-        discoveredListViewAdapter = new ArrayAdapter(this, android.R.layout.simple_list_item_1, discoveredListStrings);
-        listView.setAdapter(discoveredListViewAdapter);
-    }
-
-    //Broadcastreceiver der auf BT found Intent reagiert
-    BroadcastReceiver myReceiver = new BroadcastReceiver() {
-        @Override
-        public void onReceive(Context context, Intent intent) {
-            String action = intent.getAction();
-            //wenn BT found intent
-            if (BluetoothDevice.ACTION_FOUND.equals(action)) {
-                //Device und dessen Name in Listen hinzufuegen
-                BluetoothDevice device = intent.getParcelableExtra(BluetoothDevice.EXTRA_DEVICE);
-                discoveredListStrings.add(device.getName());
-                discoveredList.add(device);
-                //crashfix?
-                discoveredListStrings.removeAll(Collections.singleton(null));
-                //listView aktualisieren
-                discoveredListViewAdapter.notifyDataSetChanged();
-                //Lade icon unsichtbar
-                progressBar.setVisibility(View.INVISIBLE);
-            }
-        }
-    };
-
-    //String an BT device schicken
-    protected void sendData(String msg) throws IOException {
-        Toast.makeText(this, "Sending data: " + msg, Toast.LENGTH_SHORT).show();
-        mmOutputStream.write(msg.getBytes());
-    }
-
-    //findet paired BT devices
-    private void enableBTHardware() {
-        //checken ob Handy BT hat
-        mBluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
-        if (mBluetoothAdapter == null) {
-            // myLabel.setText("No bluetooth adapter available");
-        }
-        //checkt ob BT an ist, schaltet an falls nicht
-        if (!mBluetoothAdapter.isEnabled()) {
-            Intent enableBluetooth = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
-            startActivityForResult(enableBluetooth, 3);
-        }
-    }
-
-
-    private void openBT() throws IOException {
-        //Socket inkl. input/outpustream mit device erstellen
-        UUID uuid = UUID.fromString("00001101-0000-1000-8000-00805F9B34FB"); //Standard SerialPortService ID
-        mmSocket = mmDevice.createRfcommSocketToServiceRecord(uuid);
-        mmSocket.connect();
-        mmOutputStream = mmSocket.getOutputStream();
-        mmInputStream = mmSocket.getInputStream();
-        Toast.makeText(this, "Connected", Toast.LENGTH_SHORT).show();
-        //BT dialog schließen
-        dialog.cancel();
-        //auf daten von device hoeren
-        beginListenForData();
-    }
-
-    void beginListenForData() {
-        final Handler handler = new Handler();
-        //ASCII newline
-        final byte newline = 10;
-
-        stopWorker = false;
-        readBufferPosition = 0;
-        readBuffer = new byte[1024];
-        //neuen thread erstellen
-        workerThread = new Thread(new Runnable() {
-            public void run() {
-                //solange kein interrupt und keine exception
-                while (!Thread.currentThread().isInterrupted() && !stopWorker) {
-                    try {
-                        int bytesAvailable = mmInputStream.available();
-                        //wenn auf dem inputstream etwas anliegt
-                        if (bytesAvailable > 0) {
-                            byte[] packetBytes = new byte[bytesAvailable];
-                            mmInputStream.read(packetBytes);
-                            //bytes von inputstream durchgehen
-                            for (int i = 0; i < bytesAvailable; i++) {
-                                byte b = packetBytes[i];
-                                //wenn newline, dann aktuelles lesen fertig
-                                if (b == newline) {
-                                    //readbuffer in String konvertieren
-                                    byte[] encodedBytes = new byte[readBufferPosition];
-                                    System.arraycopy(readBuffer, 0, encodedBytes, 0, encodedBytes.length);
-                                    final String data = new String(encodedBytes, "US-ASCII");
-                                    //readBUferPosition reset fuer naechste auslesung
-                                    readBufferPosition = 0;
-                                    //ausfuehren was mit data passieren soll
-                                    handler.post(new Runnable() {
-                                        public void run() {
-                                            Toast.makeText(getApplicationContext(), "Returned String: " + data, Toast.LENGTH_SHORT).show();
-                                        }
-                                    });
-                                    //ansonsten naechstes byte
-                                } else {
-                                    readBuffer[readBufferPosition++] = b;
-                                }
-                            }
-                        }
-                    } catch (IOException ex) {
-                        stopWorker = true;
-                    }
-                }
-            }
-        });
-        //thread starten
-        workerThread.start();
-    }
-
-
-    //BT socket schließen
-    void closeBT() throws IOException {
+    //close socket
+    private void closeBT() throws IOException {
         stopWorker = true;
         mmOutputStream.close();
         mmInputStream.close();
         mmSocket.close();
-        //myLabel.setText("Bluetooth Closed");
     }
 }
