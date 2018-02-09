@@ -62,7 +62,8 @@ public class Tab1Fragment extends Fragment {
 
                     } else if (!bluetoothSwitchButton.isChecked()) {
                         TextView switchItemText = rootView.findViewById(R.id.btSwitchItem);
-
+                        MainActivity mainActivity = (MainActivity) getActivity();
+                        mainActivity.closeBT();
                         switchItemText.setText(R.string.bt_disabled);
                     } else {
                         Toast.makeText(getActivity(), "Bluetooth Switch not working!", Toast.LENGTH_SHORT).show();

@@ -40,7 +40,7 @@ android:orientation="vertical">
             android:paddingLeft="?android:attr/expandableListPreferredChildPaddingLeft"
             android:paddingTop="5dp"
             android:textSize="14sp"
-            android:text="This device is not paired."/>
+            android:text=""/>
     </LinearLayout>
 
     <!-- Dark Line for seperation of content-->

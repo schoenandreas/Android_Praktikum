@@ -275,6 +275,8 @@ public class MainActivity extends AppCompatActivity {
         Toast.makeText(this, "Connected", Toast.LENGTH_SHORT).show();
         //close BT dialog
         dialog.cancel();
+        TextView switchItemText = findViewById(R.id.btSwitchItem);
+        switchItemText.setText(R.string.bt_enabled + "HMSoft");
         //create inputstream listener thread
         beginListenForData();
     }
@@ -348,10 +350,11 @@ public class MainActivity extends AppCompatActivity {
     }
 
     //close socket
-    private void closeBT() throws IOException {
+    protected void closeBT() throws IOException {
         stopWorker = true;
         mmOutputStream.close();
         mmInputStream.close();
         mmSocket.close();
+        btCancel();
     }
 }
