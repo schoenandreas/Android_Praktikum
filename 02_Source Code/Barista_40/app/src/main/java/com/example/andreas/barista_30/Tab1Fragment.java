@@ -12,10 +12,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ExpandableListView;
-import android.widget.ExpandableListView.OnChildClickListener;
-import android.widget.ExpandableListView.OnGroupClickListener;
-import android.widget.ExpandableListView.OnGroupCollapseListener;
-import android.widget.ExpandableListView.OnGroupExpandListener;
 import android.widget.Switch;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -39,10 +35,8 @@ public class Tab1Fragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         rootView = inflater.inflate(R.layout.tab1_fragment, container, false);
 
-
         // Getting the expndablelistview
         expListView = (ExpandableListView) rootView.findViewById(R.id.lvExp);
-
 
         // get the listView
         expListView = rootView.findViewById(R.id.lvExp);
@@ -52,67 +46,12 @@ public class Tab1Fragment extends Fragment {
         // Setting the list adapter
         expListView.setAdapter(listAdapter);
 
-        //listView Group click listener
-        expListView.setOnGroupClickListener(new OnGroupClickListener() {
-
-            @Override
-            public boolean onGroupClick(ExpandableListView parent, View v,
-                                        int groupPosition, long id) {
-
-                // Placeholder
-
-                return false;
-            }
-        });
-        //listViewGroup expanded listener
-        expListView.setOnGroupExpandListener(new OnGroupExpandListener() {
-
-            @Override
-            public void onGroupExpand(int groupPosition) {
-
-                // Placeholder
-
-            }
-        });
-        //listView Group collapsed listener
-        expListView.setOnGroupCollapseListener(new OnGroupCollapseListener() {
-
-            @Override
-            public void onGroupCollapse(int groupPosition) {
-
-                // Placeholder
-
-            }
-        });
-        //listView on child click listener
-        expListView.setOnChildClickListener(new OnChildClickListener() {
-
-            @Override
-            public boolean onChildClick(ExpandableListView parent, View v,
-                                        int groupPosition, int childPosition, long id) {
-
-                // Placeholder
-
-                return false;
-            }
-        });
-
         // Gives the bluetooth Switch an OnClickListener
         final Switch bluetoothSwitchButton = rootView.findViewById(R.id.btSwitch);
 
         bluetoothSwitchButton.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
                 try {
-
-                    if (bluetoothSwitchButton.isChecked()){
-                        // Popup for bluetooth dialog open
-                        MainActivity mainActivity = (MainActivity) getActivity();
-                        mainActivity.bluetoothDialog();
-                        TextView switchItemText = (TextView) rootView.findViewById(R.id.btSwitchItem);
-                        switchItemText.setText(R.string.bt_enabled + "HMSoft");
-                    } else if (!bluetoothSwitchButton.isChecked()) {
-                        TextView switchItemText = (TextView) rootView.findViewById(R.id.btSwitchItem);
-                    }
                     if (bluetoothSwitchButton.isChecked()) {
                         //popup for bluetooth dialog initialisation
                         MainActivity mainActivity = (MainActivity) getActivity();
@@ -134,7 +73,6 @@ public class Tab1Fragment extends Fragment {
             }
         });
         return rootView;
-
     }
 
     /*
@@ -213,8 +151,7 @@ public class Tab1Fragment extends Fragment {
         about.add("This project was a cooperation between: \nThe chair of operating systems (M. Sc. Sebastian Eckl) " +
                 "\n& " +
                 "\nThe Barrista Team (Andreas Schön, Krist Stoja & B. Sc. Tobias Bartsch)");
-
-
+        
         // Combines Header item data
         listDataChild.put(listDataHeader.get(0), introduction);
         listDataChild.put(listDataHeader.get(1), commands);

@@ -32,7 +32,7 @@ public class Tab3Fragment extends Fragment {
 
     private ArrayList<DrinkList> listItems = new ArrayList<>();
     private RecyclerView MyRecyclerView;
-    private String Drinks[] = {"Coca-Cola","Fanta","Tomatensaft","Wasser"};
+    private String Drinks[] = {"Coke","Fanta","Tomato juice","Water"};
     private int  Images[] = {R.drawable.coca_cola,R.drawable.fanta,R.drawable.tomatensaft,R.drawable.wasser};
 
     @Override
