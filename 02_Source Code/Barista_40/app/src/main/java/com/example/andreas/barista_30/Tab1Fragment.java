@@ -18,11 +18,6 @@ import android.widget.Switch;
 import android.widget.TextView;
 import android.widget.Toast;
 
-
-/**
- * Created by Andreas on 06.12.2017.
- */
-
 public class Tab1Fragment extends Fragment {
 
     View rootView;
@@ -34,8 +29,7 @@ public class Tab1Fragment extends Fragment {
 
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
-        // preparing list data
+        // Preparing list data
         prepareListData();
     }
 
@@ -43,13 +37,12 @@ public class Tab1Fragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         rootView = inflater.inflate(R.layout.tab1_fragment, container, false);
 
-
-        // get the listview
+        // Getting the expndablelistview
         expListView = (ExpandableListView) rootView.findViewById(R.id.lvExp);
         listAdapter = new ExpandableListAdapter(listDataHeader, listDataChild, getActivity());
-        // setting list adapter
-        expListView.setAdapter(listAdapter);
 
+        // Setting the list adapter
+        expListView.setAdapter(listAdapter);
 
         // Listview Group click listener
         expListView.setOnGroupClickListener(new OnGroupClickListener() {
@@ -57,9 +50,7 @@ public class Tab1Fragment extends Fragment {
             @Override
             public boolean onGroupClick(ExpandableListView parent, View v,
                                         int groupPosition, long id) {
-                // Toast.makeText(getApplicationContext(),
-                // "Group Clicked " + listDataHeader.get(groupPosition),
-                // Toast.LENGTH_SHORT).show();
+                // Placeholder
                 return false;
             }
         });
@@ -68,9 +59,7 @@ public class Tab1Fragment extends Fragment {
 
             @Override
             public void onGroupExpand(int groupPosition) {
-                /*Toast.makeText(getActivity(),
-                        listDataHeader.get(groupPosition) + " Expanded",
-                        Toast.LENGTH_SHORT).show();*/
+                // Placeholder
             }
         });
         // Listview Group collasped listener
@@ -78,10 +67,7 @@ public class Tab1Fragment extends Fragment {
 
             @Override
             public void onGroupCollapse(int groupPosition) {
-                /*Toast.makeText(getActivity(),
-                        listDataHeader.get(groupPosition) + " Collapsed",
-                        Toast.LENGTH_SHORT).show();*/
-
+                // Placeholder
             }
         });
         // Listview on child click listener
@@ -90,17 +76,11 @@ public class Tab1Fragment extends Fragment {
             @Override
             public boolean onChildClick(ExpandableListView parent, View v,
                                         int groupPosition, int childPosition, long id) {
-                /*Toast.makeText(
-                        getActivity(),
-                        listDataHeader.get(groupPosition)
-                                + " : "
-                                + listDataChild.get(
-                                listDataHeader.get(groupPosition)).get(
-                                childPosition), Toast.LENGTH_SHORT)
-                        .show();*/
+                // Placeholder
                 return false;
             }
         });
+
         // Gives the bluetooth Switch an OnClickListener
         final Switch bluetoothSwitchButton = (Switch) rootView.findViewById(R.id.btSwitch);
 
@@ -108,13 +88,11 @@ public class Tab1Fragment extends Fragment {
             public void onClick (View v){
                 try {
                     if (bluetoothSwitchButton.isChecked()){
-                        //popup für bluetooth dialog initialisieren
+                        // Popup for bluetooth dialog open
                         MainActivity mainActivity = (MainActivity) getActivity();
                         mainActivity.bluetoothDialog();
-
                         TextView switchItemText = (TextView) rootView.findViewById(R.id.btSwitchItem);
                         switchItemText.setText(R.string.bt_enabled + "HMSoft");
-
                     } else if (!bluetoothSwitchButton.isChecked()){
                         TextView switchItemText = (TextView) rootView.findViewById(R.id.btSwitchItem);
                         switchItemText.setText(R.string.bt_disabled);
@@ -126,7 +104,6 @@ public class Tab1Fragment extends Fragment {
                 }
             }
         });
-
         return rootView;
     }
 
@@ -137,17 +114,17 @@ public class Tab1Fragment extends Fragment {
         listDataHeader = new ArrayList<String>();
         listDataChild = new HashMap<String, List<String>>();
 
-        // Adding child data
+        // Adding groupview data
         listDataHeader.add("Braccio Introduction");
         listDataHeader.add("Braccio Commands");
         listDataHeader.add("FAQs");
         listDataHeader.add("About");
 
 
-        // Adding child data
+        // Adding item data
         List<String> introduction = new ArrayList<String>();
         introduction.add("The idea was to create a robotic barkeeper with the Arduino Braccio. " +
-                "Therefor some drinks where realised to search for within the closed alpha. " +
+                "Therefore some drinks where realised to search for within the closed alpha. " +
                 "Additionally the possibility to perform predefined patterns is given. " +
                 "In case somebody wants to control single joints of the Braccio you can address them via absolute commands referring to the degree on the plate or via relative commands referring to the current position. " +
                 "The absolute limitations for each joint are listed beneath. " +
@@ -208,7 +185,8 @@ public class Tab1Fragment extends Fragment {
                 "\nThe Barrista Team (Andreas Schön, Krist Stoja & B. Sc. Tobias Bartsch)");
 
 
-        listDataChild.put(listDataHeader.get(0), introduction); // Header, Child data
+        // Combines Header item data
+        listDataChild.put(listDataHeader.get(0), introduction);
         listDataChild.put(listDataHeader.get(1), commands);
         listDataChild.put(listDataHeader.get(2), faqs);
         listDataChild.put(listDataHeader.get(3), about);

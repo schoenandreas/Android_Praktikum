@@ -1,9 +1,5 @@
 package com.example.andreas.barista_30;
 
-/**
- * Created by tbartsch on 29.01.2018.
- */
-
 import java.util.HashMap;
 import java.util.List;
 

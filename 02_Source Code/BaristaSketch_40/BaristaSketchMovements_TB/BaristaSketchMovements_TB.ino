@@ -27,7 +27,6 @@ Adafruit_TCS34725 tcs = Adafruit_TCS34725(TCS34725_INTEGRATIONTIME_50MS, TCS3472
 // Define Standard position
 =======
 // Standard position
->>>>>>> 78592a95c7d6dc57c7ef7a841c838dbd6f403ffb
 const int ba = 95;
 const int sh = 90;
 const int el = 140;

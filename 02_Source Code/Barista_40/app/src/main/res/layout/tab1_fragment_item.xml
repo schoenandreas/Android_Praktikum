@@ -14,5 +14,4 @@ android:orientation="vertical" >
         android:paddingLeft="?android:attr/expandableListPreferredChildPaddingLeft"
         android:textSize="17dip"
         android:paddingTop="5dp" />
-
 </LinearLayout>
