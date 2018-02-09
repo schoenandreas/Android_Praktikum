@@ -10,29 +10,6 @@
     <string name="manual">Modus: Manual</string>
     <string name="predefined">Modus: Predefined</string>
 
-    <!-- Drink list for sending strings to braccio-->
-    <string name="Coke">coke</string>
-    <string name="Tomato">tomato</string>
-    <string name="Orange">orange</string>
-    <string name="Fanta">fanta</string>
-    <string name="Water">water</string>
-
-    <!-- Predefined commandos for sending strings to braccio-->
-    <string name="Crcocodile">crocodile</string>
-    <string name="Grap">grap</string>
-    <string name="Release">release</string>
-    <string name="Hello">hello</string>
-    <string name="Goodbye">goodbye</string>
-    <string name="Standard">standard</string>
-    <string name="Stretch">stretch</string>
-
-    <!-- Predefined joints for sending strings to braccio-->
-    <string name="Base">base</string>
-    <string name="shoulder">shoulder</string>
-    <string name="Elbow">elbow</string>
-    <string name="Underarm">underarm</string>
-    <string name="Wrist">wrist</string>
-    <string name="Gripper">gripper</string>
 
     <!-- Drink Descriptions-->
     <string name="colaDesc">

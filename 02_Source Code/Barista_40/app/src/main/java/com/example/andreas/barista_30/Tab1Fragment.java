@@ -39,14 +39,14 @@ public class Tab1Fragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         rootView = inflater.inflate(R.layout.tab1_fragment, container, false);
 
-<<<<<<< HEAD
+
         // Getting the expndablelistview
         expListView = (ExpandableListView) rootView.findViewById(R.id.lvExp);
-=======
+
 
         // get the listView
         expListView = rootView.findViewById(R.id.lvExp);
->>>>>>> f705baca48828e51e60692239d2d5da32518667f
+
         listAdapter = new ExpandableListAdapter(listDataHeader, listDataChild, getActivity());
 
         // Setting the list adapter
@@ -58,10 +58,9 @@ public class Tab1Fragment extends Fragment {
             @Override
             public boolean onGroupClick(ExpandableListView parent, View v,
                                         int groupPosition, long id) {
-<<<<<<< HEAD
+
                 // Placeholder
-=======
->>>>>>> f705baca48828e51e60692239d2d5da32518667f
+
                 return false;
             }
         });
@@ -70,10 +69,9 @@ public class Tab1Fragment extends Fragment {
 
             @Override
             public void onGroupExpand(int groupPosition) {
-<<<<<<< HEAD
+
                 // Placeholder
-=======
->>>>>>> f705baca48828e51e60692239d2d5da32518667f
+
             }
         });
         //listView Group collapsed listener
@@ -81,10 +79,9 @@ public class Tab1Fragment extends Fragment {
 
             @Override
             public void onGroupCollapse(int groupPosition) {
-<<<<<<< HEAD
+
                 // Placeholder
-=======
->>>>>>> f705baca48828e51e60692239d2d5da32518667f
+
             }
         });
         //listView on child click listener
@@ -93,10 +90,9 @@ public class Tab1Fragment extends Fragment {
             @Override
             public boolean onChildClick(ExpandableListView parent, View v,
                                         int groupPosition, int childPosition, long id) {
-<<<<<<< HEAD
+
                 // Placeholder
-=======
->>>>>>> f705baca48828e51e60692239d2d5da32518667f
+
                 return false;
             }
         });
@@ -107,16 +103,16 @@ public class Tab1Fragment extends Fragment {
         bluetoothSwitchButton.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
                 try {
-<<<<<<< HEAD
+
                     if (bluetoothSwitchButton.isChecked()){
                         // Popup for bluetooth dialog open
                         MainActivity mainActivity = (MainActivity) getActivity();
                         mainActivity.bluetoothDialog();
                         TextView switchItemText = (TextView) rootView.findViewById(R.id.btSwitchItem);
                         switchItemText.setText(R.string.bt_enabled + "HMSoft");
-                    } else if (!bluetoothSwitchButton.isChecked()){
+                    } else if (!bluetoothSwitchButton.isChecked()) {
                         TextView switchItemText = (TextView) rootView.findViewById(R.id.btSwitchItem);
-=======
+                    }
                     if (bluetoothSwitchButton.isChecked()) {
                         //popup for bluetooth dialog initialisation
                         MainActivity mainActivity = (MainActivity) getActivity();
@@ -127,7 +123,7 @@ public class Tab1Fragment extends Fragment {
 
                     } else if (!bluetoothSwitchButton.isChecked()) {
                         TextView switchItemText = rootView.findViewById(R.id.btSwitchItem);
->>>>>>> f705baca48828e51e60692239d2d5da32518667f
+
                         switchItemText.setText(R.string.bt_disabled);
                     } else {
                         Toast.makeText(getActivity(), "Bluetooth Switch not working!", Toast.LENGTH_SHORT).show();
@@ -138,6 +134,7 @@ public class Tab1Fragment extends Fragment {
             }
         });
         return rootView;
+
     }
 
     /*
